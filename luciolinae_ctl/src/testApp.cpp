@@ -70,10 +70,15 @@ void testApp::setup(){
 
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
 	
+	printf("starting pd...\n");
+	
+	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
+	pd.setup( "" );
+	//pd.addOpenFile( "pd-test.pd" );
+	pd.addOpenFile( "pdstuff/_main.pd" );
+	pd.start();
+	
 	printf("testApp::setup() finished\n");
-#ifdef NO_WINDOW
-	printf("\n\n***** Press Esc to quit *****\n\n");
-#endif
 	
 }
 
@@ -224,3 +229,16 @@ void testApp::windowResized(int w, int h){
 
 }
 
+
+void testApp::audioRequested( float* input, int bufferSize, int nChannels )
+{
+	if ( pd.isThreadRunning() )
+	{
+		pd.audioRequested( input, bufferSize, nChannels );
+	}
+	else
+	{
+		memset( input, 0, sizeof( input ) );
+	}
+		
+}
