@@ -16,6 +16,8 @@ void testApp::setup(){
 
 	printf("testApp::setup()\n");
 
+	shutdown_started = false;
+	
 #ifndef NO_WINDOW
 	ofSetVerticalSync(true);
 	ofBackground(20,20,20);	
@@ -64,6 +66,12 @@ void testApp::setup(){
 		ofLog( OF_LOG_ERROR, "couldn't load data/settings.xml");
 		lights.setup( buffered_serial );
 	}
+	
+	ontime_ms = data.getValue("ontime_ms", 180000 );
+	
+	
+	data.popTag();
+	
 
 	AnimationFactory::useLights( &lights );
 	//anim_switcher.addAnim( AnimKapelica::NAME );
@@ -84,9 +92,10 @@ void testApp::setup(){
 	//pd.addOpenFile( "pd-test.pd" );
 	pd.addOpenFile( "pdstuff/_main.pd" );
 	pd.start();
+	
+	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
 #endif
 	
-	ofSoundStreamSetup(2, 0, this, 44100, 256, 12 );
 	printf("testApp::setup() finished\n");
 	
 }
@@ -111,6 +120,41 @@ void testApp::update(){
 
 	// send light levels
 	lights.flush();
+	
+	
+	static const int FADE_TIME = 10000;
+	static const int STARTUP_DELAY = 5000;
+	// fade up
+	if ( ofGetElapsedTimeMillis()-STARTUP_DELAY < FADE_TIME )
+	{
+		// calculate a volume
+		float vol = float(ofGetElapsedTimeMillis()-STARTUP_DELAY)/FADE_TIME;
+		vol = max(0.0f, vol);
+		// send volume
+		ofxOscMessage m;
+		m.setAddress("/volume");
+		m.addFloatArg( vol );
+		osc.sendMessage(m);
+	}
+	else if ( ofGetElapsedTimeMillis() > ontime_ms )
+	{
+		// calculate a volume
+		float vol = float(ofGetElapsedTimeMillis()-ontime_ms)/FADE_TIME;
+		vol = min(1.0f,max(0.0f, vol));
+		vol = 1.0f-vol;
+		// send volume
+		ofxOscMessage m;
+		m.setAddress("/volume");
+		m.addFloatArg( vol );
+		osc.sendMessage(m);
+		
+		if ( ofGetElapsedTimeMillis() > (ontime_ms+FADE_TIME) )
+		{
+			printf("quit time\n");
+			::exit(0);
+		}
+	}
+
 	
 	
 }
@@ -147,6 +191,7 @@ void testApp::keyPressed  (int key){
 			ofxXmlSettings data;
 			lights.save( data );
 			data.saveFile( "settings.xml" );
+			data.addValue("ontime_ms", ontime_ms);
 			break;
 		}
 		case '[':
@@ -212,15 +257,7 @@ void testApp::windowResized(int w, int h){
 
 void testApp::audioRequested( float* input, int bufferSize, int nChannels )
 {
-	/*
-	if ( pd.isReady() )
-	{
-		pd.audioRequested( input, bufferSize, nChannels );
-	}
-	else
-	{
-		memset( input, 0, sizeof( input ) );
-	}*/
 	pd.renderAudio( input, bufferSize, nChannels );
+	//memset( input, 0, sizeof( input ) );
 		
 }

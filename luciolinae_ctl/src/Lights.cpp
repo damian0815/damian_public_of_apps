@@ -70,11 +70,14 @@ void Lights::setup( BufferedSerial* _serial, ofxXmlSettings& data )
 	data.pushTag("lights");
 	num_boards = data.getValue("num_boards", 0 );
 	int num_lights = data.getNumTags( "light" );
+	float decay_factor = data.getValue("decay_factor", 10.0f );
+	printf("got decay factor %f\n", decay_factor );
 	lights.resize( num_lights );
 	for ( int i=0; i<num_lights; i++ )
 	{
 		data.pushTag("light", i );
 		lights[i].setup( data );
+		lights[i].setDecayFactor( decay_factor );
 		data.popTag();
 		// remember the big lights
 		if ( lights[i].isBig() )

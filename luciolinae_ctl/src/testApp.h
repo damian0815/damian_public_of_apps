@@ -55,6 +55,8 @@ public:
 	ofxPd pd;
 	void audioRequested 	(float * input, int bufferSize, int nChannels);
 	
+	int ontime_ms;
+	bool shutdown_started;
 };
 
 

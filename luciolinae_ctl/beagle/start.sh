@@ -10,12 +10,35 @@
 #echo "pd opened, pid $pd_pid, now sleeping 5 seconds"
 #sleep 5
 
-# now open control app
+#trap ctrl-c
+trap '{ echo trapped INT; }' INT
+
+# play bird sound
+mpg123 /home/ubuntu/Dettwiler_bird-karaoke_gazebo-trees.mp3
+# sleep for 20 minutes
+echo sleeping 20
+env sleep 1200
+
+# now open control app, run for set time
 echo starting luciolinae_ctl
 ctl_app_path=`dirname $0`/../bin
 cd $ctl_app_path
 echo $ctl_app_path
 ls
-./clickToLaunchApp_Release.sh
+echo $(pwd)
+export LD_LIBRARY_PATH=$(pwd)/libs/
+./luciolinae_ctl
+
+# play bird sound
+mpg123 /home/ubuntu/Dettwiler_bird-karaoke_gazebo-trees.mp3
+
+# play luciolinae_ctl
+echo $(pwd)
+export LD_LIBRARY_PATH=$(pwd)/libs/
+./luciolinae_ctl
+
+
+
+
 
 

@@ -34,6 +34,7 @@ public:
 	// brightness + decay
 	float getBrightness() const { return brightness; }
 	float getPulseDecayFactor() const { return decay_factor; }
+	void setDecayFactor( float d ) { decay_factor = d; }
 	
 	// position
 	float getX() const { return x; }

@@ -1,5 +1,6 @@
 <lights>
     <num_boards>4</num_boards>
+	<decay_factor>5.0</decay_factor>
     <light>
         <x>0.014062</x>
         <y>0.940625</y>
@@ -273,3 +274,5 @@
         <big>0</big>
     </light>
 </lights>
+<ontime_ms>10800000</ontime_ms>
+
