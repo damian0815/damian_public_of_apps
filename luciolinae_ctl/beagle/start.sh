@@ -3,7 +3,7 @@
 # launch pd
 pd_patch_path=$PWD/`dirname $0`/../pdbits/new/_main.pd
 #pd -nogui -oss -blocksize 1024 ~/pd-test.pd &
-echo pd -nogui -noadc -oss -blocksize 1024 $pd_patch_path &
+echo ~/code/puredata-0.42.5/bin/pd -nogui -sleepgrain 2 -verbose -alsa $pd_patch_path &
 
 # now sleep
 pd_pid=$!
