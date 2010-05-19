@@ -2,6 +2,7 @@
 #include "AnimSweep.h"
 #include "AnimPositionCalibrate.h"
 #include "AnimDelaunay.h"
+#include "AnimStateMachine.h"
 
 
 //--------------------------------------------------------------
@@ -49,6 +50,7 @@ void testApp::setup(){
 	anim_switcher.addAnim( AnimSweep::NAME );
 	anim_switcher.addAnim( AnimDelaunay::NAME );
 	anim_switcher.addAnim( AnimPositionCalibrate::NAME );
+	anim_switcher.addAnim( AnimStateMachine::NAME );
 	
 	current_anim = anim_switcher.currentAnim();
 }
@@ -132,9 +134,11 @@ void testApp::keyPressed  (int key){
 		}
 		case '[':
 			current_anim = anim_switcher.prevAnim();
+			lights.clear();
 			break;
 		case ']':
 			current_anim = anim_switcher.nextAnim();
+			lights.clear();
 			break;
 		default:
 			break;

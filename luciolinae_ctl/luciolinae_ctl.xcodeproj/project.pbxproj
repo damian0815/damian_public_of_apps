@@ -22,6 +22,11 @@
 		2DA5E65A11946D1800301C42 /* BufferedSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E65911946D1800301C42 /* BufferedSerial.cpp */; };
 		2DA8B62B11A459B2008B545A /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B62A11A459B2008B545A /* Light.cpp */; };
 		2DA8B68911A45E34008B545A /* AnimStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B68811A45E34008B545A /* AnimStateMachine.cpp */; };
+		2DA8B6DB11A4671B008B545A /* SharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B6DA11A4671B008B545A /* SharedData.cpp */; };
+		2DA8B6F111A469E7008B545A /* StateAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B6F011A469E7008B545A /* StateAnimation.cpp */; };
+		2DA8B70111A46AC3008B545A /* StateAnimIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B70011A46AC3008B545A /* StateAnimIdle.cpp */; };
+		2DA8B72911A46D33008B545A /* StateAnimStartBlip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B72811A46D33008B545A /* StateAnimStartBlip.cpp */; };
+		2DA8B73011A46E13008B545A /* StateAnimBlip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B72F11A46E13008B545A /* StateAnimBlip.cpp */; };
 		2DC026AB11A15623006AFBA9 /* AnimLuxeonTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC026AA11A15623006AFBA9 /* AnimLuxeonTest.cpp */; };
 		2DC027FD11A2D746006AFBA9 /* AnimPositionCalibrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC027FC11A2D746006AFBA9 /* AnimPositionCalibrate.cpp */; };
 		2DC0281911A2DC28006AFBA9 /* NearestPointOnLineToPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC0281811A2DC28006AFBA9 /* NearestPointOnLineToPoint.cpp */; };
@@ -142,6 +147,16 @@
 		2DA8B62A11A459B2008B545A /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
 		2DA8B68711A45E34008B545A /* AnimStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimStateMachine.h; sourceTree = "<group>"; };
 		2DA8B68811A45E34008B545A /* AnimStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimStateMachine.cpp; sourceTree = "<group>"; };
+		2DA8B6D911A4671B008B545A /* SharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedData.h; sourceTree = "<group>"; };
+		2DA8B6DA11A4671B008B545A /* SharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedData.cpp; sourceTree = "<group>"; };
+		2DA8B6EF11A469E7008B545A /* StateAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimation.h; sourceTree = "<group>"; };
+		2DA8B6F011A469E7008B545A /* StateAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimation.cpp; sourceTree = "<group>"; };
+		2DA8B6FF11A46AC3008B545A /* StateAnimIdle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimIdle.h; sourceTree = "<group>"; };
+		2DA8B70011A46AC3008B545A /* StateAnimIdle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimIdle.cpp; sourceTree = "<group>"; };
+		2DA8B72711A46D33008B545A /* StateAnimStartBlip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimStartBlip.h; sourceTree = "<group>"; };
+		2DA8B72811A46D33008B545A /* StateAnimStartBlip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimStartBlip.cpp; sourceTree = "<group>"; };
+		2DA8B72E11A46E13008B545A /* StateAnimBlip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimBlip.h; sourceTree = "<group>"; };
+		2DA8B72F11A46E13008B545A /* StateAnimBlip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimBlip.cpp; sourceTree = "<group>"; };
 		2DC026A911A15623006AFBA9 /* AnimLuxeonTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimLuxeonTest.h; sourceTree = "<group>"; };
 		2DC026AA11A15623006AFBA9 /* AnimLuxeonTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimLuxeonTest.cpp; sourceTree = "<group>"; };
 		2DC027FB11A2D746006AFBA9 /* AnimPositionCalibrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimPositionCalibrate.h; sourceTree = "<group>"; };
@@ -269,6 +284,7 @@
 		2D2D323C119CA0A5001D76C9 /* Animation */ = {
 			isa = PBXGroup;
 			children = (
+				2DA8B6EE11A4699C008B545A /* State Machine */,
 				2DA5E5881194616800301C42 /* Animation.h */,
 				2DA5E5891194616800301C42 /* Animation.cpp */,
 				2DC02CA511A31272006AFBA9 /* AnimActivators.h */,
@@ -287,8 +303,6 @@
 				2D84293411A402E200A388E1 /* AnimSeq.cpp */,
 				2D84293611A4030100A388E1 /* AnimSweep.h */,
 				2D84293711A4030100A388E1 /* AnimSweep.cpp */,
-				2DA8B68711A45E34008B545A /* AnimStateMachine.h */,
-				2DA8B68811A45E34008B545A /* AnimStateMachine.cpp */,
 			);
 			name = Animation;
 			sourceTree = "<group>";
@@ -323,6 +337,25 @@
 				2DA5E5911194634300301C42 /* Lights.cpp */,
 			);
 			name = System;
+			sourceTree = "<group>";
+		};
+		2DA8B6EE11A4699C008B545A /* State Machine */ = {
+			isa = PBXGroup;
+			children = (
+				2DA8B72E11A46E13008B545A /* StateAnimBlip.h */,
+				2DA8B72F11A46E13008B545A /* StateAnimBlip.cpp */,
+				2DA8B72711A46D33008B545A /* StateAnimStartBlip.h */,
+				2DA8B72811A46D33008B545A /* StateAnimStartBlip.cpp */,
+				2DA8B6FF11A46AC3008B545A /* StateAnimIdle.h */,
+				2DA8B70011A46AC3008B545A /* StateAnimIdle.cpp */,
+				2DA8B6EF11A469E7008B545A /* StateAnimation.h */,
+				2DA8B6F011A469E7008B545A /* StateAnimation.cpp */,
+				2DA8B68711A45E34008B545A /* AnimStateMachine.h */,
+				2DA8B68811A45E34008B545A /* AnimStateMachine.cpp */,
+				2DA8B6D911A4671B008B545A /* SharedData.h */,
+				2DA8B6DA11A4671B008B545A /* SharedData.cpp */,
+			);
+			name = "State Machine";
 			sourceTree = "<group>";
 		};
 		2DC02AF511A2EBD5006AFBA9 /* ofxXmlSettings */ = {
@@ -747,6 +780,11 @@
 				2D84293811A4030100A388E1 /* AnimSweep.cpp in Sources */,
 				2DA8B62B11A459B2008B545A /* Light.cpp in Sources */,
 				2DA8B68911A45E34008B545A /* AnimStateMachine.cpp in Sources */,
+				2DA8B6DB11A4671B008B545A /* SharedData.cpp in Sources */,
+				2DA8B6F111A469E7008B545A /* StateAnimation.cpp in Sources */,
+				2DA8B70111A46AC3008B545A /* StateAnimIdle.cpp in Sources */,
+				2DA8B72911A46D33008B545A /* StateAnimStartBlip.cpp in Sources */,
+				2DA8B73011A46E13008B545A /* StateAnimBlip.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

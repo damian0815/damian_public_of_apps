@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Animation.h"
+class StateAnimation;
 class Light;
 
 class AnimStateMachine: public Animation
@@ -24,35 +25,25 @@ public:
 
 private:
 	
+	// transition management
+	void addTransition( string from, string to, float prob );
 	void loadTransitions();
 	
-	typedef enum _State 
-	{
-		STATE_IDLE,
-		STATE_BUILDUP,
-		STATE_BLIP,
-		STATE_RELEASE
-	} State ;
-	State current_state;
-	float timer;
-	
-	// returns true when it's time to get a new state
-	bool updateState( float elapsed );
-	void enterState( State new_state );
 	void nextState();
+	void enterState( string next_state );
+
+	StateAnimation* current_state;
 	
 	typedef struct StateTransitionProbability
 	{
-		State next_state;
+		string next_state;
 		float probability;
-		StateTransitionProbability( State s, float p ) { next_state = s; probability = p; }
-		StateTransitionProbability() { next_state = STATE_IDLE; probability = 1; }
+		StateTransitionProbability( string s, float p ) { next_state = s; probability = p; }
+		StateTransitionProbability() { next_state = "idle"; probability = 1; }
 	} StateTransitionProbability;
-	typedef map< State, vector<StateTransitionProbability> > Transitions;
+	typedef map< string, vector<StateTransitionProbability> > Transitions;
 	Transitions transitions;
 
-	// return a squared random number between first and second inclusive, favouring first
-	float getSquaredRandom( float first, float second );
 	
 
 };

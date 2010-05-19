@@ -8,6 +8,10 @@
  */
 
 #include "AnimStateMachine.h"
+#include "StateAnimation.h"
+#include "StateAnimIdle.h"
+#include "StateAnimBlip.h"
+#include "StateAnimStartBlip.h"
 
 const char* AnimStateMachine::NAME = "StateMachine";
 
@@ -15,9 +19,14 @@ AnimStateMachine::AnimStateMachine( Lights* _lights )
 : Animation(_lights)
 {
 	loadTransitions();
-	current_state = STATE_IDLE;
+	enterState( StateAnimIdle::NAME );
 }
 
+void AnimStateMachine::addTransition( string from, string to, float prob )
+{
+	transitions[from].push_back( StateTransitionProbability( to, prob ) );
+
+}
 
 void AnimStateMachine::loadTransitions()
 {
@@ -40,11 +49,17 @@ void AnimStateMachine::loadTransitions()
 	}
 	data.popTag();*/
 	
-	transitions[STATE_IDLE].push_back( StateTransitionProbability( STATE_BUILDUP, 1 ) );
-	transitions[STATE_BUILDUP].push_back( StateTransitionProbability( STATE_BLIP, 1 ) );
-	transitions[STATE_BUILDUP].push_back( StateTransitionProbability( STATE_RELEASE, 0.3 ) );
-	transitions[STATE_BLIP ].push_back( StateTransitionProbability( STATE_IDLE, 1 ) );
-	transitions[STATE_BLIP ].push_back( StateTransitionProbability( STATE_BLIP, 0.1 ) );
+/*	transitions["state_idle"].push_back( StateTransitionProbability( "state_buildup", 1 ) );
+	transitions["state_buildup"].push_back( StateTransitionProbability( "state_blip", 1 ) );
+	transitions["state_buildup"].push_back( StateTransitionProbability( "state_release", 0.3 ) );
+	transitions["state_blip"].push_back( StateTransitionProbability( "state_idle", 1 ) );
+	transitions["state_blip"].push_back( StateTransitionProbability( "state_blip", 0.1 ) );*/
+	addTransition( StateAnimIdle::NAME, StateAnimStartBlip::NAME, 1 );
+
+	// blip
+	addTransition( StateAnimStartBlip::NAME, StateAnimBlip::NAME, 1 );
+	addTransition( StateAnimBlip::NAME, StateAnimIdle::NAME, 1 );
+	addTransition( StateAnimBlip::NAME, StateAnimBlip::NAME, 0.3f );
 	
 	// normalise probabilities
 	float total_p = 0;
@@ -67,13 +82,17 @@ void AnimStateMachine::loadTransitions()
 
 void AnimStateMachine::draw()
 {
+	ofSetColor( 0xff, 0xff, 0xff, 0x80 );
+	char buf[1024];
+	sprintf(buf, "StateMachine running: current state '%s'", current_state->getName().c_str() );
+	ofDrawBitmapString( buf, 10, 10 );
+	current_state->draw();
 }
 
 void AnimStateMachine::update( float elapsed )
 {
-	bool go_to_next = updateState( elapsed );
-
-	if ( go_to_next )
+	current_state->update( elapsed );
+	if ( current_state->isFinished() )
 		nextState();
 }
 
@@ -85,7 +104,7 @@ void AnimStateMachine::nextState()
 	float so_far = 0;
 	// go through all possibiliets, incrementing so_far until we are at which
 	// this takes care of probability distribution
-	vector<StateTransitionProbability> transition_chances;
+	vector<StateTransitionProbability>& transition_chances = transitions[current_state->getName()];
 	for ( int i=0; i<transition_chances.size(); i++ )
 	{
 		so_far += transition_chances[i].probability;
@@ -99,72 +118,12 @@ void AnimStateMachine::nextState()
 	// done
 }
 
-void AnimStateMachine::enterState( State new_state )
+void AnimStateMachine::enterState( string new_state )
 {
+	current_state = (StateAnimation*)AnimationFactory::makeAnimation( new_state );
 	// enter the new state
-	current_state = new_state;
-	
-	switch ( current_state )
-	{
-		case STATE_IDLE:
-			// set up a timer
-			timer = getSquaredRandom( 2, 8 );
-			break;
-			
-		case STATE_BLIP:
-		{
-			// blip
-			int which_to_blip = lights->getBigLightIndex( ofRandom( 0, 0.9999f*lights->getNumBigLights() ) );
-			lights->pulse( which_to_blip, 1, 0 );
-			// pause for a little bit
-			timer = getSquaredRandom( 1.5f, 0.3f );
-			break;
-		}
-			
-		case STATE_BUILDUP:
-		case STATE_RELEASE:
-			timer = getSquaredRandom( 1.5f, 0.3f );
-			break;
-	};
-}
-
-bool AnimStateMachine::updateState( float elapsed )
-{
-	switch (current_state)
-	{
-		case STATE_IDLE:
-			timer -= elapsed;
-			if ( timer < 0 )
-				return true;
-			break;
-			
-		case STATE_BLIP:
-			timer -= elapsed;
-			if ( timer < 0 )
-				return true;
-			break;
-			
-		case STATE_BUILDUP:
-			timer -= elapsed;
-			if ( timer < 0 )
-				return true;
-			break;
-			
-	}
-	
-	
-	return false;
+	current_state->enter();
 }
 
 
 
-float AnimStateMachine::getSquaredRandom( float first, float second )
-{
-	// get the random pct
-	float r = ofRandomuf();
-	r*=r;
-	
-	// so then
-	return first + r*(second-first);
-	
-}

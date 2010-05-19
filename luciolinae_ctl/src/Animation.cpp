@@ -14,6 +14,10 @@
 #include "AnimLuxeonTest.h"
 #include "AnimSweep.h"
 #include "AnimDelaunay.h"
+#include "AnimStateMachine.h"
+#include "StateAnimIdle.h"
+#include "StateAnimBlip.h"
+#include "StateAnimStartBlip.h"
 
 
 map< string, Animation* > AnimationFactory::cache;
@@ -34,9 +38,24 @@ Animation* AnimationFactory::makeAnimation( string name )
 			cache[name] = new AnimSweep( lights );
 		else if ( name == AnimDelaunay::NAME )
 			cache[name] = new AnimDelaunay( lights );
+		
+		else if ( name == AnimStateMachine::NAME )
+			cache[name] = new AnimStateMachine( lights );
+		
+		else if ( name == StateAnimIdle::NAME )
+			cache[name] = new StateAnimIdle( lights );
+		else if ( name == StateAnimStartBlip::NAME )
+			cache[name] = new StateAnimStartBlip( lights );
+		else if ( name == StateAnimBlip::NAME )
+			cache[name] = new StateAnimBlip( lights );
+		
+		/*
+		else if ( name == StateAnimIdle::NAME )
+			cache[name] = new StateAnimIdle( lights );*/
 		else
 		{
 			printf("AnimationFactory: unknown animation name '%s'\n", name.c_str() );
+			assert( false );
 			return new Animation( lights );
 		}
 	}
