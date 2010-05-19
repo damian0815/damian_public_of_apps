@@ -277,11 +277,13 @@ void Lights::clear( bool pummel )
 	}
 	else
 	{
+		serial->beginWrite();
 		// to be sure
 		unsigned char msg[2];
 		msg[0] = 0x01;
 		msg[1] = 0x00;
 		serial->writeBytes( msg, 2 );
+		serial->endWrite();
 	}
 }
 
