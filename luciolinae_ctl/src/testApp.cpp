@@ -116,6 +116,10 @@ void testApp::keyPressed  (int key){
 	
 	switch( key )
 	{
+		// panic button
+		case '!':
+			lights.clear( true );
+			break;
 		case 'p':
 			lights.pulseAll( 0.25 );
 			break;

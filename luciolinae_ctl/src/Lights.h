@@ -12,60 +12,9 @@
 #include "ofMain.h"
 #include "ofxXmlSettings.h"
 #include "BufferedSerial.h"
+#include <set>
+#include "Light.h"
 class LightsDelaunay;
-
-class Light
-{
-public:	
-	Light();
-	
-	void setup( int board_id, int light_id, float _x, float _y ) ;
-	void setup( ofxXmlSettings& data );
-	void save( ofxXmlSettings& data );
-	
-	void update( float elapsed );
-	void draw();
-	
-	void pulse( float max_bright, float decay_factor );
-	void set( float bright );
-
-	// serial
-	inline bool needsSerial() const;
-	void resetNeedsSerial() { last_brightness = brightness; }
-	inline bool wantsPulse() { return was_pulsed; }
-	void resetWantsPulse() { was_pulsed = false; draw_brightness = brightness; brightness = target_brightness; }
-	
-	// brightness + decay
-	float getBrightness() const { return brightness; }
-	float getPulseDecayFactor() const { return decay_factor; }
-	
-	// position
-	float getX() const { return x; }
-	float getY() const { return y; }
-	void setPosition( float _x, float _y ) { x = _x; y = _y; }
-	void toggleBig() { big = !big; }
-
-	// board/light data
-	unsigned char getBoardId() { return board_id; }
-	unsigned char getLightId() { return light_id; }
-	
-private:
-	
-	unsigned char board_id, light_id;
-	
-	float brightness; // 0..1
-	float draw_brightness;
-	float target_brightness;
-	
-	float decay_factor;
-	float last_brightness;
-	
-	bool was_pulsed;
-	bool big;
-	
-	float x,y;
-
-};
 
 
 class Lights
@@ -105,10 +54,16 @@ public:
 	int getNumLights() const { return lights.size(); }
 	const Light& getLight( int i ) const { return lights.at(i); }
 	void setLightPosition( int id, float x, float y ) { lights.at(id).setPosition( x, y ); rebuild_delaunay = true; }
-	void toggleLightIsBig( int id ) { lights.at(id).toggleBig(); }
+	
+	int getNumBigLights() const { return big_lights.size(); }
+	const Light& getBigLight( int i ) const { return lights[big_lights.at(i)]; }
+	int getBigLightIndex( int i ) const { return big_lights.at(i); }
+	void toggleLightIsBig( int id );
 	
 	// get delaunay triangulation
 	LightsDelaunay* getDelaunay();
+	
+	
 
 private:
 	// takes brightness of 0..4095
@@ -127,7 +82,10 @@ private:
 	int num_boards;
 	bool rebuild_delaunay;
 	
+	
 	vector<Light> lights;
+
+	vector<int> big_lights;
 	
 
 };

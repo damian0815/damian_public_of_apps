@@ -20,6 +20,8 @@
 		2DA5E58D1194619400301C42 /* AnimRotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E58C1194619400301C42 /* AnimRotate.cpp */; };
 		2DA5E5921194634300301C42 /* Lights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E5911194634300301C42 /* Lights.cpp */; };
 		2DA5E65A11946D1800301C42 /* BufferedSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E65911946D1800301C42 /* BufferedSerial.cpp */; };
+		2DA8B62B11A459B2008B545A /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B62A11A459B2008B545A /* Light.cpp */; };
+		2DA8B68911A45E34008B545A /* AnimStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8B68811A45E34008B545A /* AnimStateMachine.cpp */; };
 		2DC026AB11A15623006AFBA9 /* AnimLuxeonTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC026AA11A15623006AFBA9 /* AnimLuxeonTest.cpp */; };
 		2DC027FD11A2D746006AFBA9 /* AnimPositionCalibrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC027FC11A2D746006AFBA9 /* AnimPositionCalibrate.cpp */; };
 		2DC0281911A2DC28006AFBA9 /* NearestPointOnLineToPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC0281811A2DC28006AFBA9 /* NearestPointOnLineToPoint.cpp */; };
@@ -136,6 +138,10 @@
 		2DA5E5911194634300301C42 /* Lights.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lights.cpp; sourceTree = "<group>"; };
 		2DA5E65811946D1800301C42 /* BufferedSerial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferedSerial.h; sourceTree = "<group>"; };
 		2DA5E65911946D1800301C42 /* BufferedSerial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BufferedSerial.cpp; sourceTree = "<group>"; };
+		2DA8B62911A459B2008B545A /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
+		2DA8B62A11A459B2008B545A /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
+		2DA8B68711A45E34008B545A /* AnimStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimStateMachine.h; sourceTree = "<group>"; };
+		2DA8B68811A45E34008B545A /* AnimStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimStateMachine.cpp; sourceTree = "<group>"; };
 		2DC026A911A15623006AFBA9 /* AnimLuxeonTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimLuxeonTest.h; sourceTree = "<group>"; };
 		2DC026AA11A15623006AFBA9 /* AnimLuxeonTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimLuxeonTest.cpp; sourceTree = "<group>"; };
 		2DC027FB11A2D746006AFBA9 /* AnimPositionCalibrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimPositionCalibrate.h; sourceTree = "<group>"; };
@@ -281,6 +287,8 @@
 				2D84293411A402E200A388E1 /* AnimSeq.cpp */,
 				2D84293611A4030100A388E1 /* AnimSweep.h */,
 				2D84293711A4030100A388E1 /* AnimSweep.cpp */,
+				2DA8B68711A45E34008B545A /* AnimStateMachine.h */,
+				2DA8B68811A45E34008B545A /* AnimStateMachine.cpp */,
 			);
 			name = Animation;
 			sourceTree = "<group>";
@@ -301,6 +309,8 @@
 		2D2D323E119CA0C1001D76C9 /* System */ = {
 			isa = PBXGroup;
 			children = (
+				2DA8B62911A459B2008B545A /* Light.h */,
+				2DA8B62A11A459B2008B545A /* Light.cpp */,
 				2DC02D4D11A31A45006AFBA9 /* Delaunay.h */,
 				2DC02D4E11A31A45006AFBA9 /* Delaunay.cpp */,
 				2DC02D1C11A31807006AFBA9 /* LightsDelaunay.h */,
@@ -735,6 +745,8 @@
 				2DC02DA411A32259006AFBA9 /* AnimDelaunay.cpp in Sources */,
 				2D84293511A402E200A388E1 /* AnimSeq.cpp in Sources */,
 				2D84293811A4030100A388E1 /* AnimSweep.cpp in Sources */,
+				2DA8B62B11A459B2008B545A /* Light.cpp in Sources */,
+				2DA8B68911A45E34008B545A /* AnimStateMachine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
