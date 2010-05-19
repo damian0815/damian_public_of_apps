@@ -61,6 +61,7 @@ private:
 	
 	bool was_pulsed;
 	bool big;
+	float last_set_timer;
 	
 	float x,y;
 	

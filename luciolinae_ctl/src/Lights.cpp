@@ -257,6 +257,7 @@ void Lights::clear( bool pummel )
 	for ( int i=0; i<lights.size(); i++ ) 
 	{
 		lights[i].set( 0 );
+		pulse( i, 0, 0 );
 	}
 	// immediate
 	flush();

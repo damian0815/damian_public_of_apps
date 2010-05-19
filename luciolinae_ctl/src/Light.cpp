@@ -66,6 +66,15 @@ void Light::draw()
 
 void Light::update(float elapsed )
 {	
+	if ( last_set_timer < 0.5f )
+	{
+		last_set_timer += elapsed;
+		if ( last_set_timer >= 0.5f )
+		{
+			target_brightness = 0;
+			decay_factor = 0.5f;
+		}
+	}
 	// move toward target brightness
 	if ( decay_factor > 0 && fabsf(brightness-target_brightness)>=0.5f*FLOAT_STEP_SIZE )
 	{
@@ -75,9 +84,7 @@ void Light::update(float elapsed )
 	}
 	else
 	{
-		//printf("updating light: was %8.6f ", brightness );
 		brightness = target_brightness;
-		//printf("now %8.6f\n", brightness );
 	}
 	if ( decay_factor > 0 && fabsf(draw_brightness-target_brightness)>FLOAT_STEP_SIZE )
 	{
@@ -101,14 +108,14 @@ void Light::pulse( float max_bright, float _decay_factor )
 		brightness = max_bright;
 		draw_brightness = max_bright;
 	}
-	target_brightness = 0;
+	decay_factor = _decay_factor;
 	
 	if ( decay_factor > 0 )
 		was_pulsed = true;
 	else
 		was_pulsed = false;
 	
-	decay_factor = _decay_factor;
+	target_brightness = 0;
 }
 
 void Light::set( float bright ) 
