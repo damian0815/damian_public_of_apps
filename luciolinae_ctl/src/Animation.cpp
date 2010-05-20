@@ -18,6 +18,7 @@
 #include "StateAnimIdle.h"
 #include "StateAnimBlip.h"
 #include "StateAnimStartBlip.h"
+#include "StateAnimGather.h"
 #include "StateAnimDelaunayOut.h"
 
 
@@ -55,6 +56,8 @@ Animation* AnimationFactory::makeAnimation( string name )
 			cache[name] = new StateAnimBlip( lights );
 		else if ( name == StateAnimDelaunayOut::NAME )
 			cache[name] = new StateAnimDelaunayOut( lights );
+		else if ( name == StateAnimGather::NAME )
+			cache[name] = new StateAnimGather( lights );
 		
 		/*
 		else if ( name == StateAnimIdle::NAME )

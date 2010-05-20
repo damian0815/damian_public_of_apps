@@ -26,7 +26,7 @@ public:
 	void enter() { 
 		// blip the appropriate light
 		int from_which = SharedData::getFloat( "blip_target" );
-		DelaunayPulses::getInstance()->addPulseOut( from_which, 0.1f );
+		DelaunayPulses::getInstance()->addPulseOut( from_which, 0.2f );
 	}
 	bool isFinished() { return true; }
 	

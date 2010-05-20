@@ -26,5 +26,9 @@ void StateAnimGather::update( float elapsed )
 		if ( count > 0 )
 			// should we continue?
 			timer = getSquaredRandom( 0.1f, 0.5f ); 
+		// final pause
+		else if ( count == 0 )
+			timer = getSquaredRandom( 2.0f, 4.0f );
+		
 	}
 }

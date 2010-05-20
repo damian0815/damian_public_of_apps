@@ -27,12 +27,14 @@ void AnimPositionCalibrate::keyPressed( int k )
 	switch( k )
 	{
 		case OF_KEY_RIGHT:
+			lights->set( current_id, 0, true );
 			current_id++;
 			phase = 0;
 			if ( current_id >= lights->getNumLights() )
 				current_id = 0;
 			break;
 		case OF_KEY_LEFT:
+			lights->set( current_id, 0, true );
 			current_id--;
 			phase = 0;
 			if ( current_id < 0 )

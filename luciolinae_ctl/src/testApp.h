@@ -8,6 +8,7 @@
 #include "Animation.h"
 #include "Activators.h"
 #include "DelaunayPulse.h"
+#include "Osc.h"
 
 class testApp : public ofBaseApp{
 	
@@ -37,6 +38,8 @@ public:
 	Animation* current_anim;
 	AnimationSwitcher anim_switcher;
 	DelaunayPulses pulses;
+	
+	Osc osc;
 };
 
 

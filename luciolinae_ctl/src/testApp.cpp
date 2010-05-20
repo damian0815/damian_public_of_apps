@@ -16,19 +16,6 @@ void testApp::setup(){
 	ofSetLogLevel( OF_LOG_WARNING );
 	
 	serial.enumerateDevices();
-			
-	
-	//----------------------------------- note:
-	// < this should be set
-	// to whatever com port
-	// your serial device is
-	// connected to.
-	// (ie, COM4 on a- pc, /dev/tty.... on linux, /dev/tty... on a mac)
-	// arduino users check in arduino app....
-
-	//serial.setup("COM4");  						  // windows example
-	//serial.setup("/dev/tty.usbserial-A5001aub",9600); // mac osx example
-	//serial.setup("/dev/ttyUSB0", 9600);			  //linux example
 	static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
 	static const int BAUDRATE = 19200;
 	if ( serial.setup(SERIAL_PORT, BAUDRATE ) )
@@ -40,7 +27,13 @@ void testApp::setup(){
 	}
 	buffered_serial->setup( &serial, BAUDRATE );
 
+	// osc
+	static const char* OSC_HOST = "localhost";
+	static const int OSC_PORT = 10001;
+	osc.setup( OSC_HOST, OSC_PORT );
 	
+	
+	// load settings
 	ofxXmlSettings data;
 	if ( data.loadFile( "settings.xml" ) )
 		lights.setup( buffered_serial, data );

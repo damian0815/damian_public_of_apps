@@ -14,7 +14,7 @@
 class BufferedSerialDummy: public BufferedSerial
 {
 public:
-	virtual void setup( ofSerial* _serial ) {};
+	virtual void setup( ofSerial* _serial, int baud_rate ) {};
 	virtual void shutdown() {};
 	virtual void beginWrite() {};
 	virtual bool writeBytes( unsigned char* buffer, int count ) { return count; }
