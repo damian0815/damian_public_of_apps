@@ -102,10 +102,11 @@ void Lights::update( float elapsed )
 {
 	// send serial
 	flush();
-	
+
 	// update lights
 	for ( int i=0;i<lights.size(); i++ )
 		lights[i].update(elapsed);
+	
 	
 	// then send serial again if necessary
 	flush();
@@ -127,7 +128,7 @@ void Lights::flush()
 	for ( int i=0; i<num_boards; i++ )
 	{
 		// if more than 8, best to send all at once
-		if /*( counts[i] > 8 )*/(false)
+		if ( counts[i] > 8 )
 		{
 //			printf("compiling every light level data for board %i\n", i);
 			unsigned char total_board_data[24];
@@ -138,8 +139,10 @@ void Lights::flush()
 				{
 					// add data to array
 					int light_id = lights[j].getLightId();
-					int base_index = (light_id*3>>1);
-					unsigned int brightness = min(4095,max(0,int(lights[j].getBrightness()*4096)));
+					int base_index = /*((15-light_id)*3>>1);*/ (light_id*3)>>1;
+					float bright = lights[j].getBrightness();
+					bright *= bright;
+					unsigned int brightness = min(4095,max(0,int(bright*4096)));
 					//printf("  adding light %02x:%02x brightness %03x\n", lights[j].getBoardId(), lights[j].getLightId(), brightness );
 					if ( light_id%2 == 0 )
 					{
@@ -168,7 +171,9 @@ void Lights::flush()
 				// find this board's lights
 				if ( (lights[j].getBoardId()==(i+1)<<4) && lights[j].needsSerial() /*&& !lights[j].wantsPulse()*/ )
 				{
-					int brightness = lights[j].getBrightness()*4096;
+					float bright = lights[j].getBrightness();
+					bright *= bright;
+					int brightness = bright*4096;
 					sendLightLevel( lights[j].getBoardId(), lights[j].getLightId(), brightness );
 					lights[j].resetNeedsSerial();
 				}
@@ -295,8 +300,8 @@ void Lights::clear( bool pummel )
 {
 	for ( int i=0; i<lights.size(); i++ ) 
 	{
+		lights[i].pulse( 0, 0 );
 		lights[i].set( 0 );
-		pulse( i, 0, true, 0 );
 	}
 	// immediate
 	flush();
@@ -355,6 +360,7 @@ void Lights::sendEveryLightLevel( unsigned char board_id, unsigned char* data )
 	serial->writeBytes( &func, 1 );
 	serial->writeBytes( data, 24 );
 	
+	/*
 	printf(" %02x\n", func );
 	for ( int i=0; i<8; i++ )
 	{
@@ -362,6 +368,7 @@ void Lights::sendEveryLightLevel( unsigned char board_id, unsigned char* data )
 		unsigned int l2 = (unsigned int)((data[i*3+1]&0x0f)<<8) + data[i*3+2];
 		printf(" %02x %02x %02x -> %03x %03x;%s", data[i*3], data[i*3+1], data[i*3+2], l1, l2, i%4==3?"\n":"" );
 	}
+	*/
 	// done
 }
 

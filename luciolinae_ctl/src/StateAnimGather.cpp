@@ -1,5 +1,5 @@
 /*
- *  SateAnimGather.cpp
+ *  StateAnimGather.cpp
  *  luciolinae_ctl
  *
  *  Created by damian on 20/05/10.
@@ -7,6 +7,6 @@
  *
  */
 
-#include "SateAnimGather.h"
+#include "StateAnimGather.h"
 
 const char* StateAnimGather::NAME = "state_gather";

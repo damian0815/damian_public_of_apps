@@ -17,9 +17,10 @@ Light::Light()
 {
 	brightness = 0; 
 	target_brightness = 0; 
+	draw_brightness = 0;
 	last_brightness = 1; // force serial update 
-	// decay to given pct of current brightness every second
-	decay_factor = 0.3f; 
+	// decay by given pct of brightness every second
+	decay_factor = 5.0f; 
 }
 
 void Light::setup( int _board_id, int _light_id, float _x, float _y )
@@ -53,10 +54,11 @@ void Light::draw()
 {
 	ofNoFill();
 	ofSetColor( 0xff, 0xff, 0xff, 0x08 );
-	ofCircle( x*ofGetWidth(), y*ofGetHeight(), big?12:6 );
+	ofCircle( x*ofGetWidth(), y*ofGetHeight(), 3+(big?9:3) );
 	ofFill();
-	ofSetColor( 0x00, 0x00, 0xff, brightness*0xff );
-	ofCircle( x*ofGetWidth(),y*ofGetHeight(), sqrtf(brightness)*(big?12:6) );
+	ofSetColor( 0x00, 0x00, 0xff, sqrtf(draw_brightness)*0xff );
+	ofCircle( x*ofGetWidth(),y*ofGetHeight(), 3+sqrtf(draw_brightness)*(big?9:3) );
+	draw_brightness = brightness;
 }
 
 
@@ -76,7 +78,8 @@ void Light::update(float elapsed )
 	{
 //		if ( light_id == 0x0a && board_id == 0x10 )
 //			printf("updating light %x:%x : was %8.6f ", board_id, light_id, brightness );
-		brightness += powf(decay_factor,elapsed) * (target_brightness-brightness);
+		brightness += decay_factor*elapsed * (target_brightness-brightness);
+		brightness = max(0.0f,min(1.0f,brightness));
 //		if ( light_id == 0x0a && board_id == 0x10 )
 //			printf("now %8.6f (powf %8.6f)\n", brightness, powf(decay_factor, elapsed) );
 	}
@@ -93,6 +96,7 @@ void Light::pulse( float max_bright, /*float _decay_factor*/ float end_brightnes
 	{
 		brightness = max_bright;
 		last_set_timer = 0;
+		draw_brightness = max_bright;
 	}
 	
 	target_brightness = end_brightness;

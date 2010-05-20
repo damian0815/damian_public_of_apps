@@ -1,5 +1,5 @@
 /*
- *  SateAnimGather.h
+ *  StateAnimGather.h
  *  luciolinae_ctl
  *
  *  Created by damian on 20/05/10.

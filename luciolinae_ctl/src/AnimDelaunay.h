@@ -16,7 +16,7 @@
 class AnimDelaunay: public Animation
 {
 public:
-	AnimDelaunay( Lights* _lights ) : Animation( _lights ) { which = ofRandom( 0, lights->getNumLights()*0.999f );};
+	AnimDelaunay( Lights* _lights ) : Animation( _lights ) { inout = false; which = ofRandom( 0, lights->getNumLights()*0.999f );};
 
 	static const char* NAME;
 	
@@ -31,4 +31,5 @@ private:
 	
 	int which;
 
+	bool inout;
 };

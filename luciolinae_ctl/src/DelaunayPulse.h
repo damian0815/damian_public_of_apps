@@ -32,8 +32,8 @@ public:
 	DelaunayPulses( Lights* _lights ) : lights( _lights ) { instance = this; };
 	static DelaunayPulses* getInstance() { assert( instance != NULL ); return instance; }
 	
-	void addPulseIn( int target, float brightness, float falloff = 5.0f, float speed = 1.0f );
-	void addPulseOut( int source, float brightness, float falloff = 5.0f, float speed = 1.0f );
+	void addPulseIn( int target, float start_radius, float buildup = 0.25f, float speed = 1.0f );
+	void addPulseOut( int source, float brightness, float falloff = 4.0f, float speed = 1.0f );
 	void update( float elapsed );
 
 private:

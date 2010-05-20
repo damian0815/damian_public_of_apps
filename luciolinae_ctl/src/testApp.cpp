@@ -30,14 +30,15 @@ void testApp::setup(){
 	//serial.setup("/dev/tty.usbserial-A5001aub",9600); // mac osx example
 	//serial.setup("/dev/ttyUSB0", 9600);			  //linux example
 	static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
-	if ( serial.setup(SERIAL_PORT,9600) )
+	static const int BAUDRATE = 19200;
+	if ( serial.setup(SERIAL_PORT, BAUDRATE ) )
 		buffered_serial = new BufferedSerial();
 	else
 	{
 		printf("couldn't open serial %s, making dummy\n", SERIAL_PORT );
 		buffered_serial = new BufferedSerialDummy();
 	}
-	buffered_serial->setup( &serial );
+	buffered_serial->setup( &serial, BAUDRATE );
 
 	
 	ofxXmlSettings data;
@@ -59,6 +60,12 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+	buffered_serial->update( ofGetLastFrameTime() );
+	
+	// update delaunay pulses
+	pulses.update( ofGetLastFrameTime() );
+	
+
 	// update lights
 	lights.update( ofGetLastFrameTime() );
 	
@@ -66,9 +73,6 @@ void testApp::update(){
 	// update animation
 	current_anim->update( ofGetLastFrameTime() );
 
-	// update delaunay pulses
-	pulses.update( ofGetLastFrameTime() );
-	
 	//lights.illuminateCircularArea( float(mouseX)/ofGetWidth(), float(mouseY)/ofGetHeight(), illArea );
 
 	// send light levels
@@ -102,6 +106,8 @@ void testApp::update(){
 	current_float = next_float;
 	current = next;
 	 */
+	
+	
 }
 
 //--------------------------------------------------------------
@@ -114,7 +120,7 @@ void testApp::draw(){
 void testApp::exit()
 {
 	printf("clearing lights\n");
-	lights.clear();
+	lights.clear( true );
 	buffered_serial->shutdown();
 }
 

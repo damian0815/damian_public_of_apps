@@ -15,8 +15,11 @@ static unsigned char ACK=0x7f;
 
 //#define WAIT_FOR_ACK
 
-void BufferedSerial::setup( ofSerial* _serial )
+void BufferedSerial::setup( ofSerial* _serial , int baud )
 {
+	baudrate = baud;
+	baud_timer = 0;
+	bytes_written = 0;
 	//// time to transmit one block should be:
 	//transmit_block_time = float(BLOCKSIZE)/(float(baud_rate)/9);
 	serial = _serial;
@@ -99,23 +102,28 @@ void BufferedSerial::beginWrite()
 	
 }
 
-bool BufferedSerial::writeBytes( unsigned char* bytes, int count )
+bool BufferedSerial::writeBytes( unsigned char* bytes, int size )
 {
+	int count = size;
 	while ( count > 0 )
 	{
 		// write in BLOCKSIZE byte chunks
+#ifdef WAIT_FOR_ACK
 		int to_write = min(count,BLOCKSIZE-sent_this_block);
+#else
+		int to_write = count;
+#endif
 		int written = 0;
 		while( to_write > 0 )
 		{
 			// try to send
-			ofLog( OF_LOG_NOTICE, "BufferedSerial::writeBytes trying to send %i/%i bytes", to_write, count );
+			ofLog( OF_LOG_VERBOSE, "BufferedSerial::writeBytes trying to send %i/%i bytes", to_write, count );
 			written = serial->writeBytes( bytes, to_write );
-			ofLog( OF_LOG_NOTICE, "BufferedSerial::writeBytes wrote %i bytes", written );
+			ofLog( OF_LOG_VERBOSE, "BufferedSerial::writeBytes wrote %i bytes", written );
 			if ( written <= 0 )
 			{
-				// sleep for 10ms and try again
-				delayUs( 100 );
+				// sleep for 1ms and try again
+				delayUs( 1000 );
 			}
 			else
 			{
@@ -155,6 +163,9 @@ bool BufferedSerial::writeBytes( unsigned char* bytes, int count )
 			}			
 		}
 	}
+	
+	// delay if we should 
+	bytes_written += size;
 	return true;
 }
 
@@ -179,3 +190,25 @@ void BufferedSerial::endWrite()
 }
 
 
+void BufferedSerial::update( float elapsed )
+{
+	baud_timer += elapsed;
+	
+	if ( bytes_written > 1024 )
+	{
+		// maintain baudrate
+		float time_should_have_taken = (float(bytes_written)*10)/float(baudrate);
+		float time_actually_took = baud_timer;
+		// sleep if we have > 20ms lag
+		if ( time_should_have_taken-time_actually_took > 0.02f )
+		{
+			float sleep_time = time_should_have_taken - time_actually_took;
+			int sleep_time_us = sleep_time*1000.0f*1000.0f;
+			//printf("BufferedSerial::update sleeping %i ms\n", sleep_time_us/1000 );
+			delayUs( sleep_time_us );
+			// clear a bit
+			baud_timer -= (float(128)*10)/float(baudrate);
+			bytes_written -= 128;
+		}
+	}
+}	

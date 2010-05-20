@@ -26,13 +26,18 @@ void AnimDelaunay::keyPressed ( int k )
 		triggerDelaunay( which );
 	else if ( k == 'p' )
 		which = ofRandom( 0, lights->getNumLights()*0.999f );
+	else if ( k == 'i' )
+		inout = !inout;
 }
 
 
 void AnimDelaunay::triggerDelaunay( int index )
 {
 	index = min(lights->getNumLights()-1,max(0,index));
-	DelaunayPulses::getInstance()->addPulseOut( index, 0.1f );
+	if ( inout )
+		DelaunayPulses::getInstance()->addPulseIn( index, 1.0f, 0.1f, 0.5f );
+	else
+		DelaunayPulses::getInstance()->addPulseOut( index, 0.1f );
 }
 
 

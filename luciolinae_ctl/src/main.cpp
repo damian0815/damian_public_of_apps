@@ -5,7 +5,7 @@
 
 void delayUs( unsigned long us )
 {
-	// sleep for the requested number of ms
+	// sleep for the requested number of us
 	struct timespec req = {0};
 	req.tv_sec = us/(1000*1000);
 	req.tv_nsec = (us%(1000*1000))*(1000);

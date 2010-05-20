@@ -9,14 +9,25 @@
 
 #include "DelaunayPulse.h"
 #include "DelaunayPulseOut.h"
+#include "DelaunayPulseIn.h"
 #include "Lights.h"
 
 DelaunayPulses* DelaunayPulses::instance = NULL;
 
 void DelaunayPulses::addPulseOut( int target, float brightness, float decay, float speed )
 {
+	if ( pulses.size()> 8 )
+		return;
 	pulses.push_back( new DelaunayPulseOut( lights ) );
 	pulses.back()->start( target, brightness, decay, speed );
+}
+
+void DelaunayPulses::addPulseIn( int target, float start_radius, float buildup, float speed )
+{
+	if ( pulses.size()> 8 )
+		return;
+	pulses.push_back( new DelaunayPulseIn( lights ) );
+	pulses.back()->start( target, start_radius, buildup, speed );
 }
 
 void DelaunayPulses::update( float elapsed )
