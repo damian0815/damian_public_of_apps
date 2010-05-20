@@ -20,7 +20,7 @@ class LightsDelaunay;
 class Lights
 {
 public:
-	Lights() { rebuild_delaunay = true; delaunay = NULL; }
+	Lights() { rebuild_delaunay = true; delaunay = NULL; disableBlending(); setBlendMode( BLEND_MIX ); setBlendAlpha( 1 ); }
 	~Lights();
 	
 	void setup( BufferedSerial* serial );
@@ -32,9 +32,9 @@ public:
 	void draw();
 
 	// all brightness settings are 0..1
-	void pulse( int id, float max_bright, float decay_factor= 0.3f/* 0.1 = very fast, 0.9 = very slow */  );
-	void pulseAll( float max_bright, float decay_factor= 0.3f /* 0.1 = very fast, 0.9 = very slow */  );
-	void set( int id, float bright );
+	void pulse( int id, float max_bright, bool include_big = false, float end_bright = 0 );
+	void pulseAll( float max_bright, bool include_big = false );
+	void set( int id, float bright, bool include_big = false );
 
 	// all off; if pummel is true then do this very thoroughly
 	void clear( bool pummel=false );
@@ -64,6 +64,13 @@ public:
 	LightsDelaunay* getDelaunay();
 	
 	
+	// blending
+	void enableBlending() { blending = true; }
+	void disableBlending() { blending = false; }
+	// blend mode
+	typedef enum _BlendMode{ BLEND_ADD, BLEND_MIX } BlendMode;
+	void setBlendMode( BlendMode _mode ) { blend_mode = _mode; }
+	void setBlendAlpha( float a ) { blend_alpha = a; }
 
 private:
 	// takes brightness of 0..4095
@@ -87,6 +94,10 @@ private:
 
 	vector<int> big_lights;
 	
+	
+	bool blending;
+	BlendMode blend_mode;
+	float blend_alpha;
 
 };
 

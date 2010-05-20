@@ -19,7 +19,7 @@ Light::Light()
 	target_brightness = 0; 
 	last_brightness = 1; // force serial update 
 	// decay to given pct of current brightness every second
-	decay_factor = 0.7f; 
+	decay_factor = 0.3f; 
 	was_pulsed = false;
 }
 
@@ -55,74 +55,61 @@ void Light::draw()
 	ofNoFill();
 	ofSetColor( 0xff, 0xff, 0xff, 0x08 );
 	ofCircle( x*ofGetWidth(), y*ofGetHeight(), big?12:6 );
-	if ( draw_brightness > 0 )
-	{
-		ofFill();
-		ofSetColor( 0x00, 0x00, 0xff, draw_brightness*0xff );
-		ofCircle( x*ofGetWidth(),y*ofGetHeight(), sqrtf(draw_brightness)*(big?12:6) );
-	}
+	ofFill();
+	ofSetColor( 0x00, 0x00, 0xff, brightness*0xff );
+	ofCircle( x*ofGetWidth(),y*ofGetHeight(), sqrtf(brightness)*(big?12:6) );
 }
 
 
 void Light::update(float elapsed )
 {	
-	if ( last_set_timer < 0.5f )
+/*	if ( last_set_timer < 0.5f )
 	{
 		last_set_timer += elapsed;
 		if ( last_set_timer >= 0.5f )
 		{
 			target_brightness = 0;
-			decay_factor = 0.5f;
+			decay_factor = 0.9f;
 		}
-	}
+	}*/
 	// move toward target brightness
 	if ( decay_factor > 0 && fabsf(brightness-target_brightness)>=0.5f*FLOAT_STEP_SIZE )
 	{
-		//printf("updating light: was %8.6f ", brightness );
-		brightness += elapsed * powf(decay_factor,elapsed) * (target_brightness-brightness);
-		//printf("now %8.6f (powf %8.6f)\n", brightness, powf(decay_factor, elapsed) );
+//		if ( light_id == 0x0a && board_id == 0x10 )
+//			printf("updating light %x:%x : was %8.6f ", board_id, light_id, brightness );
+		brightness += powf(decay_factor,elapsed) * (target_brightness-brightness);
+//		if ( light_id == 0x0a && board_id == 0x10 )
+//			printf("now %8.6f (powf %8.6f)\n", brightness, powf(decay_factor, elapsed) );
 	}
 	else
 	{
 		brightness = target_brightness;
 	}
-	if ( decay_factor > 0 && fabsf(draw_brightness-target_brightness)>FLOAT_STEP_SIZE )
-	{
-		//printf("updating light: was %8.6f ", brightness );
-		draw_brightness += elapsed * powf(decay_factor,elapsed) * (target_brightness-draw_brightness);
-		//printf("now %8.6f (powf %8.6f)\n", brightness, powf(decay_factor, elapsed) );
-	}
-	else
-	{
-		//printf("updating light: was %8.6f ", brightness );
-		draw_brightness = target_brightness;
-		//printf("now %8.6f\n", brightness );
-	}
 }
 
 
-void Light::pulse( float max_bright, float _decay_factor )
+void Light::pulse( float max_bright, /*float _decay_factor*/ float end_brightness )
 {
 	if ( max_bright > brightness )
 	{
 		brightness = max_bright;
-		draw_brightness = max_bright;
+		last_set_timer = 0;
 	}
-	decay_factor = _decay_factor;
+//	decay_factor = _decay_factor;
 	
-	if ( decay_factor > 0 )
+/*	if ( decay_factor > 0 )
 		was_pulsed = true;
-	else
+	else*/
 		was_pulsed = false;
 	
-	target_brightness = 0;
+	target_brightness = end_brightness;
 }
 
 void Light::set( float bright ) 
 {
 	brightness = bright;
-	draw_brightness = bright;
 	target_brightness = bright;
+	last_set_timer = 0;
 	was_pulsed = false;
 }
 

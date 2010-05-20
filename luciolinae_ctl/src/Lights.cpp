@@ -231,24 +231,43 @@ void Lights::sendPulse( unsigned char board_id, unsigned char light_id, int brig
 }
 
 
-void Lights::pulse( int id, float max_bright, float decay_factor )
+void Lights::pulse( int id, float max_bright, bool include_big, float end_bright )
 {
 	if ( id >=0 && id < lights.size() ) 
 	{ 
-		lights[id].pulse( max_bright, decay_factor );
+		if ( !lights[id].isBig() || include_big )
+			lights[id].pulse( max_bright, end_bright );
 	}
 }
 
-void Lights::set( int id, float bright )
+void Lights::set( int id, float bright, bool include_big )
 {
+	if ( lights[id].isBig() && !include_big )
+		return;
+	
+	if ( blending ) 
+	{
+		float current = lights[id].getBrightness() ;
+		if ( blend_mode == BLEND_MIX )
+		{
+			// current*(1-blend_alpha) + bright*blend_alpha
+			bright = current*(1-blend_alpha) + bright*blend_alpha;
+		}
+		else if ( blend_mode == BLEND_ADD )
+		{
+			// current + bright*blend_alpha
+			// keep to bounds
+			bright = min( 1.0f, current + bright*blend_alpha );
+		}
+	}
 	lights[id].set( bright );
 }
 
-void Lights::pulseAll( float max_bright, float decay_factor )
+void Lights::pulseAll( float max_bright, bool include_big )
 {
 	for ( int i=0; i<lights.size(); i++ ) 
 	{
-		pulse( i, max_bright, decay_factor );
+		pulse( i, max_bright, include_big, 0  );
 	}
 }
 
@@ -257,7 +276,7 @@ void Lights::clear( bool pummel )
 	for ( int i=0; i<lights.size(); i++ ) 
 	{
 		lights[i].set( 0 );
-		pulse( i, 0, 0 );
+		pulse( i, 0, true, 0 );
 	}
 	// immediate
 	flush();

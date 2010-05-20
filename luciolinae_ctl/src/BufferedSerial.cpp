@@ -169,6 +169,8 @@ void BufferedSerial::endWrite()
 		// did it work?
 		assert( sent_this_block % CHUNKSIZE == 0 );
 	}
+	
+	serial->flush( /*in*/false, /*out*/true );
 }
 
 

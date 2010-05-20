@@ -24,14 +24,14 @@ public:
 	void update( float elapsed );
 	void draw();
 	
-	void pulse( float max_bright, float decay_factor );
+	void pulse( float max_bright, float end_brightness );
 	void set( float bright );
 	
 	// serial
 	bool needsSerial() const;
 	void resetNeedsSerial() { last_brightness = brightness; }
 	bool wantsPulse() { return was_pulsed; }
-	void resetWantsPulse() { was_pulsed = false; draw_brightness = brightness; brightness = target_brightness; }
+	void resetWantsPulse() { was_pulsed = false; brightness = target_brightness; }
 	
 	// brightness + decay
 	float getBrightness() const { return brightness; }
@@ -53,7 +53,6 @@ private:
 	unsigned char board_id, light_id;
 	
 	float brightness; // 0..1
-	float draw_brightness;
 	float target_brightness;
 	
 	float decay_factor;

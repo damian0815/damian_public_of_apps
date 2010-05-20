@@ -16,6 +16,9 @@
 		2D2D30C9119C8DD5001D76C9 /* AnimFlicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2D30C8119C8DD5001D76C9 /* AnimFlicker.cpp */; };
 		2D84293511A402E200A388E1 /* AnimSeq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D84293411A402E200A388E1 /* AnimSeq.cpp */; };
 		2D84293811A4030100A388E1 /* AnimSweep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D84293711A4030100A388E1 /* AnimSweep.cpp */; };
+		2DA5398011A537EF00C21422 /* SateAnimGather.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5397F11A537EF00C21422 /* SateAnimGather.cpp */; };
+		2DA5398311A5382000C21422 /* StateAnimDelaunayOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */; };
+		2DA5398A11A53A8B00C21422 /* DelaunayPulseOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5398911A53A8B00C21422 /* DelaunayPulseOut.cpp */; };
 		2DA5E58A1194616800301C42 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E5891194616800301C42 /* Animation.cpp */; };
 		2DA5E58D1194619400301C42 /* AnimRotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E58C1194619400301C42 /* AnimRotate.cpp */; };
 		2DA5E5921194634300301C42 /* Lights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E5911194634300301C42 /* Lights.cpp */; };
@@ -135,6 +138,12 @@
 		2D84293411A402E200A388E1 /* AnimSeq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimSeq.cpp; sourceTree = "<group>"; };
 		2D84293611A4030100A388E1 /* AnimSweep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimSweep.h; sourceTree = "<group>"; };
 		2D84293711A4030100A388E1 /* AnimSweep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimSweep.cpp; sourceTree = "<group>"; };
+		2DA5397E11A537EF00C21422 /* SateAnimGather.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SateAnimGather.h; sourceTree = "<group>"; };
+		2DA5397F11A537EF00C21422 /* SateAnimGather.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SateAnimGather.cpp; sourceTree = "<group>"; };
+		2DA5398111A5382000C21422 /* StateAnimDelaunayOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimDelaunayOut.h; sourceTree = "<group>"; };
+		2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimDelaunayOut.cpp; sourceTree = "<group>"; };
+		2DA5398811A53A8B00C21422 /* DelaunayPulseOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelaunayPulseOut.h; sourceTree = "<group>"; };
+		2DA5398911A53A8B00C21422 /* DelaunayPulseOut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DelaunayPulseOut.cpp; sourceTree = "<group>"; };
 		2DA5E5881194616800301C42 /* Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Animation.h; sourceTree = "<group>"; };
 		2DA5E5891194616800301C42 /* Animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Animation.cpp; sourceTree = "<group>"; };
 		2DA5E58B1194619400301C42 /* AnimRotate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimRotate.h; sourceTree = "<group>"; };
@@ -310,6 +319,10 @@
 		2D2D323D119CA0B2001D76C9 /* Dynamics */ = {
 			isa = PBXGroup;
 			children = (
+				2DC02D1C11A31807006AFBA9 /* LightsDelaunay.h */,
+				2DC02D1D11A31807006AFBA9 /* LightsDelaunay.cpp */,
+				2DA5398811A53A8B00C21422 /* DelaunayPulseOut.h */,
+				2DA5398911A53A8B00C21422 /* DelaunayPulseOut.cpp */,
 				2DC0281811A2DC28006AFBA9 /* NearestPointOnLineToPoint.cpp */,
 				2D2D2C7A119B2F01001D76C9 /* Activator.h */,
 				2D2D2C7B119B2F01001D76C9 /* Activator.cpp */,
@@ -327,8 +340,6 @@
 				2DA8B62A11A459B2008B545A /* Light.cpp */,
 				2DC02D4D11A31A45006AFBA9 /* Delaunay.h */,
 				2DC02D4E11A31A45006AFBA9 /* Delaunay.cpp */,
-				2DC02D1C11A31807006AFBA9 /* LightsDelaunay.h */,
-				2DC02D1D11A31807006AFBA9 /* LightsDelaunay.cpp */,
 				2D2D2AFA119B239B001D76C9 /* BufferedSerialDummy.h */,
 				2D2D2AFB119B239B001D76C9 /* BufferedSerialDummy.cpp */,
 				2DA5E65811946D1800301C42 /* BufferedSerial.h */,
@@ -342,6 +353,10 @@
 		2DA8B6EE11A4699C008B545A /* State Machine */ = {
 			isa = PBXGroup;
 			children = (
+				2DA5398111A5382000C21422 /* StateAnimDelaunayOut.h */,
+				2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */,
+				2DA5397E11A537EF00C21422 /* SateAnimGather.h */,
+				2DA5397F11A537EF00C21422 /* SateAnimGather.cpp */,
 				2DA8B72E11A46E13008B545A /* StateAnimBlip.h */,
 				2DA8B72F11A46E13008B545A /* StateAnimBlip.cpp */,
 				2DA8B72711A46D33008B545A /* StateAnimStartBlip.h */,
@@ -785,6 +800,9 @@
 				2DA8B70111A46AC3008B545A /* StateAnimIdle.cpp in Sources */,
 				2DA8B72911A46D33008B545A /* StateAnimStartBlip.cpp in Sources */,
 				2DA8B73011A46E13008B545A /* StateAnimBlip.cpp in Sources */,
+				2DA5398011A537EF00C21422 /* SateAnimGather.cpp in Sources */,
+				2DA5398311A5382000C21422 /* StateAnimDelaunayOut.cpp in Sources */,
+				2DA5398A11A53A8B00C21422 /* DelaunayPulseOut.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

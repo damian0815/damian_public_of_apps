@@ -27,7 +27,6 @@ void AnimSweep::update( float elapsed )
 		position_pct = 0;
 		speed = -speed;
 	}
-	printf("%f\n", position_pct );
 /*	while ( position_pct < 0 )
 		position_pct += 1;
 	while ( position_pct > 1 )

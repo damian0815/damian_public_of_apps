@@ -111,7 +111,6 @@ void AnimPositionCalibrate::draw()
 		dy = -sqrtf( 2 );
 	}
 	
-	//printf("illuminating corridor: %f,%f  %f,%f\n", x, y, dx, dy );
 	lights->drawIlluminateCorridor( x, y, dx, dy, 0.1f, 0.1f );
 
 	// draw current light highlight
@@ -157,6 +156,6 @@ void AnimPositionCalibrate::update( float elapsed )
 		phase -= PI;
 	float bright = 0.5f*cosf(phase);
 	bright *= bright;
-	lights->set( current_id, bright );
+	lights->set( current_id, bright, /* include big */true );
 	
 }

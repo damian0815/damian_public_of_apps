@@ -60,7 +60,7 @@ void AnimRotate::update( float elapsed )
 		{
 			int which = first + dir*i;
 			printf("pulsing %i\n", which%STEPS );
-			lights->pulse( which%STEPS, 1.0, 0 );			
+			lights->pulse( which%STEPS, 1.0 );			
 		}
 		// next
 		current_active = new_active%STEPS;

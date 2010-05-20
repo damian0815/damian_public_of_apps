@@ -40,7 +40,7 @@ void Activators::update( float elapsed )
 			// set
 			if ( brightness > 0 )
 			{
-				lights->pulse( j, brightness, 0 );
+				lights->pulse( j, brightness );
 			}
 		}
 	}

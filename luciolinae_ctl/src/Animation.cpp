@@ -18,10 +18,15 @@
 #include "StateAnimIdle.h"
 #include "StateAnimBlip.h"
 #include "StateAnimStartBlip.h"
+#include "StateAnimDelaunayOut.h"
+
 
 
 map< string, Animation* > AnimationFactory::cache;
 Lights* AnimationFactory::lights = NULL;
+
+// to force a linker error when i forget the class:: tag for NAME variablesq
+const char* NAME = "dummy";
 
 Animation* AnimationFactory::makeAnimation( string name )
 {
@@ -48,6 +53,8 @@ Animation* AnimationFactory::makeAnimation( string name )
 			cache[name] = new StateAnimStartBlip( lights );
 		else if ( name == StateAnimBlip::NAME )
 			cache[name] = new StateAnimBlip( lights );
+		else if ( name == StateAnimDelaunayOut::NAME )
+			cache[name] = new StateAnimDelaunayOut( lights );
 		
 		/*
 		else if ( name == StateAnimIdle::NAME )

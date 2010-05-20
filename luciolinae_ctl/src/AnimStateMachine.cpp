@@ -12,6 +12,7 @@
 #include "StateAnimIdle.h"
 #include "StateAnimBlip.h"
 #include "StateAnimStartBlip.h"
+#include "StateAnimDelaunayOut.h"
 
 const char* AnimStateMachine::NAME = "StateMachine";
 
@@ -59,7 +60,9 @@ void AnimStateMachine::loadTransitions()
 	// blip
 	addTransition( StateAnimStartBlip::NAME, StateAnimBlip::NAME, 1 );
 	addTransition( StateAnimBlip::NAME, StateAnimIdle::NAME, 1 );
-	addTransition( StateAnimBlip::NAME, StateAnimBlip::NAME, 0.3f );
+	addTransition( StateAnimBlip::NAME, StateAnimBlip::NAME, 0.3f );	
+	addTransition( StateAnimBlip::NAME, StateAnimDelaunayOut::NAME, 1.0f );
+	addTransition( StateAnimDelaunayOut::NAME, StateAnimIdle::NAME, 1 );
 	
 	// normalise probabilities
 	float total_p = 0;

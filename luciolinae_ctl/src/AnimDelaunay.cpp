@@ -18,45 +18,7 @@ const char* AnimDelaunay::NAME = "Delaunay";
 
 void AnimDelaunay::update( float elapsed )
 {
-	timer += elapsed;
-	// update animation
-	while ( !queued_pulses.empty() && queued_pulses.top().timer < timer )
-	{
-		// fetch id
-		int curr = queued_pulses.top().id;
-		float energy = queued_pulses.top().energy;
-		// remove from queue
-		queued_pulses.pop();
-		// if we haven't already seen this one
-		if ( seen.find( curr ) == seen.end() )
-		{
-			// pulse the led
-			lights->pulse( curr, energy, 0 );
-			
-			// add to seen
-			seen.insert( curr );
-			
-			// add neighbours to queue
-			set<int> adj = lights->getDelaunay()->getNeighbours( curr );
-			// check neighbours against seen. 
-			ofxVec2f curr_pos( lights->getLight( curr ).getX(), 
-						   lights->getLight( curr ).getY() );
-			for ( set<int>::iterator jt = adj.begin();
-				 jt != adj.end(); 
-				 ++jt )
-			{
-				// add unseen neighbours 
-				if ( seen.find( *jt ) == seen.end() )
-				{
-					ofxVec2f adj_pos( lights->getLight( *jt ).getX(), 
-									  lights->getLight( *jt ).getY() );
-					float distance = ( adj_pos - curr_pos ).length();
-					static const float SPEED = 0.5f;
-					queued_pulses.push( DelaunayPulse(*jt, energy*(1-distance), ofRandom(0.8f,1.2f)*(timer+(distance/SPEED)) ) );
-				}
-			}
-		}
-	}
+	delaunay_pulse.update( elapsed );
 }
 
 void AnimDelaunay::keyPressed ( int k ) 
@@ -71,11 +33,7 @@ void AnimDelaunay::keyPressed ( int k )
 void AnimDelaunay::triggerDelaunay( int index )
 {
 	index = min(lights->getNumLights()-1,max(0,index));
-	seen.clear();
-	while ( !queued_pulses.empty() )
-		queued_pulses.pop();
-	queued_pulses.push( DelaunayPulse( index, 0.2, 0 ) );
-	timer = 0;
+	delaunay_pulse.start( index, 0.1f, 1, 1);
 }
 
 
@@ -93,5 +51,4 @@ void AnimDelaunay::draw()
 				    ofGetWidth()*lights->getLight( *jt ).getX(), ofGetHeight()*lights->getLight( *jt ).getY() );
 		}
 	}
-	
 }

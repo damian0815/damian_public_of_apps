@@ -16,6 +16,5 @@ const char* AnimFlicker::NAME = "Flicker";
 
 void AnimFlicker::update( float elapsed )
 {
-	lights->pulse( ofRandom(FIRST,(FIRST+COUNT)-0.00001f ), ofRandomuf(), 
-				  /*ofRandom( 1.0f/256, 16.0f/256 )*/0 );
+	lights->pulse( ofRandom(FIRST,(FIRST+COUNT)-0.00001f ), ofRandomuf() );
 }

@@ -11,11 +11,12 @@
 #include "Animation.h"
 #include <set>
 #include <queue>
+#include "DelaunayPulseOut.h"
 
 class AnimDelaunay: public Animation
 {
 public:
-	AnimDelaunay( Lights* _lights ) : Animation( _lights ),timer(0) {};
+	AnimDelaunay( Lights* _lights ) : Animation( _lights ), delaunay_pulse( _lights ) {};
 
 	static const char* NAME;
 	
@@ -28,22 +29,6 @@ private:
 	// trigger a delaunay pulse starting at index
 	void triggerDelaunay ( int index );
 
-	// list of currently active
-	set<int> seen;
-
-	class DelaunayPulse
-	{
-	public:
-		DelaunayPulse( int _id, float _energy, float _timer ) { id = _id; energy = _energy; timer = _timer; }
-		bool operator<( const DelaunayPulse& other ) const { return timer > other.timer; }
-		int id;
-		float timer;
-		float energy;
-	};
-	typedef priority_queue<DelaunayPulse> DelaunayPulses;
-	DelaunayPulses queued_pulses;
-	
-	float timer;
-
+	DelaunayPulseOut delaunay_pulse;
 
 };
