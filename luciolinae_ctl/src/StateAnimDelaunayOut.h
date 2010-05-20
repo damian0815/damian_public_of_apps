@@ -15,23 +15,21 @@
 class StateAnimDelaunayOut : public StateAnimation
 {
 public:
-	StateAnimDelaunayOut( Lights* _lights ) : StateAnimation( _lights ), delaunay_out( _lights ) {};
+	StateAnimDelaunayOut( Lights* _lights ) : StateAnimation( _lights ) {};
 	
 	static const char* NAME;
 	string getName() { return NAME; }
 	
-	void update( float elapsed ) { delaunay_out.update( elapsed ); }
+	void update( float elapsed ){};
 	void draw() {};
 	
 	void enter() { 
 		// blip the appropriate light
 		int from_which = SharedData::getFloat( "blip_target" );
-		delaunay_out.start( from_which, 0.1f );
+		DelaunayPulses::getInstance()->addPulseOut( from_which, 0.1f );
 	}
-	bool isFinished() { return delaunay_out.isFinished(); }
+	bool isFinished() { return true; }
 	
 private:
-	
-	DelaunayPulseOut delaunay_out;
 	
 };

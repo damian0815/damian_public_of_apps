@@ -16,7 +16,7 @@
 class AnimDelaunay: public Animation
 {
 public:
-	AnimDelaunay( Lights* _lights ) : Animation( _lights ), delaunay_pulse( _lights ) {};
+	AnimDelaunay( Lights* _lights ) : Animation( _lights ) { which = ofRandom( 0, lights->getNumLights()*0.999f );};
 
 	static const char* NAME;
 	
@@ -28,7 +28,7 @@ public:
 private:
 	// trigger a delaunay pulse starting at index
 	void triggerDelaunay ( int index );
-
-	DelaunayPulseOut delaunay_pulse;
+	
+	int which;
 
 };

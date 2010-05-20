@@ -63,6 +63,7 @@ void AnimStateMachine::loadTransitions()
 	addTransition( StateAnimBlip::NAME, StateAnimBlip::NAME, 0.3f );	
 	addTransition( StateAnimBlip::NAME, StateAnimDelaunayOut::NAME, 1.0f );
 	addTransition( StateAnimDelaunayOut::NAME, StateAnimIdle::NAME, 1 );
+	addTransition( StateAnimDelaunayOut::NAME, StateAnimBlip::NAME, 0.3f );
 	
 	// normalise probabilities
 	float total_p = 0;

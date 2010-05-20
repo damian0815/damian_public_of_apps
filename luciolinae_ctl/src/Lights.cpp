@@ -29,6 +29,8 @@ Lights::~Lights()
 
 void Lights::setup( BufferedSerial* _serial )
 {
+	// ** REMEMBER TO DO THE OTHER SETUP
+	
 	serial = _serial;
 	num_boards = 0;
 	
@@ -45,12 +47,15 @@ void Lights::setup( BufferedSerial* _serial )
 			num_boards++;
 	}
 	
+	debug_sent.resize( lights.size() );
+
 	clear( true );
 }
 
 void Lights::setup( BufferedSerial* _serial, ofxXmlSettings& data )
 {
-	serial = _serial;
+	// ** REMEMBER TO DO THE OTHER SETUP
+	serial = _serial;	
 	
 	data.pushTag("lights");
 	num_boards = data.getValue("num_boards", 0 );
@@ -69,6 +74,8 @@ void Lights::setup( BufferedSerial* _serial, ofxXmlSettings& data )
 	}
 	std::sort( big_lights.begin(), big_lights.end() );
 	data.popTag();
+	
+	debug_sent.resize( lights.size() );
 	
 	clear(true);
 
@@ -93,6 +100,9 @@ void Lights::save( ofxXmlSettings& data )
 
 void Lights::update( float elapsed )
 {
+	// send serial
+	flush();
+	
 	// update lights
 	for ( int i=0;i<lights.size(); i++ )
 		lights[i].update(elapsed);
@@ -111,7 +121,7 @@ void Lights::flush()
 	// count up how many per board
 	for ( int i=0; i<lights.size(); i++ )
 	{
-		if ( lights[i].needsSerial() && !lights[i].wantsPulse() )
+		if ( lights[i].needsSerial() /*&& !lights[i].wantsPulse()*/ )
 			counts[(lights[i].getBoardId()>>4)-1]++;
 	}
 	for ( int i=0; i<num_boards; i++ )
@@ -156,10 +166,11 @@ void Lights::flush()
 			for ( int j=0; j<lights.size(); j++ )
 			{
 				// find this board's lights
-				if ( (lights[j].getBoardId()==(i+1)<<4) && lights[j].needsSerial() && !lights[j].wantsPulse() )
+				if ( (lights[j].getBoardId()==(i+1)<<4) && lights[j].needsSerial() /*&& !lights[j].wantsPulse()*/ )
 				{
 					int brightness = lights[j].getBrightness()*4096;
 					sendLightLevel( lights[j].getBoardId(), lights[j].getLightId(), brightness );
+					lights[j].resetNeedsSerial();
 				}
 			}
 		}
@@ -169,6 +180,7 @@ void Lights::flush()
 	latch();
 
 	// send pulses
+	/*
 	for ( int j=0; j<lights.size(); j++ )
 	{
 		// find this board's lights
@@ -182,11 +194,8 @@ void Lights::flush()
 			sendPulse( lights[j].getBoardId(), lights[j].getLightId(), brightness, decay );
 			lights[j].resetWantsPulse();
 		}
-	}
+	}*/
 	
-	// clear serial flags
-	for ( int j=0; j<lights.size(); j++ )
-		lights[j].resetNeedsSerial();
 	
 	serial->endWrite();
 }
@@ -208,6 +217,7 @@ void Lights::sendLightLevel( unsigned char board_id, unsigned char light_id, int
 	//printf("Lights::sendLightLevel: writing msg %02x %02x %02x\n", msg[0], msg[1], msg[2] );
 	// send msg
 	serial->writeBytes( msg, 3 );
+	
 }
 
 void Lights::sendPulse( unsigned char board_id, unsigned char light_id, int brightness, unsigned char decay )
@@ -231,12 +241,22 @@ void Lights::sendPulse( unsigned char board_id, unsigned char light_id, int brig
 }
 
 
-void Lights::pulse( int id, float max_bright, bool include_big, float end_bright )
+void Lights::pulse( int id, float bright, bool include_big, float end_bright )
 {
 	if ( id >=0 && id < lights.size() ) 
 	{ 
 		if ( !lights[id].isBig() || include_big )
-			lights[id].pulse( max_bright, end_bright );
+		{
+			if ( blend_state_stack.back().blending )
+			{
+				float current = lights[id].getBrightness();
+				if ( blend_state_stack.back().blend_mode == BLEND_MIX )
+					bright = current*(1-blend_state_stack.back().blend_alpha) + bright*blend_state_stack.back().blend_alpha;
+				else if ( blend_state_stack.back().blend_mode == BLEND_ADD )
+					bright = min( 1.0f, current + bright*blend_state_stack.back().blend_alpha );
+			}
+			lights[id].pulse( bright, end_bright );
+		}
 	}
 }
 
@@ -245,19 +265,19 @@ void Lights::set( int id, float bright, bool include_big )
 	if ( lights[id].isBig() && !include_big )
 		return;
 	
-	if ( blending ) 
+	if ( blend_state_stack.back().blending ) 
 	{
 		float current = lights[id].getBrightness() ;
-		if ( blend_mode == BLEND_MIX )
+		if ( blend_state_stack.back().blend_mode == BLEND_MIX )
 		{
 			// current*(1-blend_alpha) + bright*blend_alpha
-			bright = current*(1-blend_alpha) + bright*blend_alpha;
+			bright = current*(1-blend_state_stack.back().blend_alpha) + bright*blend_state_stack.back().blend_alpha;
 		}
-		else if ( blend_mode == BLEND_ADD )
+		else if ( blend_state_stack.back().blend_mode == BLEND_ADD )
 		{
 			// current + bright*blend_alpha
 			// keep to bounds
-			bright = min( 1.0f, current + bright*blend_alpha );
+			bright = min( 1.0f, current + bright*blend_state_stack.back().blend_alpha );
 		}
 	}
 	lights[id].set( bright );

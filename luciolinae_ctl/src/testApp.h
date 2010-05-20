@@ -7,10 +7,12 @@
 #include "BufferedSerialDummy.h"
 #include "Animation.h"
 #include "Activators.h"
+#include "DelaunayPulse.h"
 
 class testApp : public ofBaseApp{
 	
 public:
+	testApp() : pulses( &lights ) { printf("testApp constructor called\n"); };
 	
 	void setup();
 	void update();
@@ -34,7 +36,7 @@ public:
 	
 	Animation* current_anim;
 	AnimationSwitcher anim_switcher;
-	
+	DelaunayPulses pulses;
 };
 
 

@@ -13,6 +13,7 @@
 #include "ofxXmlSettings.h"
 #include "BufferedSerial.h"
 #include <set>
+#include <deque>
 #include "Light.h"
 class LightsDelaunay;
 
@@ -20,7 +21,9 @@ class LightsDelaunay;
 class Lights
 {
 public:
-	Lights() { rebuild_delaunay = true; delaunay = NULL; disableBlending(); setBlendMode( BLEND_MIX ); setBlendAlpha( 1 ); }
+	Lights() { rebuild_delaunay = true; delaunay = NULL; 	
+		blend_state_stack.resize(1);
+		disableBlending(); setBlendMode( BLEND_MIX ); setBlendAlpha( 1 ); }
 	~Lights();
 	
 	void setup( BufferedSerial* serial );
@@ -32,7 +35,7 @@ public:
 	void draw();
 
 	// all brightness settings are 0..1
-	void pulse( int id, float max_bright, bool include_big = false, float end_bright = 0 );
+	void pulse( int id, float max_bright, bool include_big = false, float end_bright=0 );
 	void pulseAll( float max_bright, bool include_big = false );
 	void set( int id, float bright, bool include_big = false );
 
@@ -65,12 +68,15 @@ public:
 	
 	
 	// blending
-	void enableBlending() { blending = true; }
-	void disableBlending() { blending = false; }
+	void enableBlending() { blend_state_stack.back().blending = true; }
+	void disableBlending() { blend_state_stack.back().blending = false; }
 	// blend mode
 	typedef enum _BlendMode{ BLEND_ADD, BLEND_MIX } BlendMode;
-	void setBlendMode( BlendMode _mode ) { blend_mode = _mode; }
-	void setBlendAlpha( float a ) { blend_alpha = a; }
+	void setBlendMode( BlendMode _mode ) { blend_state_stack.back().blend_mode = _mode; }
+	void setBlendAlpha( float a ) { blend_state_stack.back().blend_alpha = a; }
+	// blending state stack
+	void pushBlendState() { blend_state_stack.push_back( blend_state_stack.back() ); }
+	void popBlendState() { blend_state_stack.pop_back(); }
 
 private:
 	// takes brightness of 0..4095
@@ -95,9 +101,17 @@ private:
 	vector<int> big_lights;
 	
 	
-	bool blending;
-	BlendMode blend_mode;
-	float blend_alpha;
+	typedef struct _BlendState
+	{
+		bool blending;
+		BlendMode blend_mode;
+		float blend_alpha;
+	} BlendState;
+	deque<BlendState> blend_state_stack;
+	
+	
+	vector<int> debug_sent;
+	
 
 };
 

@@ -19,6 +19,7 @@
 		2DA5398011A537EF00C21422 /* SateAnimGather.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5397F11A537EF00C21422 /* SateAnimGather.cpp */; };
 		2DA5398311A5382000C21422 /* StateAnimDelaunayOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */; };
 		2DA5398A11A53A8B00C21422 /* DelaunayPulseOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5398911A53A8B00C21422 /* DelaunayPulseOut.cpp */; };
+		2DA53C8111A54E8400C21422 /* DelaunayPulse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA53C8011A54E8400C21422 /* DelaunayPulse.cpp */; };
 		2DA5E58A1194616800301C42 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E5891194616800301C42 /* Animation.cpp */; };
 		2DA5E58D1194619400301C42 /* AnimRotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E58C1194619400301C42 /* AnimRotate.cpp */; };
 		2DA5E5921194634300301C42 /* Lights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E5911194634300301C42 /* Lights.cpp */; };
@@ -144,6 +145,8 @@
 		2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimDelaunayOut.cpp; sourceTree = "<group>"; };
 		2DA5398811A53A8B00C21422 /* DelaunayPulseOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelaunayPulseOut.h; sourceTree = "<group>"; };
 		2DA5398911A53A8B00C21422 /* DelaunayPulseOut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DelaunayPulseOut.cpp; sourceTree = "<group>"; };
+		2DA53C7F11A54E8400C21422 /* DelaunayPulse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelaunayPulse.h; sourceTree = "<group>"; };
+		2DA53C8011A54E8400C21422 /* DelaunayPulse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DelaunayPulse.cpp; sourceTree = "<group>"; };
 		2DA5E5881194616800301C42 /* Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Animation.h; sourceTree = "<group>"; };
 		2DA5E5891194616800301C42 /* Animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Animation.cpp; sourceTree = "<group>"; };
 		2DA5E58B1194619400301C42 /* AnimRotate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimRotate.h; sourceTree = "<group>"; };
@@ -319,8 +322,8 @@
 		2D2D323D119CA0B2001D76C9 /* Dynamics */ = {
 			isa = PBXGroup;
 			children = (
-				2DC02D1C11A31807006AFBA9 /* LightsDelaunay.h */,
-				2DC02D1D11A31807006AFBA9 /* LightsDelaunay.cpp */,
+				2DA53C7F11A54E8400C21422 /* DelaunayPulse.h */,
+				2DA53C8011A54E8400C21422 /* DelaunayPulse.cpp */,
 				2DA5398811A53A8B00C21422 /* DelaunayPulseOut.h */,
 				2DA5398911A53A8B00C21422 /* DelaunayPulseOut.cpp */,
 				2DC0281811A2DC28006AFBA9 /* NearestPointOnLineToPoint.cpp */,
@@ -346,6 +349,8 @@
 				2DA5E65911946D1800301C42 /* BufferedSerial.cpp */,
 				2DA5E5901194634300301C42 /* Lights.h */,
 				2DA5E5911194634300301C42 /* Lights.cpp */,
+				2DC02D1C11A31807006AFBA9 /* LightsDelaunay.h */,
+				2DC02D1D11A31807006AFBA9 /* LightsDelaunay.cpp */,
 			);
 			name = System;
 			sourceTree = "<group>";
@@ -803,6 +808,7 @@
 				2DA5398011A537EF00C21422 /* SateAnimGather.cpp in Sources */,
 				2DA5398311A5382000C21422 /* StateAnimDelaunayOut.cpp in Sources */,
 				2DA5398A11A53A8B00C21422 /* DelaunayPulseOut.cpp in Sources */,
+				2DA53C8111A54E8400C21422 /* DelaunayPulse.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

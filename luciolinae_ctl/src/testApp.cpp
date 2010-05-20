@@ -53,6 +53,8 @@ void testApp::setup(){
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	
 	current_anim = anim_switcher.currentAnim();
+	
+	
 }
 
 //--------------------------------------------------------------
@@ -63,6 +65,9 @@ void testApp::update(){
 	
 	// update animation
 	current_anim->update( ofGetLastFrameTime() );
+
+	// update delaunay pulses
+	pulses.update( ofGetLastFrameTime() );
 	
 	//lights.illuminateCircularArea( float(mouseX)/ofGetWidth(), float(mouseY)/ofGetHeight(), illArea );
 

@@ -13,11 +13,7 @@
 #include "LightsDelaunay.h"
 #include "ofxVectorMath.h"
 
-DelaunayPulseOut::DelaunayPulseOut( Lights* _lights )
-: lights( _lights )
-{
-	
-}
+
 
 void DelaunayPulseOut::start( int which_source, float brightness, float _falloff, float _speed )
 {

@@ -17,6 +17,8 @@ static unsigned char ACK=0x7f;
 
 void BufferedSerial::setup( ofSerial* _serial )
 {
+	//// time to transmit one block should be:
+	//transmit_block_time = float(BLOCKSIZE)/(float(baud_rate)/9);
 	serial = _serial;
 	sent_this_block = 0;
 	
@@ -94,6 +96,7 @@ void BufferedSerial::shutdown()
 void BufferedSerial::beginWrite()
 {
 	assert( sent_this_block%CHUNKSIZE == 0);
+	
 }
 
 bool BufferedSerial::writeBytes( unsigned char* bytes, int count )
@@ -170,7 +173,9 @@ void BufferedSerial::endWrite()
 		assert( sent_this_block % CHUNKSIZE == 0 );
 	}
 	
+	
 	serial->flush( /*in*/false, /*out*/true );
+	// TODO :wait until we think the block has been sent
 }
 
 

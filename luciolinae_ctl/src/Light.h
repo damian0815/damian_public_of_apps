@@ -29,9 +29,7 @@ public:
 	
 	// serial
 	bool needsSerial() const;
-	void resetNeedsSerial() { last_brightness = brightness; }
-	bool wantsPulse() { return was_pulsed; }
-	void resetWantsPulse() { was_pulsed = false; brightness = target_brightness; }
+	void resetNeedsSerial();
 	
 	// brightness + decay
 	float getBrightness() const { return brightness; }
@@ -58,7 +56,6 @@ private:
 	float decay_factor;
 	float last_brightness;
 	
-	bool was_pulsed;
 	bool big;
 	float last_set_timer;
 	

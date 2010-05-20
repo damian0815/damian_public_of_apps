@@ -18,22 +18,21 @@ const char* AnimDelaunay::NAME = "Delaunay";
 
 void AnimDelaunay::update( float elapsed )
 {
-	delaunay_pulse.update( elapsed );
 }
 
 void AnimDelaunay::keyPressed ( int k ) 
 {
 	if ( k == OF_KEY_RETURN )
-	{
-		triggerDelaunay( ofRandom( 0, lights->getNumLights()*0.999f ) );
-	}
+		triggerDelaunay( which );
+	else if ( k == 'p' )
+		which = ofRandom( 0, lights->getNumLights()*0.999f );
 }
 
 
 void AnimDelaunay::triggerDelaunay( int index )
 {
 	index = min(lights->getNumLights()-1,max(0,index));
-	delaunay_pulse.start( index, 0.1f, 1, 1);
+	DelaunayPulses::getInstance()->addPulseOut( index, 0.1f );
 }
 
 
@@ -51,4 +50,6 @@ void AnimDelaunay::draw()
 				    ofGetWidth()*lights->getLight( *jt ).getX(), ofGetHeight()*lights->getLight( *jt ).getY() );
 		}
 	}
+	
 }
+

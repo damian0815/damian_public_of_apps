@@ -9,18 +9,18 @@
 
 #pragma once
 
-class Lights;
+#include "DelaunayPulse.h"
 
 #include <set>
 #include <queue>
 using namespace std;
 
-class DelaunayPulseOut
+class DelaunayPulseOut : public DelaunayPulse
 {
 public:
-	DelaunayPulseOut( Lights* _lights );
+	DelaunayPulseOut( Lights* _lights ) : lights( _lights ) {};
 	
-	void start ( int which_source, float brightness, float _falloff = 1, float _speed = 1 );
+	void start ( int which_source, float brightness, float _falloff, float _speed );
 	void update( float elapsed );
 	bool isFinished() { return queued_pulses.empty(); }
 	
@@ -42,11 +42,11 @@ private:
 	set<int> seen;
 
 	
-	Lights* lights;
 	float speed;
 	// 1 = normal speed, > = faster, < = slower
 	float falloff;
 	float timer;
 	
+	Lights* lights;
 	
 };
