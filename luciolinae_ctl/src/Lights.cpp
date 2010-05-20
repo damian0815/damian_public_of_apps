@@ -310,12 +310,20 @@ void Lights::clear( bool pummel )
 	{
 		// write ALL BLACK ALL BLACK ALL BLACK lots of times
 		serial->beginWrite();
-		for ( int i=0; i<31; i++ )
+		for ( int j=0; j<16; j++ )
 		{
-			unsigned char msg[2];
-			msg[0] = 0x01;
-			msg[1] = 0x00;
-			serial->writeBytes( msg, 2 );
+			unsigned char black[24];
+			memset( black, 0, 24 );
+			sendEveryLightLevel( (j+1)<<4, black );			
+			for ( int i=0; i<4; i++ )
+			{
+				unsigned char msg[2];
+				msg[0] = ((unsigned char)((j+1)<<4))|0x01;
+				msg[1] = 0x00;
+				serial->writeBytes( msg, 2 );
+				
+			}
+			latch();
 		}
 		serial->endWrite();
 	}

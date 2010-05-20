@@ -16,7 +16,7 @@
     </light>
     <light>
         <x>0.228125</x>
-        <y>0.406250</y>
+        <y>0.468750</y>
         <board_id>16</board_id>
         <light_id>2</light_id>
         <big>0</big>
@@ -163,7 +163,7 @@
     </light>
     <light>
         <x>0.531250</x>
-        <y>0.970312</y>
+        <y>0.446875</y>
         <board_id>32</board_id>
         <light_id>7</light_id>
         <big>0</big>

@@ -26,11 +26,11 @@ void DelaunayPulseIn::start ( int which_target, float start_radius, float _max_b
 	{
 		ofxVec2f test_pos( lights->getLight(i).getX(), lights->getLight(i).getY() );
 		float distance = (source_pos-test_pos).length();
-		if ( distance < start_radius )
+		if ( distance < start_radius  && distance > start_radius*0.7f )
 		{
-			//float brightness_pct = 1.0f-(distance/start_radius);
-			//float brightness = max_brightness*brightness_pct*brightness_pct;
-			float brightness = 0.1f;
+			float brightness_pct = 1.0f-((distance-start_radius*0.7f)/(start_radius*0.7f));
+			float brightness = max_brightness*brightness_pct/**brightness_pct*/;
+			brightness *= ofRandom( 0.8f, 1.2f );
 			queued_pulses.push( MovingPulse( i, brightness, 0 ) );
 		}
 	}
@@ -43,17 +43,44 @@ void DelaunayPulseIn::update( float elapsed )
 	timer += elapsed;
 	// update animation
 	//printf("queue contains: ");
+	vector<MovingPulse> dequeued;
 	while ( !queued_pulses.empty() && queued_pulses.top().timer < timer )
 	{
-		// fetch id
-		int curr = queued_pulses.top().id;
-		float energy = queued_pulses.top().energy;
+		// dequeue
+		dequeued.push_back( queued_pulses.top() );
+		
 		// remove from queue
 		queued_pulses.pop();
+	}
+	
+	// coalesce pulses for the same node
+	map<int,int> coalesced;
+	for ( int i=0; i<dequeued.size(); i++ )
+	{
+		int id = dequeued[i].id;
+		if ( coalesced.find( id ) == coalesced.end() )
+		{
+			coalesced[id] = i;
+		}
+		else
+		{
+			// merge
+			dequeued[coalesced[id]].energy += dequeued[i].energy;
+			// remove
+			dequeued.erase( dequeued.begin()+i );
+			i--;
+		}
+	}
+	// no go through coalesced
+	for ( int i=0; i<dequeued.size(); i++ )
+	{
+		// fetch id
+		int curr = dequeued[i].id;
+		float energy = dequeued[i].energy;
 		//printf("%2i:%7.5f ", curr, energy );
 
 		// pulse the led
-		if ( queued_pulses.top().timer > 0 )
+		if ( dequeued[i].timer > 0 )
 			lights->pulse( curr, energy );
 		// finished?
 		if ( curr == target_index || energy < 0.001f )
@@ -87,6 +114,7 @@ void DelaunayPulseIn::update( float elapsed )
 			//printf(" adj delta to next is %7.5f %f7.5 -> accuracy %7.5f\n", adj_delta.x, adj_delta.y, direction_accuracy );
 			if ( direction_accuracy > 0.5f )
 			{
+				direction_accuracy*=direction_accuracy;
 				// yes
 				//float new_energy = direction_accuracy*0.5f*(max_brightness*(1.0f-(distance_to_target/initial_radius)));
 				float falloff = 0.25f;

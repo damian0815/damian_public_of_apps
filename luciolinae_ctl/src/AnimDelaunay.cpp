@@ -35,9 +35,9 @@ void AnimDelaunay::triggerDelaunay( int index )
 {
 	index = min(lights->getNumLights()-1,max(0,index));
 	if ( inout )
-		DelaunayPulses::getInstance()->addPulseIn( index, 1.0f, 0.1f, 0.5f );
+		DelaunayPulses::getInstance()->addPulseIn( index, 0.2f, 0.7f );
 	else
-		DelaunayPulses::getInstance()->addPulseOut( index, 0.1f );
+		DelaunayPulses::getInstance()->addPulseOut( index, 0.2f );
 }
 
 

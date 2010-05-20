@@ -22,12 +22,12 @@ void DelaunayPulses::addPulseOut( int target, float brightness, float decay, flo
 	pulses.back()->start( target, brightness, decay, speed );
 }
 
-void DelaunayPulses::addPulseIn( int target, float start_radius, float buildup, float speed )
+void DelaunayPulses::addPulseIn( int target, float max_brightness, float start_radius, float speed )
 {
 	if ( pulses.size()> 8 )
 		return;
 	pulses.push_back( new DelaunayPulseIn( lights ) );
-	pulses.back()->start( target, start_radius, buildup, speed );
+	pulses.back()->start( target, start_radius, max_brightness, speed );
 }
 
 void DelaunayPulses::update( float elapsed )

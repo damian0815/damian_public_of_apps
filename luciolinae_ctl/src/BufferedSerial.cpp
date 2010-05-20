@@ -185,7 +185,7 @@ void BufferedSerial::endWrite()
 	}
 	
 	
-	serial->flush( /*in*/false, /*out*/true );
+	//serial->flush( /*in*/false, /*out*/true );
 	// TODO :wait until we think the block has been sent
 }
 

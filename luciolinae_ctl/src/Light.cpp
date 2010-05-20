@@ -20,7 +20,7 @@ Light::Light()
 	draw_brightness = 0;
 	last_brightness = 1; // force serial update 
 	// decay by given pct of brightness every second
-	decay_factor = 5.0f; 
+	decay_factor = 7.0f; 
 }
 
 void Light::setup( int _board_id, int _light_id, float _x, float _y )

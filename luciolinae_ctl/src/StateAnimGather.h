@@ -19,18 +19,21 @@ public:
 	static const char* NAME;
 	string getName() { return NAME; }
 	
-	void update( float elapsed ) { timer -= elapsed; }
+	void update( float elapsed );
 	void draw() {};
 	
 	void enter() { 
 		// blip the appropriate light
 		int which = SharedData::getFloat( "blip_target" );
-		timer = getSquaredRandom( 0.3f, 1.0f ); 
+		count = ofRandom( 2, 7 );
+		timer = getSquaredRandom( 0.1f, 0.5f ); 
 	}
 	bool isFinished() { return timer < 0; }
 	
 private:
 	
+	int count;
 	float timer;
 	
 };
+

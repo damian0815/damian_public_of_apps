@@ -8,5 +8,23 @@
  */
 
 #include "StateAnimGather.h"
+#include "DelaunayPulse.h"
 
 const char* StateAnimGather::NAME = "state_gather";
+
+void StateAnimGather::update( float elapsed )
+{
+	timer -= elapsed;
+
+	if ( timer < 0 )
+	{
+		// start a pulse inward
+		int which = SharedData::getFloat( "blip_target" );
+		DelaunayPulses::getInstance()->addPulseIn(which, 0.2f, 0.7f );
+		// decrement counter
+		count--;
+		if ( count > 0 )
+			// should we continue?
+			timer = getSquaredRandom( 0.1f, 0.5f ); 
+	}
+}
