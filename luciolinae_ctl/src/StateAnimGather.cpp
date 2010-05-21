@@ -9,6 +9,9 @@
 
 #include "StateAnimGather.h"
 #include "DelaunayPulse.h"
+#include "Util.h"
+
+
 
 const char* StateAnimGather::NAME = "state_gather";
 
@@ -25,10 +28,10 @@ void StateAnimGather::update( float elapsed )
 		count--;
 		if ( count > 0 )
 			// should we continue?
-			timer = getSquaredRandom( 0.1f, 0.5f ); 
+			timer = squaredRandom( 0.1f, 0.5f ); 
 		// final pause
 		else if ( count == 0 )
-			timer = getSquaredRandom( 2.0f, 4.0f );
+			timer = squaredRandom( 2.0f, 4.0f );
 		
 	}
 }

@@ -10,6 +10,7 @@
 #pragma once
 
 #include "StateAnimation.h"
+#include "Util.h"
 
 class StateAnimGather : public StateAnimation
 {
@@ -26,7 +27,7 @@ public:
 		// blip the appropriate light
 		int which = SharedData::getFloat( "blip_target" );
 		count = ofRandom( 2, 7 );
-		timer = getSquaredRandom( 0.1f, 0.5f ); 
+		timer = squaredRandom( 0.1f, 0.5f ); 
 	}
 	bool isFinished() { return timer < 0; }
 	

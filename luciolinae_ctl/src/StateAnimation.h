@@ -25,7 +25,4 @@ public:
 	
 protected:
 	
-	// return a squared random number between first and second inclusive, favouring first
-	static float getSquaredRandom( float first, float second );
-
 };

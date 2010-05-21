@@ -8,6 +8,8 @@
  */
 
 #pragma once
+#include "Util.h"
+
 
 #include "StateAnimation.h"
 
@@ -26,7 +28,7 @@ public:
 		// blip the appropriate light
 		int which = SharedData::getFloat( "blip_target" );
 		lights->pulse( which, 1, true );
-		timer = getSquaredRandom( 0.3f, 1.0f ); 
+		timer = squaredRandom( 0.3f, 1.0f ); 
 	}
 	bool isFinished() { return timer < 0; }
 	

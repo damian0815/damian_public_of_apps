@@ -54,6 +54,7 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 	buffered_serial->update( ofGetLastFrameTime() );
+	breath.update( ofGetLastFrameTime() );
 	
 	// update delaunay pulses
 	pulses.update( ofGetLastFrameTime() );

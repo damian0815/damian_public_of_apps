@@ -27,6 +27,8 @@
 		2DA5495B11A5A56B00C21422 /* ofxOscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5494E11A5A56A00C21422 /* ofxOscMessage.cpp */; };
 		2DA5495C11A5A56B00C21422 /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5495011A5A56A00C21422 /* ofxOscReceiver.cpp */; };
 		2DA5495D11A5A56B00C21422 /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5495211A5A56A00C21422 /* ofxOscSender.cpp */; };
+		2DA54A1111A5E79000C21422 /* Breathing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA54A1011A5E79000C21422 /* Breathing.cpp */; };
+		2DA54AD811A6158100C21422 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA54AD711A6158100C21422 /* Util.cpp */; };
 		2DA5E58A1194616800301C42 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E5891194616800301C42 /* Animation.cpp */; };
 		2DA5E58D1194619400301C42 /* AnimRotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E58C1194619400301C42 /* AnimRotate.cpp */; };
 		2DA5E5921194634300301C42 /* Lights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E5911194634300301C42 /* Lights.cpp */; };
@@ -182,6 +184,10 @@
 		2DA5495111A5A56A00C21422 /* ofxOscReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscReceiver.h; sourceTree = "<group>"; };
 		2DA5495211A5A56A00C21422 /* ofxOscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscSender.cpp; sourceTree = "<group>"; };
 		2DA5495311A5A56A00C21422 /* ofxOscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscSender.h; sourceTree = "<group>"; };
+		2DA54A0F11A5E79000C21422 /* Breathing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breathing.h; sourceTree = "<group>"; };
+		2DA54A1011A5E79000C21422 /* Breathing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Breathing.cpp; sourceTree = "<group>"; };
+		2DA54AD611A6158100C21422 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
+		2DA54AD711A6158100C21422 /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
 		2DA5E5881194616800301C42 /* Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Animation.h; sourceTree = "<group>"; };
 		2DA5E5891194616800301C42 /* Animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Animation.cpp; sourceTree = "<group>"; };
 		2DA5E58B1194619400301C42 /* AnimRotate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimRotate.h; sourceTree = "<group>"; };
@@ -358,6 +364,8 @@
 		2D2D323D119CA0B2001D76C9 /* Dynamics */ = {
 			isa = PBXGroup;
 			children = (
+				2DA54A0F11A5E79000C21422 /* Breathing.h */,
+				2DA54A1011A5E79000C21422 /* Breathing.cpp */,
 				2DA53C7F11A54E8400C21422 /* DelaunayPulse.h */,
 				2DA53C8011A54E8400C21422 /* DelaunayPulse.cpp */,
 				2DA5404111A5693200C21422 /* DelaunayPulseIn.h */,
@@ -494,6 +502,8 @@
 		2DA8B6EE11A4699C008B545A /* State Machine */ = {
 			isa = PBXGroup;
 			children = (
+				2DA54AD611A6158100C21422 /* Util.h */,
+				2DA54AD711A6158100C21422 /* Util.cpp */,
 				2DA5403B11A568C200C21422 /* StateAnimGather.h */,
 				2DA5403C11A568C200C21422 /* StateAnimGather.cpp */,
 				2DA5398111A5382000C21422 /* StateAnimDelaunayOut.h */,
@@ -952,6 +962,8 @@
 				2DA5495B11A5A56B00C21422 /* ofxOscMessage.cpp in Sources */,
 				2DA5495C11A5A56B00C21422 /* ofxOscReceiver.cpp in Sources */,
 				2DA5495D11A5A56B00C21422 /* ofxOscSender.cpp in Sources */,
+				2DA54A1111A5E79000C21422 /* Breathing.cpp in Sources */,
+				2DA54AD811A6158100C21422 /* Util.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
