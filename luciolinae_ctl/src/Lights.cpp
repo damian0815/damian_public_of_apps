@@ -473,3 +473,16 @@ void Lights::toggleLightIsBig( int id ) {
 }
 
 
+int Lights::getLightIndexForBig( int search ) const
+{
+	// locate i in big lights
+	for ( int i=0; i<big_lights.size(); i++ )
+	{
+		if ( big_lights[i] == search )
+			return i;
+	}
+	// not found
+	return -1;
+}
+
+

@@ -11,6 +11,7 @@
 #include "ofxVectorMath.h"
 #include "Lights.h"
 #include "LightsDelaunay.h"
+#include "Osc.h"
 
 void DelaunayPulseIn::start ( int which_target, float start_radius, float _max_brightness, float _speed )
 {
@@ -52,12 +53,18 @@ void DelaunayPulseIn::update( float elapsed )
 		// remove from queue
 		queued_pulses.pop();
 	}
-	
+
+	// pings
+	vector<pair< int, float > > pings;
+
 	// coalesce pulses for the same node
 	map<int,int> coalesced;
 	for ( int i=0; i<dequeued.size(); i++ )
 	{
 		int id = dequeued[i].id;
+		// add ping here (because we might drop it later)
+		pings.push_back( make_pair( id, dequeued[i].energy ) );
+		// coalesce
 		if ( coalesced.find( id ) == coalesced.end() )
 		{
 			coalesced[id] = i;
@@ -124,4 +131,16 @@ void DelaunayPulseIn::update( float elapsed )
 		}
 	}
 	//printf("\n");
+	// send pings
+	for ( int i=0; i<pings.size(); i++ )
+	{
+		ofxOscMessage m;
+		m.setAddress( "/delaunay/ping" );
+		m.addFloatArg( pings[i].second );
+		const Light& light = lights->getLight( pings[i].first );
+		m.addFloatArg( light.getX() );
+		m.addFloatArg( light.getY() );
+		Osc::getInstance()->sendMessage( m );
+	}
+	
 }

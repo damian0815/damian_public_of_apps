@@ -21,9 +21,12 @@ void StateAnimGather::update( float elapsed )
 
 	if ( timer < 0 )
 	{
-		// start a pulse inward
-		int which = SharedData::getFloat( "blip_target" );
-		DelaunayPulses::getInstance()->addPulseIn(which, 0.2f, 0.7f );
+		if ( count > 0 )
+		{
+			// start a pulse inward
+			int which = SharedData::getFloat( "blip_target" );
+			DelaunayPulses::getInstance()->addPulseIn(which, 0.2f, 0.7f );
+		}
 		// decrement counter
 		count--;
 		if ( count > 0 )

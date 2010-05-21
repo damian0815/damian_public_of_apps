@@ -9,7 +9,7 @@
 
 #pragma once
 #include "Util.h"
-
+#include "Osc.h"
 
 #include "StateAnimation.h"
 
@@ -29,6 +29,9 @@ public:
 		int which = SharedData::getFloat( "blip_target" );
 		lights->pulse( which, 1, true );
 		timer = squaredRandom( 0.3f, 1.0f ); 
+		ofxOscMessage m;
+		m.setAddress("/blip/trigger");
+		Osc::sendMessage( m );
 	}
 	bool isFinished() { return timer < 0; }
 	

@@ -22,7 +22,7 @@ public:
 	void setup( string host, int port );
 	
 	// send a message
-	void sendMessage( ofxOscMessage& m ) { send.sendMessage( m ); }
+	static void sendMessage( ofxOscMessage& m ) { instance->send.sendMessage( m ); }
 	
 private:
 	

@@ -16,7 +16,19 @@ void StateAnimStartBlip::enter()
 {
 	// choose a big light to blip
 	assert( lights->getNumBigLights() > 0 );
+
 	int which_big_light = ofRandom( 0, 0.999f*lights->getNumBigLights() );
+	if ( SharedData::getFloat( "blip_target_must_change" ) > 0 )
+	{	
+		if ( lights->getNumBigLights() > 1 )
+		{
+			int prev_big_light = lights->getLightIndexForBig( SharedData::getFloat( "blip_target" ) );
+			// avoid an infinite loop in case big lights have changed
+			if ( prev_big_light != -1 )
+				while ( which_big_light == prev_big_light )
+					which_big_light = ofRandom( 0, 0.999f*lights->getNumBigLights() );
+		}
+	}
 	
 	int which = lights->getBigLightIndex( which_big_light );
 	SharedData::setFloat( "blip_target", which );

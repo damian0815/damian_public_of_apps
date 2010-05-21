@@ -60,7 +60,11 @@ public:
 	
 	int getNumBigLights() const { return big_lights.size(); }
 	const Light& getBigLight( int i ) const { return lights[big_lights.at(i)]; }
+	// we have 2 sets of indices: big light indices, and light indices.
+	// get the light index for the given big light index
 	int getBigLightIndex( int i ) const { return big_lights.at(i); }
+	// get the big light index for the given light index, or -1 if this isn't a big light
+	int getLightIndexForBig( int i ) const;
 	void toggleLightIsBig( int id );
 	
 	// get delaunay triangulation
