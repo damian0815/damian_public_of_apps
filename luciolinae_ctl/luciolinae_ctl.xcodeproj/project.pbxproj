@@ -14,6 +14,7 @@
 		2D2D2CEB119C2768001D76C9 /* ofxQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2D2CE3119C2768001D76C9 /* ofxQuaternion.cpp */; };
 		2D2D2D0E119C3BEB001D76C9 /* Activators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2D2D0D119C3BEB001D76C9 /* Activators.cpp */; };
 		2D2D30C9119C8DD5001D76C9 /* AnimFlicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2D30C8119C8DD5001D76C9 /* AnimFlicker.cpp */; };
+		2D83940111ABD0630091A5E2 /* StateAnimChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D83940011ABD0630091A5E2 /* StateAnimChunk.cpp */; };
 		2D84293511A402E200A388E1 /* AnimSeq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D84293411A402E200A388E1 /* AnimSeq.cpp */; };
 		2D84293811A4030100A388E1 /* AnimSweep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D84293711A4030100A388E1 /* AnimSweep.cpp */; };
 		2DA5398311A5382000C21422 /* StateAnimDelaunayOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */; };
@@ -144,6 +145,8 @@
 		2D2D2D0D119C3BEB001D76C9 /* Activators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Activators.cpp; sourceTree = "<group>"; };
 		2D2D30C7119C8DD5001D76C9 /* AnimFlicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimFlicker.h; sourceTree = "<group>"; };
 		2D2D30C8119C8DD5001D76C9 /* AnimFlicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimFlicker.cpp; sourceTree = "<group>"; };
+		2D8393FF11ABD0630091A5E2 /* StateAnimChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimChunk.h; sourceTree = "<group>"; };
+		2D83940011ABD0630091A5E2 /* StateAnimChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimChunk.cpp; sourceTree = "<group>"; };
 		2D84293311A402E200A388E1 /* AnimSeq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimSeq.h; sourceTree = "<group>"; };
 		2D84293411A402E200A388E1 /* AnimSeq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimSeq.cpp; sourceTree = "<group>"; };
 		2D84293611A4030100A388E1 /* AnimSweep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimSweep.h; sourceTree = "<group>"; };
@@ -502,6 +505,8 @@
 		2DA8B6EE11A4699C008B545A /* State Machine */ = {
 			isa = PBXGroup;
 			children = (
+				2D8393FF11ABD0630091A5E2 /* StateAnimChunk.h */,
+				2D83940011ABD0630091A5E2 /* StateAnimChunk.cpp */,
 				2DA54AD611A6158100C21422 /* Util.h */,
 				2DA54AD711A6158100C21422 /* Util.cpp */,
 				2DA5403B11A568C200C21422 /* StateAnimGather.h */,
@@ -964,6 +969,7 @@
 				2DA5495D11A5A56B00C21422 /* ofxOscSender.cpp in Sources */,
 				2DA54A1111A5E79000C21422 /* Breathing.cpp in Sources */,
 				2DA54AD811A6158100C21422 /* Util.cpp in Sources */,
+				2D83940111ABD0630091A5E2 /* StateAnimChunk.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

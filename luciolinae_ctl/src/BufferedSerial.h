@@ -34,7 +34,7 @@ protected:
 	
 	int baudrate;
 	int bytes_written;
-	float baud_timer;
+	//float baud_timer;
 	
 	
 };

@@ -27,11 +27,15 @@ public:
 	void enter() { 
 		// blip the appropriate light
 		int which = SharedData::getFloat( "blip_target" );
+		float blip_count = SharedData::getFloat( "blip_count" );
 		lights->pulse( which, 1, true );
-		timer = squaredRandom( 0.3f, 1.0f ); 
+		timer = squaredRandom( 0.3f, 0.7f ) + blip_count*blip_count*0.2f; 
+		
 		ofxOscMessage m;
 		m.setAddress("/blip/trigger");
+		m.addFloatArg( blip_count );
 		Osc::sendMessage( m );
+		SharedData::setFloat( "blip_count", blip_count+1 );
 	}
 	bool isFinished() { return timer < 0; }
 	

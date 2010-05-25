@@ -40,7 +40,7 @@ public:
 	float getY() const { return y; }
 	void setPosition( float _x, float _y ) { x = _x; y = _y; }
 	void toggleBig() { big = !big; }
-	bool isBig() { return big; }
+	bool isBig() const { return big; }
 	
 	// board/light data
 	unsigned char getBoardId() { return board_id; }

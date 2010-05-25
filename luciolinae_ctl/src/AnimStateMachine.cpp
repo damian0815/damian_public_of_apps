@@ -14,6 +14,7 @@
 #include "StateAnimStartBlip.h"
 #include "StateAnimDelaunayOut.h"
 #include "StateAnimGather.h"
+#include "StateAnimChunk.h"
 
 const char* AnimStateMachine::NAME = "StateMachine";
 
@@ -56,17 +57,22 @@ void AnimStateMachine::loadTransitions()
 	transitions["state_buildup"].push_back( StateTransitionProbability( "state_release", 0.3 ) );
 	transitions["state_blip"].push_back( StateTransitionProbability( "state_idle", 1 ) );
 	transitions["state_blip"].push_back( StateTransitionProbability( "state_blip", 0.1 ) );*/
-	addTransition( StateAnimIdle::NAME, StateAnimStartBlip::NAME, 1 );
 
 	// blip
+	addTransition( StateAnimIdle::NAME,			StateAnimStartBlip::NAME, 1 );
 	addTransition( StateAnimStartBlip::NAME,	StateAnimBlip::NAME, 0.3f );
-	addTransition( StateAnimStartBlip::NAME,	StateAnimGather::NAME, 1 );
+	addTransition( StateAnimStartBlip::NAME,	StateAnimGather::NAME, 0.5f );
 	addTransition( StateAnimGather::NAME,		StateAnimBlip::NAME, 1 );
 	addTransition( StateAnimBlip::NAME,			StateAnimIdle::NAME, 1 );
 	addTransition( StateAnimBlip::NAME,			StateAnimBlip::NAME, 0.3f );	
 	addTransition( StateAnimBlip::NAME,			StateAnimDelaunayOut::NAME, 1.0f );
 	addTransition( StateAnimDelaunayOut::NAME,	StateAnimIdle::NAME, 1 );
 	addTransition( StateAnimDelaunayOut::NAME,	StateAnimBlip::NAME, 0.3f );
+	
+	// chunks
+	addTransition( StateAnimIdle::NAME,			StateAnimChunk::NAME, 3.0f );
+	addTransition( StateAnimChunk::NAME,		StateAnimStartBlip::NAME, 0.3f );
+	addTransition( StateAnimChunk::NAME,		StateAnimIdle::NAME, 0.6f );
 	
 	// normalise probabilities
 	float total_p = 0;

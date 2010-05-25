@@ -23,7 +23,8 @@ class Lights
 public:
 	Lights() { rebuild_delaunay = true; delaunay = NULL; 	
 		blend_state_stack.resize(1);
-		disableBlending(); setBlendMode( BLEND_MIX ); setBlendAlpha( 1 ); }
+		disableBlending(); setBlendMode( BLEND_MIX ); setBlendAlpha( 1 );
+		small_bright_factor = 1.0f; }
 	~Lights();
 	
 	void setup( BufferedSerial* serial );
@@ -43,12 +44,14 @@ public:
 	void clear( bool pummel=false );
 	
 	// illuminate in this area
-	void illuminateCircularArea( float x, float y, float area );
+	void illuminateCircularArea( float x, float y, float area, bool include_big=false );
 	// illuminate a line of area. (x,y) is a point on the line, (dx,dy) is a direction vector
 	// and width is the illumination width of the line
-	void illuminateCorridor( float x, float y, float dx, float dy, float power, float width );
+	void illuminateCorridor( float x, float y, float dx, float dy, float power, float width, bool include_big=false );
 	// only draw
 	void drawIlluminateCorridor( float x, float y, float dx, float dy, float power, float width );
+	// illuminate a rectangular area
+	void illuminateRect( float x, float y, float w, float h, float power, bool include_big=false );
 	
 	// send all brightness commands immediately and latch in
 	void flush();
@@ -58,6 +61,7 @@ public:
 	const Light& getLight( int i ) const { return lights.at(i); }
 	void setLightPosition( int id, float x, float y ) { lights.at(id).setPosition( x, y ); rebuild_delaunay = true; }
 	
+	// big lights (high current)
 	int getNumBigLights() const { return big_lights.size(); }
 	const Light& getBigLight( int i ) const { return lights[big_lights.at(i)]; }
 	// we have 2 sets of indices: big light indices, and light indices.
@@ -66,6 +70,10 @@ public:
 	// get the big light index for the given light index, or -1 if this isn't a big light
 	int getLightIndexForBig( int i ) const;
 	void toggleLightIsBig( int id );
+
+	// small lights
+	void increaseSmallLightBrightnessFactor() { small_bright_factor *= 1.1f; }
+	void decreaseSmallLightBrightnessFactor() { small_bright_factor /= 1.1f; }
 	
 	// get delaunay triangulation
 	LightsDelaunay* getDelaunay();
@@ -113,6 +121,7 @@ private:
 	} BlendState;
 	deque<BlendState> blend_state_stack;
 	
+	float small_bright_factor;
 	
 	vector<int> debug_sent;
 	

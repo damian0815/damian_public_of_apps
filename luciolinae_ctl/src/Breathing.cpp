@@ -75,16 +75,20 @@ void Breathing::update( float elapsed )
 	lung_fullness += speed*elapsed;*/
 	
 	ofxOscMessage m;
+	m.setAddress( "/breath" );
 	if ( speed > 0 )
-		m.setAddress( "/breath/inhale" );
+		m.addFloatArg( 1 );
 	else
-		m.setAddress( "/breath/exhale" );
-	m.addFloatArg( speed );
+		m.addFloatArg( 0 );
+	m.addFloatArg( lung_fullness );
+	speed_smoothed = speed_smoothed * 0.75f + speed * 0.25f;
+	m.addFloatArg( speed_smoothed );
 	m.addFloatArg( speed*elapsed );
 	Osc::getInstance()->sendMessage( m );
 	
 	SharedData::setFloat("breath", lung_fullness );
 	
+	/*
 	int full_bar_length = lung_fullness*20;
 	printf("breath %6.3f %6.3f %s %7.4f |", pct, speed, speed>0?"in ":"out", lung_fullness );
 	for ( int i=0; i<full_bar_length; i++ )
@@ -92,6 +96,7 @@ void Breathing::update( float elapsed )
 		printf("*");
 	}
 	printf("|\n");
+	 */
 }
 
 

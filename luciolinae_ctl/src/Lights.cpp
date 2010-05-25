@@ -141,6 +141,8 @@ void Lights::flush()
 					int light_id = lights[j].getLightId();
 					int base_index = /*((15-light_id)*3>>1);*/ (light_id*3)>>1;
 					float bright = lights[j].getBrightness();
+					if ( !lights[j].isBig() )
+						bright *= small_bright_factor;
 					bright *= bright;
 					unsigned int brightness = min(4095,max(0,int(bright*4096)));
 					//printf("  adding light %02x:%02x brightness %03x\n", lights[j].getBoardId(), lights[j].getLightId(), brightness );
@@ -172,6 +174,8 @@ void Lights::flush()
 				if ( (lights[j].getBoardId()==(i+1)<<4) && lights[j].needsSerial() /*&& !lights[j].wantsPulse()*/ )
 				{
 					float bright = lights[j].getBrightness();
+					if ( !lights[j].isBig() )
+						bright *= small_bright_factor;
 					bright *= bright;
 					int brightness = bright*4096;
 					sendLightLevel( lights[j].getBoardId(), lights[j].getLightId(), brightness );
@@ -191,7 +195,11 @@ void Lights::flush()
 		// find this board's lights
 		if ( lights[j].needsSerial() && lights[j].wantsPulse() )
 		{
-			int brightness = lights[j].getBrightness()*4096;
+			float bright = 	lights[j].getBrightness();
+			if ( !lights[j].isBig() )
+				bright *= small_bright_factor;
+			bright *= bright;
+			int brightness = bright*4096;
 			float decay_float = lights[j].getPulseDecayFactor();
 			// decay is 0..1 with 0 being rapid and 0.9999 being very slow
 			// soo.... subtract from 1 and multiply by 256
@@ -347,7 +355,7 @@ void Lights::draw()
 	}
 }
 
-void Lights::illuminateCircularArea( float x, float y, float area )
+void Lights::illuminateCircularArea( float x, float y, float area, bool include_big )
 {
 	for ( int i=0; i<lights.size(); i++ )
 	{
@@ -357,7 +365,7 @@ void Lights::illuminateCircularArea( float x, float y, float area )
 		if ( dx*dx+dy*dy <= area*area )
 		{
 			float brightness = 1.0f-(dx*dx+dy*dy)/(area*area);
-			pulse( i, brightness, 0 );
+			pulse( i, brightness, 0, include_big );
 		}
 	}
 }
@@ -380,7 +388,7 @@ void Lights::sendEveryLightLevel( unsigned char board_id, unsigned char* data )
 	// done
 }
 
-void Lights::illuminateCorridor( float x, float y, float dx, float dy, float power, float width )
+void Lights::illuminateCorridor( float x, float y, float dx, float dy, float power, float width, bool include_big )
 {
 	ofxVec3f p(x,y);
 	ofxVec3f d(dx,dy);
@@ -393,8 +401,8 @@ void Lights::illuminateCorridor( float x, float y, float dx, float dy, float pow
 		ofxVec3f light_pos( light.getX(), light.getY() );
 		float line_position;
 		// get the nearest point on the given infinite line
-		ofxVec3f nearest_point_on_line = NearestPointOnLineToPoint::calculateNearestPoint
-			( p, p+d, light_pos, &line_position );
+		ofxVec3f nearest_point_on_line = NearestPointOnLineToPoint::calculateNearestPoint( 
+			p, p+d, light_pos, &line_position );
 		// work out the distance
 		float distance = (nearest_point_on_line-light_pos).length();
 		//printf("  nearest point is %f %f (%f) -> distance %f\n", nearest_point_on_line.x, nearest_point_on_line.y, 
@@ -407,10 +415,10 @@ void Lights::illuminateCorridor( float x, float y, float dx, float dy, float pow
 				brightness = (1.0f-distance/width);
 			else
 				brightness = 1;
-			set( i, power*brightness*brightness );
+			set( i, power*brightness*brightness, include_big );
 		}			
 		else
-			set( i, 0 );
+			set( i, 0, include_big );
 	}
 }
 void Lights::drawIlluminateCorridor( float x, float y, float dx, float dy, float power, float width )
@@ -485,4 +493,22 @@ int Lights::getLightIndexForBig( int search ) const
 	return -1;
 }
 
+
+void Lights::illuminateRect( float x, float y, float w, float h, float power, bool include_big )
+{
+	for ( int i=0; i<lights.size(); i++ )
+	{
+		const Light& light = lights[i];
+		float lx = light.getX();
+		float ly = light.getY();
+		if ( lx > x && lx < x+w &&
+			ly > y && ly < y+h )
+		{
+			if ( !light.isBig() || include_big )
+			{
+				pulse( i, power, 0, include_big );
+			}
+		}
+	}
+}
 

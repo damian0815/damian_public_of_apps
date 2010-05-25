@@ -13,10 +13,11 @@
 class Breathing 
 {
 public:
-	Breathing() { timer = 1; lung_fullness=0; breath_time = 0; };
+	Breathing() { timer = 1; lung_fullness=0; breath_time = 0; speed_smoothed = 0;};
 	void update( float elapsed );	
 private:
 	float timer;
 	float lung_fullness;
 	float breath_time;
+	float speed_smoothed;
 };

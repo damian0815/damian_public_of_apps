@@ -32,6 +32,7 @@ void StateAnimStartBlip::enter()
 	
 	int which = lights->getBigLightIndex( which_big_light );
 	SharedData::setFloat( "blip_target", which );
+	SharedData::setFloat( "blip_count", 0 );
 	
 	ofxOscMessage m;
 	m.setAddress( "/blip/target" );

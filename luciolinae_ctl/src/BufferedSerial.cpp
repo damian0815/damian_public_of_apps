@@ -18,10 +18,8 @@ static unsigned char ACK=0x7f;
 void BufferedSerial::setup( ofSerial* _serial , int baud )
 {
 	baudrate = baud;
-	baud_timer = 0;
+//	baud_timer = 0;
 	bytes_written = 0;
-	//// time to transmit one block should be:
-	//transmit_block_time = float(BLOCKSIZE)/(float(baud_rate)/9);
 	serial = _serial;
 	sent_this_block = 0;
 	
@@ -164,7 +162,6 @@ bool BufferedSerial::writeBytes( unsigned char* bytes, int size )
 		}
 	}
 	
-	// delay if we should 
 	bytes_written += size;
 	return true;
 }
@@ -184,14 +181,17 @@ void BufferedSerial::endWrite()
 		assert( sent_this_block % CHUNKSIZE == 0 );
 	}
 	
-	
 	//serial->flush( /*in*/false, /*out*/true );
-	// TODO :wait until we think the block has been sent
+	// wait until the block has been sent
+	if ( bytes_written > 32 )
+		serial->drain();
+	bytes_written = 0;
 }
 
 
 void BufferedSerial::update( float elapsed )
 {
+	/*
 	baud_timer += elapsed;
 	
 	if ( bytes_written > 1024 )
@@ -210,5 +210,5 @@ void BufferedSerial::update( float elapsed )
 			baud_timer -= (float(128)*10)/float(baudrate);
 			bytes_written -= 128;
 		}
-	}
+	}*/
 }	
