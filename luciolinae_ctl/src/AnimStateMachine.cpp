@@ -58,6 +58,13 @@ void AnimStateMachine::loadTransitions()
 	transitions["state_blip"].push_back( StateTransitionProbability( "state_idle", 1 ) );
 	transitions["state_blip"].push_back( StateTransitionProbability( "state_blip", 0.1 ) );*/
 
+#ifdef ALWAYS_THE_SAME
+	addTransition( StateAnimIdle::NAME,			StateAnimStartBlip::NAME, 1 );
+	addTransition( StateAnimStartBlip::NAME,	StateAnimGather::NAME, 0.5f );
+	addTransition( StateAnimGather::NAME,		StateAnimBlip::NAME, 1 );
+	addTransition( StateAnimBlip::NAME,			StateAnimDelaunayOut::NAME, 1.0f );
+	addTransition( StateAnimDelaunayOut::NAME,	StateAnimIdle::NAME, 1 );
+#else
 	// blip
 	addTransition( StateAnimIdle::NAME,			StateAnimStartBlip::NAME, 1 );
 	addTransition( StateAnimStartBlip::NAME,	StateAnimBlip::NAME, 0.3f );
@@ -70,9 +77,10 @@ void AnimStateMachine::loadTransitions()
 	addTransition( StateAnimDelaunayOut::NAME,	StateAnimBlip::NAME, 0.3f );
 	
 	// chunks
-	addTransition( StateAnimIdle::NAME,			StateAnimChunk::NAME, 3.0f );
+	addTransition( StateAnimIdle::NAME,			StateAnimChunk::NAME, 0.5f );
 	addTransition( StateAnimChunk::NAME,		StateAnimStartBlip::NAME, 0.3f );
 	addTransition( StateAnimChunk::NAME,		StateAnimIdle::NAME, 0.6f );
+#endif
 	
 	// normalise probabilities
 	float total_p = 0;
@@ -97,7 +105,8 @@ void AnimStateMachine::draw()
 {
 	ofSetColor( 0xff, 0xff, 0xff, 0x80 );
 	char buf[1024];
-	sprintf(buf, "StateMachine running: current state '%s'", current_state->getName().c_str() );
+	sprintf(buf, "StateMachine running: bright %7.5f current state '%s'", lights->getSmalLightBrightnessFactor(), 
+			current_state->getName().c_str() );
 	ofDrawBitmapString( buf, 10, 10 );
 	current_state->draw();
 }

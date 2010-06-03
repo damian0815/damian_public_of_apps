@@ -98,6 +98,11 @@ void BufferedSerial::beginWrite()
 {
 	assert( sent_this_block%CHUNKSIZE == 0);
 	
+	unsigned char dummy[2];
+	dummy[0] = 0;
+	dummy[1] = 0;
+	writeBytes( dummy, 2 );
+	
 }
 
 bool BufferedSerial::writeBytes( unsigned char* bytes, int size )
@@ -168,6 +173,7 @@ bool BufferedSerial::writeBytes( unsigned char* bytes, int size )
 
 void BufferedSerial::endWrite()
 {
+#ifdef WAIT_FOR_ACK
 	if ( sent_this_block%CHUNKSIZE != 0 )
 	{
 		int sent_this_chunk = sent_this_block%CHUNKSIZE;
@@ -180,6 +186,9 @@ void BufferedSerial::endWrite()
 		// did it work?
 		assert( sent_this_block % CHUNKSIZE == 0 );
 	}
+#else
+	sent_this_block = 0;
+#endif
 	
 	//serial->flush( /*in*/false, /*out*/true );
 	// wait until the block has been sent

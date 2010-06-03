@@ -19,6 +19,8 @@ void StateAnimChunk::enter()
 	total_chunks = chunks;
 	chunk_time = squaredRandom( 0.3f, 1.3f );
 	timer = 0;
+	prev_x = 0; 
+	prev_y = 0;
 	ofxOscMessage m;
 	m.setAddress("/chunks/setup");
 	m.addFloatArg( total_chunks );
@@ -36,7 +38,19 @@ void StateAnimChunk::update( float elapsed )
 		float h = ofRandom( 0.2, 0.5+(float(chunks)/total_chunks)*0.5 );
 		float x = ofRandom( 0, 1-w );
 		float y = ofRandom( 0, 1-h );
-		float power = 0.5f;
+		for ( int i=0; i<3; i++ )
+		{
+			float nx = ofRandom( 0, 1-w );
+			if ( fabsf( nx-prev_x ) > fabsf( x-prev_x ) )
+				x = nx;
+		}
+		for ( int i=0; i<3; i++ )
+		{
+			float ny = ofRandom( 0, 1-h );
+			if ( fabsf( ny-prev_y ) > fabsf( y-prev_y ) )
+				y = ny;
+		}
+		float power = 0.1f + (1.0f-(float(chunks)/total_chunks))*0.4f;
 		lights->illuminateRect( x, y, w, h, power );
 		
 		ofxOscMessage m;

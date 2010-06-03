@@ -19,8 +19,8 @@ Light::Light()
 	target_brightness = 0; 
 	draw_brightness = 0;
 	last_brightness = 1; // force serial update 
-	// decay by given pct of brightness every second
-	decay_factor = 7.0f; 
+	needs_count = 2;
+	decay_factor = 10.0f; 
 }
 
 void Light::setup( int _board_id, int _light_id, float _x, float _y )
@@ -80,6 +80,8 @@ void Light::update(float elapsed )
 //			printf("updating light %x:%x : was %8.6f ", board_id, light_id, brightness );
 		brightness += decay_factor*elapsed * (target_brightness-brightness);
 		brightness = max(0.0f,min(1.0f,brightness));
+		needs_count =2 ;
+
 //		if ( light_id == 0x0a && board_id == 0x10 )
 //			printf("now %8.6f (powf %8.6f)\n", brightness, powf(decay_factor, elapsed) );
 	}
@@ -100,6 +102,7 @@ void Light::pulse( float max_bright, /*float _decay_factor*/ float end_brightnes
 	}
 	
 	target_brightness = end_brightness;
+	needs_count =2 ;
 }
 
 void Light::set( float bright ) 
@@ -107,16 +110,20 @@ void Light::set( float bright )
 	brightness = bright;
 	target_brightness = bright;
 	last_set_timer = 0;
+	needs_count = 2;
 }
 
 bool Light::needsSerial() const
 { 
-	return fabsf(brightness-last_brightness)>=0.5f*FLOAT_STEP_SIZE;
+	return (fabsf(brightness-last_brightness)>=0.5f*FLOAT_STEP_SIZE) 
+		|| needs_count > 0;
 }
 
 void Light::resetNeedsSerial()
 { 
 	last_brightness = brightness; 
+	if ( needs_count > 0 )
+		needs_count --;
 }
 
 

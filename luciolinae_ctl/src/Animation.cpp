@@ -14,6 +14,7 @@
 #include "AnimLuxeonTest.h"
 #include "AnimSweep.h"
 #include "AnimDelaunay.h"
+#include "AnimSeq.h"
 #include "AnimStateMachine.h"
 #include "StateAnimIdle.h"
 #include "StateAnimBlip.h"
@@ -45,6 +46,8 @@ Animation* AnimationFactory::makeAnimation( string name )
 			cache[name] = new AnimSweep( lights );
 		else if ( name == AnimDelaunay::NAME )
 			cache[name] = new AnimDelaunay( lights );
+		else if ( name == AnimSeq::NAME )
+			cache[name] = new AnimSeq( lights );
 		
 		else if ( name == AnimStateMachine::NAME )
 			cache[name] = new AnimStateMachine( lights );

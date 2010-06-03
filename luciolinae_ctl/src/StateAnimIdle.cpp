@@ -10,9 +10,13 @@
 #include "StateAnimIdle.h"
 
 const char* StateAnimIdle::NAME = "state_idle";
+bool StateAnimIdle::should_reset_random = false;
 
 void StateAnimIdle::enter()
 {
+#ifdef ALWAYS_THE_SAME
+	ofSeedRandom( 12345 );
+#endif
 	// set a random timer
 	timer = ofRandom( 2.0f, 8.0f );
 }

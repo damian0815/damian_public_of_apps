@@ -1,11 +1,11 @@
 <lights>
-    <num_boards>2</num_boards>
+    <num_boards>3</num_boards>
     <light>
         <x>0.334375</x>
         <y>0.062500</y>
         <board_id>16</board_id>
         <light_id>0</light_id>
-        <big>1</big>
+        <big>0</big>
     </light>
     <light>
         <x>0.221875</x>
@@ -159,7 +159,7 @@
         <y>0.954687</y>
         <board_id>32</board_id>
         <light_id>6</light_id>
-        <big>1</big>
+        <big>0</big>
     </light>
     <light>
         <x>0.470313</x>
@@ -221,6 +221,118 @@
         <x>0.243750</x>
         <y>0.807813</y>
         <board_id>32</board_id>
+        <light_id>15</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>0</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>1</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>2</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>3</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>4</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>5</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>6</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>7</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>8</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>9</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>10</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>11</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>12</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>13</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
+        <light_id>14</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0.000000</x>
+        <y>0.000000</y>
+        <board_id>48</board_id>
         <light_id>15</light_id>
         <big>0</big>
     </light>

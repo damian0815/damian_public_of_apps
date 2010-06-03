@@ -9,8 +9,6 @@
 
 #include "AnimSeq.h"
 
-static const int STEPS=16*2;
-
 const char* AnimSeq::NAME = "Seq";
 
 AnimSeq::AnimSeq( Lights* _lights ) 
@@ -23,12 +21,12 @@ AnimSeq::AnimSeq( Lights* _lights )
 
 void AnimSeq::update( float elapsed )
 {
-	float real_speed = 16*1.0f/STEPS;
+	float real_speed = 16*1.0f/lights->getNumLights();
 	
 	// update pct
 	anim_pct += elapsed * real_speed;
 	// calculate new active
-	int new_active = anim_pct*STEPS;
+	int new_active = anim_pct*lights->getNumLights();
 	if ( new_active != current_active )
 	{
 		// we might jump more than one
@@ -36,18 +34,18 @@ void AnimSeq::update( float elapsed )
 		int first, last;
 		printf("current_active %2i, new_active %2i, dir %i; ", current_active, new_active, dir );
 		// have we gone full circle?
-		if ( abs(new_active-current_active)>STEPS )
+		if ( abs(new_active-current_active)>lights->getNumLights() )
 		{
 			// yes - then pulse everything
 			last = new_active;
-			first = last - dir*(STEPS-1);
+			first = last - dir*(lights->getNumLights()-1);
 		}
 		else 
 		{
 			last = new_active;
 			first = current_active + dir;
 			if ( first < 0 )
-				first += STEPS;
+				first += lights->getNumLights();
 		}
 		printf("pulsing from %i to %i\n", first, last );
 		
@@ -56,11 +54,11 @@ void AnimSeq::update( float elapsed )
 		for ( int i=0; i<count; i++ )
 		{
 			int which = first + dir*i;
-			printf("pulsing %i\n", which%STEPS );
-			lights->pulse( which%STEPS, 1.0 );			
+			printf("pulsing %i\n", which%lights->getNumLights() );
+			lights->pulse( which%lights->getNumLights(), 1.0f, 0.2f );			
 		}
 		// next
-		current_active = new_active%STEPS;
+		current_active = new_active%lights->getNumLights();
 	}
 	while ( anim_pct >= 1 )
 		anim_pct -= 1;

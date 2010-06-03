@@ -3,6 +3,8 @@
 #include "AnimPositionCalibrate.h"
 #include "AnimDelaunay.h"
 #include "AnimStateMachine.h"
+#include "AnimSeq.h"
+#include "StateAnimIdle.h"
 
 
 //--------------------------------------------------------------
@@ -11,7 +13,7 @@ void testApp::setup(){
 	ofSetVerticalSync(true);
 	ofBackground(20,20,20);	
 	ofEnableAlphaBlending();
-	ofSetFrameRate( 60 );
+	ofSetFrameRate( 30 );
 	
 	ofSetLogLevel( OF_LOG_WARNING );
 	
@@ -45,6 +47,7 @@ void testApp::setup(){
 	anim_switcher.addAnim( AnimDelaunay::NAME );
 	anim_switcher.addAnim( AnimPositionCalibrate::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
+	anim_switcher.addAnim( AnimSeq::NAME );
 	
 	current_anim = anim_switcher.currentAnim();
 	
@@ -128,7 +131,7 @@ void testApp::keyPressed  (int key){
 			lights.clear( true );
 			break;
 		case 'p':
-			lights.pulseAll( 0.25 );
+			lights.pulseAll( 1 );
 			break;
 		case 'W':
 		{
@@ -145,6 +148,22 @@ void testApp::keyPressed  (int key){
 			current_anim = anim_switcher.nextAnim();
 			lights.clear();
 			break;
+		
+		case 'b':
+			lights.increaseSmallLightBrightnessFactor();
+			break;
+		case 'B':
+			lights.decreaseSmallLightBrightnessFactor();
+			break;
+		
+		case 'R':
+			ofSeedRandom( 12345 );
+			break;
+		case 'r':
+			StateAnimIdle::should_reset_random = true;
+			
+			break;
+			
 		default:
 			break;
 			

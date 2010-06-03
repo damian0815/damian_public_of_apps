@@ -25,6 +25,8 @@ public:
 	void enter();
 	bool isFinished();
 	
+	static bool should_reset_random;
+	
 private:
 	
 	float timer;

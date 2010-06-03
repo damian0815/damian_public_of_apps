@@ -74,6 +74,7 @@ public:
 	// small lights
 	void increaseSmallLightBrightnessFactor() { small_bright_factor *= 1.1f; }
 	void decreaseSmallLightBrightnessFactor() { small_bright_factor /= 1.1f; }
+	float getSmalLightBrightnessFactor() { return small_bright_factor; }
 	
 	// get delaunay triangulation
 	LightsDelaunay* getDelaunay();
@@ -100,6 +101,11 @@ private:
 	void sendEveryLightLevel( unsigned char board_id, unsigned char data[24] );
 	// latch in
 	void latch( unsigned char board_id=0 /* default all */ );
+
+	// culcalet crc of given data
+	unsigned char calculateCRC( unsigned char* data, int length ) { return updateCRC( data, length, 0 ); };
+	// update current_crc by crc-ing the given data, assumed to be appended
+	unsigned char updateCRC( unsigned char* data, int length, unsigned char current_crc );
 	
 	BufferedSerial* serial;
 	LightsDelaunay* delaunay;

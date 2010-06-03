@@ -11,6 +11,8 @@
 #include "Animation.h"
 #include "SharedData.h"
 
+//#define ALWAYS_THE_SAME
+
 class StateAnimation: public Animation
 {
 public:

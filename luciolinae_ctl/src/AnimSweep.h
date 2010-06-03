@@ -14,7 +14,7 @@
 class AnimSweep : public Animation
 {
 public:
-	AnimSweep(Lights* _lights) : Animation( _lights ) { position_pct = 0; mode = MODE_SWEEP_Y; speed = 0.5f; }
+	AnimSweep(Lights* _lights) : Animation( _lights ) { position_pct = 0; mode = MODE_SWEEP_Y; speed = 2.0f; }
 
 	static const char* NAME;
 	

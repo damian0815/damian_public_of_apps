@@ -130,7 +130,7 @@ void Lights::flush()
 		// if more than 8, best to send all at once
 		if ( counts[i] > 8 )
 		{
-//			printf("compiling every light level data for board %i\n", i);
+			//printf("compiling every light level data for board %i\n", i);
 			unsigned char total_board_data[24];
 			for ( int j=0; j<lights.size(); j++ )
 			{
@@ -158,6 +158,8 @@ void Lights::flush()
 						total_board_data[base_index  ] = (total_board_data[base_index]&0xf0) | (brightness>>8); 
 						total_board_data[base_index+1] = brightness & 0xff;
 					}
+					// clear serial
+					lights[j].resetNeedsSerial();
 				}
 			}
 			//printf("sending every light level data\n");
@@ -166,7 +168,7 @@ void Lights::flush()
 		}
 		else
 		{
-//			printf("sending levels for board %i individually\n", i );
+			//printf("sending levels for board %i individually\n", i );
 			// send lights for this board individually
 			for ( int j=0; j<lights.size(); j++ )
 			{
@@ -223,13 +225,14 @@ void Lights::sendLightLevel( unsigned char board_id, unsigned char light_id, int
 	if ( brightness > 4095 )
 		brightness = 4095;
 	// construct message
-	unsigned char msg[3];
+	unsigned char msg[4];
 	msg[0] = (board_id) | 0x02; // set level
 	msg[1] = (light_id<<4) + (brightness>>8);
 	msg[2] = brightness & 0xff;
+	msg[4] = calculateCRC( msg, 3 );
 	//printf("Lights::sendLightLevel: writing msg %02x %02x %02x\n", msg[0], msg[1], msg[2] );
 	// send msg
-	serial->writeBytes( msg, 3 );
+	serial->writeBytes( msg, 4 );
 	
 }
 
@@ -243,14 +246,15 @@ void Lights::sendPulse( unsigned char board_id, unsigned char light_id, int brig
 	decay = min(255,max(0,(int)decay));
 	
 	// construct message
-	unsigned char msg[4];
+	unsigned char msg[5];
 	msg[0] = (board_id) | 0x03; // pulse
 	msg[1] = (light_id<<4) + (brightness>>8);
 	msg[2] = brightness & 0xff;
 	msg[3] = decay;
+	msg[4] = calculateCRC( msg, 4 );
 	//printf("Lights::sendPulse: writing msg %02x %02x %02x %02x\n", msg[0], msg[1], msg[2], msg[3] );
 	// send msg
-	serial->writeBytes( msg, 4 );
+	serial->writeBytes( msg, 5 );
 }
 
 
@@ -314,6 +318,7 @@ void Lights::clear( bool pummel )
 	// immediate
 	flush();
 	
+	/*
 	if ( pummel )
 	{
 		// write ALL BLACK ALL BLACK ALL BLACK lots of times
@@ -344,7 +349,7 @@ void Lights::clear( bool pummel )
 		msg[1] = 0x00;
 		serial->writeBytes( msg, 2 );
 		serial->endWrite();
-	}
+	}*/
 }
 
 void Lights::draw()
@@ -373,8 +378,14 @@ void Lights::illuminateCircularArea( float x, float y, float area, bool include_
 void Lights::sendEveryLightLevel( unsigned char board_id, unsigned char* data )
 {
 	unsigned char func = FUNC_SET_EVERY | board_id;
+	// calculate crc
+
 	serial->writeBytes( &func, 1 );
 	serial->writeBytes( data, 24 );
+	// write crc
+	unsigned char crc = calculateCRC( &func, 1 );
+	crc = updateCRC( data, 24, crc );
+	serial->writeBytes( &crc, 1 );
 	
 	/*
 	printf(" %02x\n", func );
@@ -449,6 +460,8 @@ void Lights::latch( unsigned char board_id )
 {
 	unsigned char func = FUNC_LATCH | board_id;
 	serial->writeBytes( &func, 1 );
+	unsigned char crc = calculateCRC( &func, 1 );
+	serial->writeBytes( &crc, 1 );
 	// done
 }
 
@@ -511,4 +524,30 @@ void Lights::illuminateRect( float x, float y, float w, float h, float power, bo
 		}
 	}
 }
+
+
+unsigned char Lights::updateCRC( unsigned char* data, int length, unsigned char seed = 0 )
+{
+	for ( int i=0; i<length; i++ )
+	{
+		unsigned char input = data[i];
+		
+		unsigned char feedback;
+		for (unsigned char j=0; j<8; j++)
+		{
+			feedback = ((seed ^ input) & 0x01);
+			if (!feedback) seed >>= 1;
+			else
+			{
+				seed ^= 0x18;
+				seed >>= 1;
+				seed |= 0x80;
+			}
+			input >>= 1;
+		}
+	}
+	
+	return seed;
+}
+
 

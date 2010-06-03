@@ -17,6 +17,9 @@ void StateAnimStartBlip::enter()
 	// choose a big light to blip
 	assert( lights->getNumBigLights() > 0 );
 
+#ifdef ALWAYS_THE_SAME
+	int which_big_light = 0;
+#else
 	int which_big_light = ofRandom( 0, 0.999f*lights->getNumBigLights() );
 	if ( SharedData::getFloat( "blip_target_must_change" ) > 0 )
 	{	
@@ -29,6 +32,7 @@ void StateAnimStartBlip::enter()
 					which_big_light = ofRandom( 0, 0.999f*lights->getNumBigLights() );
 		}
 	}
+#endif
 	
 	int which = lights->getBigLightIndex( which_big_light );
 	SharedData::setFloat( "blip_target", which );

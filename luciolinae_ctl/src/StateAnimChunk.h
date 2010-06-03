@@ -14,7 +14,7 @@
 class StateAnimChunk : public StateAnimation
 {
 public:
-	StateAnimChunk( Lights* _lights ) : StateAnimation( _lights ) {};
+	StateAnimChunk( Lights* _lights ) : StateAnimation( _lights ) { };
 	
 	static const char* NAME;
 	string getName() { return NAME; }
@@ -31,6 +31,6 @@ private:
 	int total_chunks;
 	float chunk_time;
 	float timer;
-	
+	float prev_x, prev_y;
 };
 

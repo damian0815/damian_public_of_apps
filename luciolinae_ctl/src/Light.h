@@ -56,6 +56,7 @@ private:
 	float decay_factor;
 	float last_brightness;
 	float draw_brightness;
+	int needs_count;
 	
 	bool big;
 	float last_set_timer;
