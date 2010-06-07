@@ -48,10 +48,22 @@ class AnimationSwitcher
 public:
 	AnimationSwitcher() { current = 0; }
 	void addAnim( string name ) { anims.push_back( name ); }
+
+	Animation* goToAnim( string name ) { 
+		for ( int i=0; i<anims.size(); i++ ) 
+		{ 
+			if ( anims[i] == name ) 
+			{ 
+				printf("going to anim '%s'\n", name.c_str() ); 
+				current = i; 
+			} 
+			return currentAnim(); 
+		}
+	};
 	
 	Animation* currentAnim() { return AnimationFactory::makeAnimation( anims[current] ); }
-	Animation* nextAnim() { current++; if ( current >= anims.size() ) current = 0 ; return AnimationFactory::makeAnimation( anims[current] ); }
-	Animation* prevAnim() { current--; if ( current < 0 ) current = anims.size()-1; return AnimationFactory::makeAnimation( anims[current] ); }
+	Animation* nextAnim() { current++; if ( current >= anims.size() ) current = 0 ; printf("going to anim '%s'\n", anims[current].c_str() ); return AnimationFactory::makeAnimation( anims[current] ); }
+	Animation* prevAnim() { current--; if ( current < 0 ) current = anims.size()-1; printf("going to anim '%s'\n", anims[current].c_str() ); return AnimationFactory::makeAnimation( anims[current] ); }
 	
 	void draw();
 	

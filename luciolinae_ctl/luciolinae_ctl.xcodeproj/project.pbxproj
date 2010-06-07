@@ -17,6 +17,7 @@
 		2D83940111ABD0630091A5E2 /* StateAnimChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D83940011ABD0630091A5E2 /* StateAnimChunk.cpp */; };
 		2D84293511A402E200A388E1 /* AnimSeq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D84293411A402E200A388E1 /* AnimSeq.cpp */; };
 		2D84293811A4030100A388E1 /* AnimSweep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D84293711A4030100A388E1 /* AnimSweep.cpp */; };
+		2DA3DD4611B83A5F0062CBFF /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3DD4511B83A5F0062CBFF /* ofAppNoWindow.cpp */; };
 		2DA5398311A5382000C21422 /* StateAnimDelaunayOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */; };
 		2DA5398A11A53A8B00C21422 /* DelaunayPulseOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5398911A53A8B00C21422 /* DelaunayPulseOut.cpp */; };
 		2DA53C8111A54E8400C21422 /* DelaunayPulse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA53C8011A54E8400C21422 /* DelaunayPulse.cpp */; };
@@ -52,6 +53,10 @@
 		2DC02D1E11A31807006AFBA9 /* LightsDelaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC02D1D11A31807006AFBA9 /* LightsDelaunay.cpp */; };
 		2DC02D4F11A31A45006AFBA9 /* Delaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC02D4E11A31A45006AFBA9 /* Delaunay.cpp */; };
 		2DC02DA411A32259006AFBA9 /* AnimDelaunay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC02DA311A32259006AFBA9 /* AnimDelaunay.cpp */; };
+		2DC4092911BABC5200D6A288 /* StateAnimSweepOnce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4092811BABC5200D6A288 /* StateAnimSweepOnce.cpp */; };
+		2DC4092C11BABD3E00D6A288 /* StateAnimBlipAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4092B11BABD3E00D6A288 /* StateAnimBlipAll.cpp */; };
+		2DC409DD11BAC71600D6A288 /* untitled.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC409DC11BAC71600D6A288 /* untitled.cpp */; };
+		2DC409E011BAC71B00D6A288 /* StateAnimSweeps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC409DF11BAC71B00D6A288 /* StateAnimSweeps.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -151,6 +156,8 @@
 		2D84293411A402E200A388E1 /* AnimSeq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimSeq.cpp; sourceTree = "<group>"; };
 		2D84293611A4030100A388E1 /* AnimSweep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimSweep.h; sourceTree = "<group>"; };
 		2D84293711A4030100A388E1 /* AnimSweep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimSweep.cpp; sourceTree = "<group>"; };
+		2DA3DD4411B83A5F0062CBFF /* ofAppNoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppNoWindow.h; sourceTree = "<group>"; };
+		2DA3DD4511B83A5F0062CBFF /* ofAppNoWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofAppNoWindow.cpp; sourceTree = "<group>"; };
 		2DA5398111A5382000C21422 /* StateAnimDelaunayOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimDelaunayOut.h; sourceTree = "<group>"; };
 		2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimDelaunayOut.cpp; sourceTree = "<group>"; };
 		2DA5398811A53A8B00C21422 /* DelaunayPulseOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelaunayPulseOut.h; sourceTree = "<group>"; };
@@ -232,6 +239,14 @@
 		2DC02D4E11A31A45006AFBA9 /* Delaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delaunay.cpp; sourceTree = "<group>"; };
 		2DC02DA211A32259006AFBA9 /* AnimDelaunay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimDelaunay.h; sourceTree = "<group>"; };
 		2DC02DA311A32259006AFBA9 /* AnimDelaunay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimDelaunay.cpp; sourceTree = "<group>"; };
+		2DC4092711BABC5200D6A288 /* StateAnimSweepOnce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimSweepOnce.h; sourceTree = "<group>"; };
+		2DC4092811BABC5200D6A288 /* StateAnimSweepOnce.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimSweepOnce.cpp; sourceTree = "<group>"; };
+		2DC4092A11BABD3E00D6A288 /* StateAnimBlipAll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimBlipAll.h; sourceTree = "<group>"; };
+		2DC4092B11BABD3E00D6A288 /* StateAnimBlipAll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimBlipAll.cpp; sourceTree = "<group>"; };
+		2DC409DB11BAC71600D6A288 /* untitled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = untitled.h; sourceTree = "<group>"; };
+		2DC409DC11BAC71600D6A288 /* untitled.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = untitled.cpp; sourceTree = "<group>"; };
+		2DC409DE11BAC71B00D6A288 /* StateAnimSweeps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimSweeps.h; sourceTree = "<group>"; };
+		2DC409DF11BAC71B00D6A288 /* StateAnimSweeps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimSweeps.cpp; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -388,6 +403,8 @@
 		2D2D323E119CA0C1001D76C9 /* System */ = {
 			isa = PBXGroup;
 			children = (
+				2DA54AD611A6158100C21422 /* Util.h */,
+				2DA54AD711A6158100C21422 /* Util.cpp */,
 				2DC02D4D11A31A45006AFBA9 /* Delaunay.h */,
 				2DC02D4E11A31A45006AFBA9 /* Delaunay.cpp */,
 				2D2D2AFA119B239B001D76C9 /* BufferedSerialDummy.h */,
@@ -505,20 +522,26 @@
 		2DA8B6EE11A4699C008B545A /* State Machine */ = {
 			isa = PBXGroup;
 			children = (
-				2D8393FF11ABD0630091A5E2 /* StateAnimChunk.h */,
-				2D83940011ABD0630091A5E2 /* StateAnimChunk.cpp */,
-				2DA54AD611A6158100C21422 /* Util.h */,
-				2DA54AD711A6158100C21422 /* Util.cpp */,
-				2DA5403B11A568C200C21422 /* StateAnimGather.h */,
-				2DA5403C11A568C200C21422 /* StateAnimGather.cpp */,
-				2DA5398111A5382000C21422 /* StateAnimDelaunayOut.h */,
-				2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */,
+				2DC409DE11BAC71B00D6A288 /* StateAnimSweeps.h */,
+				2DC409DF11BAC71B00D6A288 /* StateAnimSweeps.cpp */,
+				2DC409DB11BAC71600D6A288 /* untitled.h */,
+				2DC409DC11BAC71600D6A288 /* untitled.cpp */,
 				2DA8B72E11A46E13008B545A /* StateAnimBlip.h */,
 				2DA8B72F11A46E13008B545A /* StateAnimBlip.cpp */,
-				2DA8B72711A46D33008B545A /* StateAnimStartBlip.h */,
-				2DA8B72811A46D33008B545A /* StateAnimStartBlip.cpp */,
+				2DC4092A11BABD3E00D6A288 /* StateAnimBlipAll.h */,
+				2DC4092B11BABD3E00D6A288 /* StateAnimBlipAll.cpp */,
+				2D8393FF11ABD0630091A5E2 /* StateAnimChunk.h */,
+				2D83940011ABD0630091A5E2 /* StateAnimChunk.cpp */,
+				2DA5398111A5382000C21422 /* StateAnimDelaunayOut.h */,
+				2DA5398211A5382000C21422 /* StateAnimDelaunayOut.cpp */,
+				2DA5403B11A568C200C21422 /* StateAnimGather.h */,
+				2DA5403C11A568C200C21422 /* StateAnimGather.cpp */,
 				2DA8B6FF11A46AC3008B545A /* StateAnimIdle.h */,
 				2DA8B70011A46AC3008B545A /* StateAnimIdle.cpp */,
+				2DA8B72711A46D33008B545A /* StateAnimStartBlip.h */,
+				2DA8B72811A46D33008B545A /* StateAnimStartBlip.cpp */,
+				2DC4092711BABC5200D6A288 /* StateAnimSweepOnce.h */,
+				2DC4092811BABC5200D6A288 /* StateAnimSweepOnce.cpp */,
 				2DA8B6EF11A469E7008B545A /* StateAnimation.h */,
 				2DA8B6F011A469E7008B545A /* StateAnimation.cpp */,
 				2DA8B68711A45E34008B545A /* AnimStateMachine.h */,
@@ -754,6 +777,8 @@
 				2D2D323D119CA0B2001D76C9 /* Dynamics */,
 				2D2D323C119CA0A5001D76C9 /* Animation */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
+				2DA3DD4411B83A5F0062CBFF /* ofAppNoWindow.h */,
+				2DA3DD4511B83A5F0062CBFF /* ofAppNoWindow.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 			);
@@ -970,6 +995,11 @@
 				2DA54A1111A5E79000C21422 /* Breathing.cpp in Sources */,
 				2DA54AD811A6158100C21422 /* Util.cpp in Sources */,
 				2D83940111ABD0630091A5E2 /* StateAnimChunk.cpp in Sources */,
+				2DA3DD4611B83A5F0062CBFF /* ofAppNoWindow.cpp in Sources */,
+				2DC4092911BABC5200D6A288 /* StateAnimSweepOnce.cpp in Sources */,
+				2DC4092C11BABD3E00D6A288 /* StateAnimBlipAll.cpp in Sources */,
+				2DC409DD11BAC71600D6A288 /* untitled.cpp in Sources */,
+				2DC409E011BAC71B00D6A288 /* StateAnimSweeps.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

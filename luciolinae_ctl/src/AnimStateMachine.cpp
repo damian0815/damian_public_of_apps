@@ -15,6 +15,8 @@
 #include "StateAnimDelaunayOut.h"
 #include "StateAnimGather.h"
 #include "StateAnimChunk.h"
+#include "StateAnimSweepOnce.h"
+#include "StateAnimBlipAll.h"
 
 const char* AnimStateMachine::NAME = "StateMachine";
 
@@ -58,13 +60,13 @@ void AnimStateMachine::loadTransitions()
 	transitions["state_blip"].push_back( StateTransitionProbability( "state_idle", 1 ) );
 	transitions["state_blip"].push_back( StateTransitionProbability( "state_blip", 0.1 ) );*/
 
-#ifdef ALWAYS_THE_SAME
+#if defined ALWAYS_THE_SAME
 	addTransition( StateAnimIdle::NAME,			StateAnimStartBlip::NAME, 1 );
 	addTransition( StateAnimStartBlip::NAME,	StateAnimGather::NAME, 0.5f );
 	addTransition( StateAnimGather::NAME,		StateAnimBlip::NAME, 1 );
 	addTransition( StateAnimBlip::NAME,			StateAnimDelaunayOut::NAME, 1.0f );
 	addTransition( StateAnimDelaunayOut::NAME,	StateAnimIdle::NAME, 1 );
-#else
+#elif defined DARK
 	// blip
 	addTransition( StateAnimIdle::NAME,			StateAnimStartBlip::NAME, 1 );
 	addTransition( StateAnimStartBlip::NAME,	StateAnimBlip::NAME, 0.3f );
@@ -80,6 +82,12 @@ void AnimStateMachine::loadTransitions()
 	addTransition( StateAnimIdle::NAME,			StateAnimChunk::NAME, 0.5f );
 	addTransition( StateAnimChunk::NAME,		StateAnimStartBlip::NAME, 0.3f );
 	addTransition( StateAnimChunk::NAME,		StateAnimIdle::NAME, 0.6f );
+#else // light
+	addTransition( StateAnimIdle::NAME,			StateAnimSweepOnce::NAME, 1.0f );
+	addTransition( StateAnimSweepOnce::NAME,	StateAnimIdle::NAME, 0.3f );
+	addTransition( StateAnimSweepOnce::NAME,	StateAnimIdle::NAME, 1.0f );
+	addTransition( StateAnimSweepOnce::NAME,	StateAnimBlipAll::NAME, 0.5f );
+	
 #endif
 	
 	// normalise probabilities

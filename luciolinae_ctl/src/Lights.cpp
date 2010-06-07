@@ -1,4 +1,5 @@
 /*
+ 
  *  Lights.cpp
  *  serialExample
  *
@@ -54,7 +55,7 @@ void Lights::setup( BufferedSerial* _serial )
 
 void Lights::setup( BufferedSerial* _serial, ofxXmlSettings& data )
 {
-	// ** REMEMBER TO DO THE OTHER SETUP
+	// ** REMEMBER TO EDIT THE OTHER SETUP
 	serial = _serial;	
 	
 	data.pushTag("lights");
@@ -72,6 +73,7 @@ void Lights::setup( BufferedSerial* _serial, ofxXmlSettings& data )
 			big_lights.push_back( i );
 		}
 	}
+	printf("loaded %i lights\n", num_lights );
 	std::sort( big_lights.begin(), big_lights.end() );
 	data.popTag();
 	
@@ -107,15 +109,28 @@ void Lights::update( float elapsed )
 	for ( int i=0;i<lights.size(); i++ )
 		lights[i].update(elapsed);
 	
-	
-	// then send serial again if necessary
-	flush();
 }
 
 void Lights::flush()
 {
 	//printf("flush called\n");
 	serial->beginWrite();
+	
+	// limit total current;
+	float total_light = 0;
+	for ( int i=0; i<lights.size(); i++ )
+	{
+		float bright = lights[i].getBrightness();
+		total_light += bright*bright;
+	}
+	
+	// 15A max current
+	float bright_factor = 1;
+	if ( total_light > 15.0 )
+	{
+		bright_factor = sqrtf( 15.0f/total_light );
+	}
+	
 	vector<int> counts;
 	// fill with 0
 	counts.insert( counts.begin(), num_boards, 0 );
@@ -143,6 +158,7 @@ void Lights::flush()
 					float bright = lights[j].getBrightness();
 					if ( !lights[j].isBig() )
 						bright *= small_bright_factor;
+					bright *= bright_factor;
 					bright *= bright;
 					unsigned int brightness = min(4095,max(0,int(bright*4096)));
 					//printf("  adding light %02x:%02x brightness %03x\n", lights[j].getBoardId(), lights[j].getLightId(), brightness );
@@ -178,6 +194,7 @@ void Lights::flush()
 					float bright = lights[j].getBrightness();
 					if ( !lights[j].isBig() )
 						bright *= small_bright_factor;
+					bright *= bright_factor;
 					bright *= bright;
 					int brightness = bright*4096;
 					sendLightLevel( lights[j].getBoardId(), lights[j].getLightId(), brightness );
@@ -318,7 +335,6 @@ void Lights::clear( bool pummel )
 	// immediate
 	flush();
 	
-	/*
 	if ( pummel )
 	{
 		// write ALL BLACK ALL BLACK ALL BLACK lots of times
@@ -330,10 +346,11 @@ void Lights::clear( bool pummel )
 			sendEveryLightLevel( (j+1)<<4, black );			
 			for ( int i=0; i<4; i++ )
 			{
-				unsigned char msg[2];
+				unsigned char msg[3];
 				msg[0] = ((unsigned char)((j+1)<<4))|0x01;
 				msg[1] = 0x00;
-				serial->writeBytes( msg, 2 );
+				msg[2] = calculateCRC( msg, 2 );
+				serial->writeBytes( msg, 3 );
 				
 			}
 			latch();
@@ -344,12 +361,14 @@ void Lights::clear( bool pummel )
 	{
 		serial->beginWrite();
 		// to be sure
-		unsigned char msg[2];
+		unsigned char msg[3];
 		msg[0] = 0x01;
 		msg[1] = 0x00;
-		serial->writeBytes( msg, 2 );
+		msg[2] = calculateCRC( msg, 2 );
+		serial->writeBytes( msg, 3 );
+		latch();
 		serial->endWrite();
-	}*/
+	}
 }
 
 void Lights::draw()

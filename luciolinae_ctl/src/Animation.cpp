@@ -22,6 +22,9 @@
 #include "StateAnimGather.h"
 #include "StateAnimDelaunayOut.h"
 #include "StateAnimChunk.h"
+#include "StateAnimSweepOnce.h"
+#include "StateAnimBlipAll.h"
+
 
 
 
@@ -63,6 +66,11 @@ Animation* AnimationFactory::makeAnimation( string name )
 		else if ( name == StateAnimGather::NAME )
 			cache[name] = new StateAnimGather( lights );
 
+		else if ( name == StateAnimSweepOnce::NAME )
+			cache[name] = new StateAnimSweepOnce( lights );
+		else if ( name == StateAnimBlipAll::NAME )
+			cache[name] = new StateAnimBlipAll( lights );
+		
 		else if ( name == StateAnimChunk::NAME )
 			cache[name] = new StateAnimChunk( lights );
 		

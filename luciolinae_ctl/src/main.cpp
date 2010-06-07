@@ -1,6 +1,7 @@
 #include "ofMain.h"
 #include "testApp.h"
 #include "ofAppGlutWindow.h"
+#include "ofAppNoWindow.h"
 
 
 void delayUs( unsigned long us )
@@ -18,7 +19,11 @@ void delayUs( unsigned long us )
 //========================================================================
 int main( ){
 
-    ofAppGlutWindow window;
+#ifdef NO_WINDOW
+    ofAppNoWindow window;
+#else
+	ofAppGlutWindow window;
+#endif
 	ofSetupOpenGL(&window, 640,640, OF_WINDOW);			// <-------- setup the GL context
 
 	// this kicks off the running of my app

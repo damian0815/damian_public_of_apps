@@ -15,6 +15,10 @@ void testApp::setup(){
 	ofEnableAlphaBlending();
 	ofSetFrameRate( 30 );
 	
+#ifdef NO_WINDOW
+	ofSetDataPathRoot( "data/" );
+#endif
+	
 	ofSetLogLevel( OF_LOG_WARNING );
 	
 	serial.enumerateDevices();
@@ -40,7 +44,10 @@ void testApp::setup(){
 	if ( data.loadFile( "settings.xml" ) )
 		lights.setup( buffered_serial, data );
 	else
+	{
+		ofLog( OF_LOG_ERROR, "couldn't load data/settings.xml");
 		lights.setup( buffered_serial );
+	}
 
 	AnimationFactory::useLights( &lights );
 	anim_switcher.addAnim( AnimSweep::NAME );
@@ -48,8 +55,8 @@ void testApp::setup(){
 	anim_switcher.addAnim( AnimPositionCalibrate::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSeq::NAME );
-	
-	current_anim = anim_switcher.currentAnim();
+
+	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
 	
 	
 }

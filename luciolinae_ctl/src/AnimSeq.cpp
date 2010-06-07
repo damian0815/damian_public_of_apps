@@ -30,9 +30,9 @@ void AnimSeq::update( float elapsed )
 	if ( new_active != current_active )
 	{
 		// we might jump more than one
-		int dir = (real_speed>=0) ? 1:-1 ;
+		int dir = (real_speed>=0) ? 1:-1;
 		int first, last;
-		printf("current_active %2i, new_active %2i, dir %i; ", current_active, new_active, dir );
+		//printf("current_active %2i, new_active %2i, dir %i; ", current_active, new_active, dir );
 		// have we gone full circle?
 		if ( abs(new_active-current_active)>lights->getNumLights() )
 		{
@@ -47,15 +47,15 @@ void AnimSeq::update( float elapsed )
 			if ( first < 0 )
 				first += lights->getNumLights();
 		}
-		printf("pulsing from %i to %i\n", first, last );
+		//printf("pulsing from %i to %i\n", first, last );
 		
 		// pulse the new one(s)
 		int count = abs(last-first)+1;
 		for ( int i=0; i<count; i++ )
 		{
 			int which = first + dir*i;
-			printf("pulsing %i\n", which%lights->getNumLights() );
-			lights->pulse( which%lights->getNumLights(), 1.0f, 0.2f );			
+			//printf("pulsing %i\n", which%lights->getNumLights() );
+			lights->pulse( which%lights->getNumLights(), 1.0f );			
 		}
 		// next
 		current_active = new_active%lights->getNumLights();

@@ -37,13 +37,13 @@ void AnimSweep::update( float elapsed )
 	if ( mode == MODE_SWEEP_Y )
 	{
 		x = 0;
-		y = position_pct;
+		y = position_pct*1.2f-0.1f;
 		dx = 1;
 		dy = 0;
 	}
 	else if ( mode == MODE_SWEEP_X )
 	{
-		x = position_pct;
+		x = position_pct*1.2f-0.1f;
 		y = 0;
 		dx = 0;
 		dy = 1;
@@ -51,7 +51,7 @@ void AnimSweep::update( float elapsed )
 	else /* MODE_SWEEP_DIAG */ 
 	{
 		x = 0;
-		y = position_pct*2;
+		y = (position_pct*1.2f-0.1f)*2;
 		dx = sqrtf( 2 );
 		dy = -sqrtf( 2 );
 	}
