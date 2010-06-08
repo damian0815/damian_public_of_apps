@@ -10,6 +10,8 @@
 #pragma once
 class Lights;
 
+#include <assert.h>
+
 class DelaunayPulse
 {
 public:

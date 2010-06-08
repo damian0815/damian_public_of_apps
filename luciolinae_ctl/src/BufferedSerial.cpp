@@ -9,6 +9,8 @@
 
 #include "BufferedSerial.h"
 
+#include <assert.h>
+
 static const int CHUNKSIZE=4;
 static const int BLOCKSIZE=128; // at 9600 baud this is 8 blocks/second; one ack sent per block
 static unsigned char ACK=0x7f;
