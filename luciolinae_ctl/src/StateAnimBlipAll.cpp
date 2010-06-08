@@ -33,12 +33,7 @@ void StateAnimBlipAll::update( float elapsed )
 		ofxOscMessage m;
 		m.setAddress("/blip_all/trigger");
 		Osc::sendMessage( m );
-		timer = SharedData::getFloat( "blipall_timer" );
-		if ( timer < 0 )
-		{
-			timer = squaredRandom( 0.1f, 0.6f ); 
-			SharedData::setFloat( "blipall_timer", timer );
-		}
+		timer = 0.3f;
 		blipped = true;
 	}	
 }

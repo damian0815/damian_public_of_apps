@@ -17,6 +17,7 @@
 #include "StateAnimChunk.h"
 #include "StateAnimSweepOnce.h"
 #include "StateAnimBlipAll.h"
+#include "StateAnimSeq.h"
 
 const char* AnimStateMachine::NAME = "StateMachine";
 
@@ -85,10 +86,13 @@ void AnimStateMachine::loadTransitions()
 #else // light
 	addTransition( StateAnimIdle::NAME,			StateAnimSweepOnce::NAME, 1.0f );
 	addTransition( StateAnimSweepOnce::NAME,	StateAnimIdle::NAME, 0.3f );
-	addTransition( StateAnimSweepOnce::NAME,	StateAnimSweepOnce::NAME, 1.0f );
+	addTransition( StateAnimSweepOnce::NAME,	StateAnimSweepOnce::NAME, 0.8f );
 	addTransition( StateAnimSweepOnce::NAME,	StateAnimBlipAll::NAME, 0.5f );
 	addTransition( StateAnimBlipAll::NAME,		StateAnimIdle::NAME, 1 );
 	addTransition( StateAnimBlipAll::NAME,		StateAnimBlipAll::NAME, 1 );
+	addTransition( StateAnimBlipAll::NAME,		StateAnimSeq::NAME, 0.7f );
+	addTransition( StateAnimSeq::NAME, StateAnimIdle::NAME, 1 );
+	addTransition( StateAnimSeq::NAME, StateAnimBlipAll::NAME, 1 );
 #endif
 
 	

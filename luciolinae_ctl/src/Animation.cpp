@@ -24,6 +24,7 @@
 #include "StateAnimChunk.h"
 #include "StateAnimSweepOnce.h"
 #include "StateAnimBlipAll.h"
+#include "StateAnimSeq.h"
 
 
 
@@ -73,7 +74,10 @@ Animation* AnimationFactory::makeAnimation( string name )
 		
 		else if ( name == StateAnimChunk::NAME )
 			cache[name] = new StateAnimChunk( lights );
-		
+
+		else if ( name == StateAnimSeq::NAME )
+			cache[name] = new StateAnimSeq( lights );
+
 		/*
 		else if ( name == StateAnimIdle::NAME )
 			cache[name] = new StateAnimIdle( lights );*/
