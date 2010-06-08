@@ -29,7 +29,12 @@ public:
 	
 	void enter() { 
 		blipped = false;
-		timer = 0; 
+		timer = SharedData::getFloat( "blipall_timer" );
+		if ( timer < 0 )
+		{
+			timer = squaredRandom( 0.1f, 0.6f ); 
+			SharedData::setFloat( "blipall_timer", timer );
+		}
 	}
 	bool isFinished() { return blipped && timer < 0; }
 	

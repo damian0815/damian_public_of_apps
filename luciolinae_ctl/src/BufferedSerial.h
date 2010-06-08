@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include <assert.h>
 
 extern void delayUs( unsigned long us );
 
@@ -34,7 +35,7 @@ protected:
 	
 	int baudrate;
 	int bytes_written;
-	//float baud_timer;
+	float baud_timer;
 	
 	
 };

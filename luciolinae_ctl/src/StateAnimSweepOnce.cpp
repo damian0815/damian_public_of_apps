@@ -18,12 +18,13 @@ void StateAnimSweepOnce::enter()
 {
 	finished = false;
 	pos = 0;
-	speed = squaredRandom( 10.0f, 20.0f );
+	speed = squaredRandom( 1.0f, 2.0f );
 	// sometimes we will abort early
-	endpoint = ofRandomuf();
+	/*endpoint = ofRandomuf();
 	endpoint *= endpoint;
 	endpoint *= endpoint;
-	endpoint = 1.0f-endpoint;
+	endpoint = 1.0f-endpoint;*/
+	endpoint = 1.0f;
 	
 	float sweep_dir_rand = ofRandomuf();
 	if ( sweep_dir_rand <= 0.7f )
@@ -56,6 +57,8 @@ void StateAnimSweepOnce::update( float elapsed )
 			pos_pct -= 0.1f;
 			static const float ROOT_2 = sqrtf( 2.0f );
 			float power = (1-(new_pos-i)/0.5f);
+			power = max(0.0f,min(1.0f,power));
+			power *= 0.3f;
 			if ( sweep_dir == SWEEP_X )
 				lights->illuminateCorridor( pos_pct, 0, 0, 1, power, 0.1f );
 			else if ( sweep_dir == SWEEP_Y )

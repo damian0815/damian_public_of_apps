@@ -20,7 +20,7 @@ static unsigned char ACK=0x7f;
 void BufferedSerial::setup( ofSerial* _serial , int baud )
 {
 	baudrate = baud;
-//	baud_timer = 0;
+	baud_timer = 0;
 	bytes_written = 0;
 	serial = _serial;
 	sent_this_block = 0;
@@ -202,13 +202,13 @@ void BufferedSerial::endWrite()
 
 void BufferedSerial::update( float elapsed )
 {
-	/*
 	baud_timer += elapsed;
 	
 	if ( bytes_written > 1024 )
 	{
 		// maintain baudrate
 		float time_should_have_taken = (float(bytes_written)*10)/float(baudrate);
+		time_should_have_taken *= 1.1f;
 		float time_actually_took = baud_timer;
 		// sleep if we have > 20ms lag
 		if ( time_should_have_taken-time_actually_took > 0.02f )
@@ -221,5 +221,5 @@ void BufferedSerial::update( float elapsed )
 			baud_timer -= (float(128)*10)/float(baudrate);
 			bytes_written -= 128;
 		}
-	}*/
+	}
 }	

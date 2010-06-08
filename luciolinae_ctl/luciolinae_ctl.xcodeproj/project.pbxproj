@@ -56,6 +56,7 @@
 		2DC4092911BABC5200D6A288 /* StateAnimSweepOnce.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4092811BABC5200D6A288 /* StateAnimSweepOnce.cpp */; };
 		2DC4092C11BABD3E00D6A288 /* StateAnimBlipAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4092B11BABD3E00D6A288 /* StateAnimBlipAll.cpp */; };
 		2DC409E011BAC71B00D6A288 /* StateAnimSweeps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC409DF11BAC71B00D6A288 /* StateAnimSweeps.cpp */; };
+		2DC40EF111BE7A3100D6A288 /* StateAnimSeq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC40EF011BE7A3100D6A288 /* StateAnimSeq.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -244,6 +245,8 @@
 		2DC4092B11BABD3E00D6A288 /* StateAnimBlipAll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimBlipAll.cpp; sourceTree = "<group>"; };
 		2DC409DE11BAC71B00D6A288 /* StateAnimSweeps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimSweeps.h; sourceTree = "<group>"; };
 		2DC409DF11BAC71B00D6A288 /* StateAnimSweeps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimSweeps.cpp; sourceTree = "<group>"; };
+		2DC40EEF11BE7A3100D6A288 /* StateAnimSeq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimSeq.h; sourceTree = "<group>"; };
+		2DC40EF011BE7A3100D6A288 /* StateAnimSeq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimSeq.cpp; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -519,8 +522,6 @@
 		2DA8B6EE11A4699C008B545A /* State Machine */ = {
 			isa = PBXGroup;
 			children = (
-				2DC409DE11BAC71B00D6A288 /* StateAnimSweeps.h */,
-				2DC409DF11BAC71B00D6A288 /* StateAnimSweeps.cpp */,
 				2DA8B72E11A46E13008B545A /* StateAnimBlip.h */,
 				2DA8B72F11A46E13008B545A /* StateAnimBlip.cpp */,
 				2DC4092A11BABD3E00D6A288 /* StateAnimBlipAll.h */,
@@ -533,10 +534,14 @@
 				2DA5403C11A568C200C21422 /* StateAnimGather.cpp */,
 				2DA8B6FF11A46AC3008B545A /* StateAnimIdle.h */,
 				2DA8B70011A46AC3008B545A /* StateAnimIdle.cpp */,
+				2DC40EEF11BE7A3100D6A288 /* StateAnimSeq.h */,
+				2DC40EF011BE7A3100D6A288 /* StateAnimSeq.cpp */,
 				2DA8B72711A46D33008B545A /* StateAnimStartBlip.h */,
 				2DA8B72811A46D33008B545A /* StateAnimStartBlip.cpp */,
 				2DC4092711BABC5200D6A288 /* StateAnimSweepOnce.h */,
 				2DC4092811BABC5200D6A288 /* StateAnimSweepOnce.cpp */,
+				2DC409DE11BAC71B00D6A288 /* StateAnimSweeps.h */,
+				2DC409DF11BAC71B00D6A288 /* StateAnimSweeps.cpp */,
 				2DA8B6EF11A469E7008B545A /* StateAnimation.h */,
 				2DA8B6F011A469E7008B545A /* StateAnimation.cpp */,
 				2DA8B68711A45E34008B545A /* AnimStateMachine.h */,
@@ -994,6 +999,7 @@
 				2DC4092911BABC5200D6A288 /* StateAnimSweepOnce.cpp in Sources */,
 				2DC4092C11BABD3E00D6A288 /* StateAnimBlipAll.cpp in Sources */,
 				2DC409E011BAC71B00D6A288 /* StateAnimSweeps.cpp in Sources */,
+				2DC40EF111BE7A3100D6A288 /* StateAnimSeq.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
