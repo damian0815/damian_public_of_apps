@@ -50,10 +50,10 @@ void testApp::setup(){
 	}
 
 	AnimationFactory::useLights( &lights );
+	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSweep::NAME );
 	anim_switcher.addAnim( AnimDelaunay::NAME );
 	anim_switcher.addAnim( AnimPositionCalibrate::NAME );
-	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSeq::NAME );
 
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );

@@ -192,9 +192,11 @@ void BufferedSerial::endWrite()
 	
 	//serial->flush( /*in*/false, /*out*/true );
 	// wait until the block has been sent
-	if ( bytes_written > 32 )
+	/*if ( bytes_written > 32 )
+	{
 		serial->drain();
-	bytes_written = 0;
+		bytes_written = 0;
+	}*/
 }
 
 
