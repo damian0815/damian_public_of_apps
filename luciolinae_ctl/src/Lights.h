@@ -70,6 +70,9 @@ public:
 	// get the big light index for the given light index, or -1 if this isn't a big light
 	int getLightIndexForBig( int i ) const;
 	void toggleLightIsBig( int id );
+	
+	// groups
+	void toggleGroupMembership( int id, int group_id ) {};
 
 	// small lights
 	void increaseSmallLightBrightnessFactor() { small_bright_factor *= 1.1f; }

@@ -8,6 +8,7 @@
  */
 
 #include "StateAnimIdle.h"
+#include "Util.h"
 
 const char* StateAnimIdle::NAME = "state_idle";
 bool StateAnimIdle::should_reset_random = false;
@@ -18,7 +19,8 @@ void StateAnimIdle::enter()
 	ofSeedRandom( 12345 );
 #endif
 	// set a random timer
-	timer = ofRandom( 2.0f, 8.0f );
+	timer = squaredRandom( 2.0f, 20.0f );
+	SharedData::setFloat( "blipall_timer", -1.0f );
 }
 
 

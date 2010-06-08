@@ -37,6 +37,7 @@ private:
 	float position_pct;
 
 	int current_id;
+	int current_group;
 	float phase;
 	
 };

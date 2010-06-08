@@ -74,6 +74,12 @@ void AnimSweep::keyPressed( int k )
 		case 'z':
 			mode = MODE_SWEEP_DIAG;
 			break;
+		case 's':
+			speed *= 1.2f;
+			break;
+		case 'S':
+			speed /= 1.2f;
+			break;
 			
 		default:
 			break;

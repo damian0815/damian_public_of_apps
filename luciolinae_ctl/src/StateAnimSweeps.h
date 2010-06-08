@@ -8,5 +8,6 @@
  */
 
 #define SWEEP_X 0
-#define SWEEP_Y 0
+#define SWEEP_Y 1
+#define SWEEP_DIAG 2
 

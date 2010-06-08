@@ -17,6 +17,7 @@ AnimPositionCalibrate::AnimPositionCalibrate( Lights* _lights )
 {
 	position_pct = 0;
 	current_id = 0;
+	current_group = 0;
 	mode = MODE_SWEEP_Y;
 	phase = 0;
 }
@@ -68,11 +69,18 @@ void AnimPositionCalibrate::keyPressed( int k )
 		case 'z':
 			mode = MODE_SWEEP_DIAG;
 			break;
-			
+		case 'g':
+			if ( current_group != 0 )
+				lights->toggleGroupMembership( current_id, current_group );
+			break;
 		default:
 			break;
-			
 	}			
+	if ( k >= '0' && k <= '9' )
+	{
+		current_group = k-'0';
+	}
+	
 	
 }
 
@@ -114,6 +122,9 @@ void AnimPositionCalibrate::draw()
 	}
 	
 	lights->drawIlluminateCorridor( x, y, dx, dy, 0.1f, 0.1f );
+	
+/*	if ( current_group != 0 )
+		lights->drawGroup( 0, 0.1f );*/
 
 	// draw current light highlight
 	const Light& current_light = lights->getLight( current_id );

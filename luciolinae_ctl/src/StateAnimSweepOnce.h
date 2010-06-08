@@ -24,7 +24,7 @@ public:
 	// all work happens here
 	void enter();
 	// immediately exit
-	bool isFinished() { return pos > 1.1f; }
+	bool isFinished() { return pos > endpoint; }
 	
 	// update
 	void update( float elapsed );
@@ -32,7 +32,10 @@ public:
 
 	
 private:
+	
+	float endpoint;
 
+	bool reverse;
 	bool finished;
 	float pos;
 	float speed;

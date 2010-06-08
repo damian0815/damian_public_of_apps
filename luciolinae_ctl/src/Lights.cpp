@@ -73,6 +73,13 @@ void Lights::setup( BufferedSerial* _serial, ofxXmlSettings& data )
 			big_lights.push_back( i );
 		}
 	}
+//	groups.resize( 10 );
+/*	int num_groups = data.getNumTags( "group" );
+	for ( int i=0; i<10; i++ ) 
+	{
+		data.pushTag
+	}*/
+	
 	printf("loaded %i lights\n", num_lights );
 	std::sort( big_lights.begin(), big_lights.end() );
 	data.popTag();

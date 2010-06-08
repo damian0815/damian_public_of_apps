@@ -85,10 +85,12 @@ void AnimStateMachine::loadTransitions()
 #else // light
 	addTransition( StateAnimIdle::NAME,			StateAnimSweepOnce::NAME, 1.0f );
 	addTransition( StateAnimSweepOnce::NAME,	StateAnimIdle::NAME, 0.3f );
-	addTransition( StateAnimSweepOnce::NAME,	StateAnimIdle::NAME, 1.0f );
+	addTransition( StateAnimSweepOnce::NAME,	StateAnimSweepOnce::NAME, 1.0f );
 	addTransition( StateAnimSweepOnce::NAME,	StateAnimBlipAll::NAME, 0.5f );
-	
+	addTransition( StateAnimBlipAll::NAME,		StateAnimIdle::NAME, 1 );
+	addTransition( StateAnimBlipAll::NAME,		StateAnimBlipAll::NAME, 1 );
 #endif
+
 	
 	// normalise probabilities
 	float total_p = 0;

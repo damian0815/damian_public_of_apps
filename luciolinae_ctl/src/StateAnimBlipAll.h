@@ -29,7 +29,7 @@ public:
 	
 	void enter() { 
 		blipped = false;
-		timer = squaredRandom( 0.3f, 0.7f ); 
+		timer = 0; 
 	}
 	bool isFinished() { return blipped && timer < 0; }
 	

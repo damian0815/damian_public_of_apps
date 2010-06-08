@@ -96,25 +96,30 @@ void Light::update(float elapsed )
 
 void Light::pulse( float max_bright, /*float _decay_factor*/ float end_brightness )
 {
+	if ( int(max_bright*4096) != int(brightness*4096) )
+		needs_count =2 ;
 	if ( max_bright > brightness )
 	{
 		brightness = max_bright;
 		last_set_timer = 0;
 	}
 	
+	
 	target_brightness = end_brightness;
-	needs_count =2 ;
 }
 
 void Light::set( float bright ) 
 {
+	if ( int(bright*4096) != int(brightness*4096) )
+	{
+		if ( bright == 0 )
+			needs_count = 3;
+		else	
+			needs_count = 2;
+	}
 	brightness = bright;
 	target_brightness = bright;
 	last_set_timer = 0;
-	if ( bright == 0 )
-		needs_count = 3;
-	else
-		needs_count = 2;
 }
 
 bool Light::needsSerial() const
