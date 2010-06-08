@@ -78,7 +78,7 @@ void Light::update(float elapsed )
 //			printf("updating light %x:%x : was %8.6f ", board_id, light_id, brightness );
 		brightness += decay_factor*elapsed * (target_brightness-brightness);
 		brightness = max(0.0f,min(1.0f,brightness));
-		if ( brightness-target_brightness < FLOAT_STEP_SIZE )
+		if ( fabsf(brightness-target_brightness) < FLOAT_STEP_SIZE )
 			needs_count = 3;
 		else
 			needs_count = 2;
@@ -86,7 +86,7 @@ void Light::update(float elapsed )
 //		if ( light_id == 0x0a && board_id == 0x10 )
 //			printf("now %8.6f (powf %8.6f)\n", brightness, powf(decay_factor, elapsed) );
 	}
-	else
+	else if ( fabsf(brightness-target_brightness)>=FLOAT_STEP_SIZE )
 	{
 		brightness = target_brightness;
 		needs_count = 2;

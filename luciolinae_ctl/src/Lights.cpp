@@ -152,7 +152,7 @@ void Lights::flush()
 		// if more than 8, best to send all at once
 		if ( counts[i] > 8 )
 		{
-			//printf("compiling every light level data for board %i\n", i);
+			printf("compiling every light level data for board %i\n", i);
 			unsigned char total_board_data[24];
 			for ( int j=0; j<lights.size(); j++ )
 			{
@@ -191,7 +191,7 @@ void Lights::flush()
 		}
 		else
 		{
-			//printf("sending levels for board %i individually\n", i );
+			printf("sending levels for board %i individually\n", i );
 			// send lights for this board individually
 			for ( int j=0; j<lights.size(); j++ )
 			{
@@ -253,7 +253,7 @@ void Lights::sendLightLevel( unsigned char board_id, unsigned char light_id, int
 	msg[0] = (board_id) | 0x02; // set level
 	msg[1] = (light_id<<4) + (brightness>>8);
 	msg[2] = brightness & 0xff;
-	msg[4] = calculateCRC( msg, 3 );
+	msg[3] = calculateCRC( msg, 3 );
 	//printf("Lights::sendLightLevel: writing msg %02x %02x %02x\n", msg[0], msg[1], msg[2] );
 	// send msg
 	serial->writeBytes( msg, 4 );
