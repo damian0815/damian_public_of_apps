@@ -3,6 +3,7 @@
 
 
 #include "ofMain.h"
+#include "IKchain.h"
 
 class testApp : public ofBaseApp{
 
@@ -19,6 +20,11 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 
+	
+private:
+	
+	IKChain chain;
+	
 };
 
 #endif
