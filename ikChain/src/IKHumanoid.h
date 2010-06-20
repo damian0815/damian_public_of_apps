@@ -35,6 +35,7 @@ public:
 	
 	// draw
 	void draw( int x, int y );
+	void dump();
 	
 	// how many bones?
 	int getNumBones( Component which ) { return getBonesFor( which ).size(); }
@@ -58,17 +59,18 @@ private:
 	/// returns a vector of (bones.size()+1) 2d coordinates;
 	/// result[0] is the root pos
 	/// result[bones.size()] is the last bone's endpoint
-	vector<ofxVec2f> toCartesianSpace( Component which );
+	vector<ofxVec2f> toCartesianSpace( Component which, float start_angle=0.0f );
 	
 	/// update the bones[] vector from the given bone positions
 	/// doesn't update or check lengths
-	void fromCartesianSpace( Component which, vector<ofxVec2f>& bone_positions );
+	void fromCartesianSpace( Component which, vector<ofxVec2f>& bone_positions, float start_angle=0.0f );
 	
 	
 	/// solve a simple chain
 	void solveSimpleChain(const vector<IKBone>& bones, 
 						  vector<ofxVec2f>& bone_positions, 
-						  const ofxVec2f& target_pos );
+						  const ofxVec2f& target_pos,
+						  bool set_target );
 	
 	//ofxVec3f root_pos;
 	//ofxVec3f target_pos,

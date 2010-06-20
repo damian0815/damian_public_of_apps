@@ -10,11 +10,12 @@
 #pragma once
 
 //#include "ofxVectorMath.h"
+#include "ofMain.h"
 
 class IKBone
 {
 public:
-	IKBone() { length = 1; angle = 0; weight_centre = 0.5f; };
+	IKBone() { length = 1; angle = 0; weight_centre = 0.5f; setRestAngle(0); };
 
 	// weight_centre determines which end of the bone moves:
 	// 0   = the start (==parent link) only 
@@ -23,6 +24,9 @@ public:
 	IKBone( float _length, float _angle, float _weight_centre )
 		: length(_length), angle(_angle), weight_centre(_weight_centre)
 		{};
+	/// set rest angle and extension in either direction. 
+	void setRestAngle( float a, float min = -PI/2, float max = PI/2 ) 
+		{ rest_angle = a; min_angle = a+min; max_angle=a+max; }
 
 	float getAngle() const { return angle; }
 	float getLength() const { return length; }
@@ -31,10 +35,15 @@ public:
 	void setLength( float l ) { length = l; }
 	void setWeightCentre( float wc ) { weight_centre = wc; }
 	
+	void constrainAngle();
+	
 private:
 	
 	
 	float length, weight_centre;
 	float angle;
+	float rest_angle;
+	float min_angle;
+	float max_angle;
 
 };

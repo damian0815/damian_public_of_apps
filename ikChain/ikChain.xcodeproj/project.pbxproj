@@ -12,6 +12,7 @@
 		2DC2FFCD11CE36440068E5C4 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2FFC011CE36440068E5C4 /* ofxMatrix3x3.cpp */; };
 		2DC2FFCE11CE36440068E5C4 /* ofxMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2FFC211CE36440068E5C4 /* ofxMatrix4x4.cpp */; };
 		2DC2FFCF11CE36440068E5C4 /* ofxQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2FFC711CE36440068E5C4 /* ofxQuaternion.cpp */; };
+		2DCEE8C511CE848600047601 /* IKHumanoid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DCEE8C411CE848600047601 /* IKHumanoid.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -100,6 +101,8 @@
 		2DC2FFCA11CE36440068E5C4 /* ofxVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVec3f.h; sourceTree = "<group>"; };
 		2DC2FFCB11CE36440068E5C4 /* ofxVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVec4f.h; sourceTree = "<group>"; };
 		2DC2FFCC11CE36440068E5C4 /* ofxVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVectorMath.h; sourceTree = "<group>"; };
+		2DCEE8C311CE848600047601 /* IKHumanoid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IKHumanoid.h; sourceTree = "<group>"; };
+		2DCEE8C411CE848600047601 /* IKHumanoid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IKHumanoid.cpp; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -121,7 +124,7 @@
 		E45BE9770E8CC7DD009D7055 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		E45BE9790E8CC7DD009D7055 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		E4B69B5B0A3A1756003C02F2 /* emptyExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = emptyExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B69B5B0A3A1756003C02F2 /* emptyExampleDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = emptyExampleDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = testApp.cpp; path = src/testApp.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
@@ -394,7 +397,7 @@
 			isa = PBXGroup;
 			children = (
 				2DC2FFBB11CE36300068E5C4 /* addons */,
-				E4B69B5B0A3A1756003C02F2 /* emptyExample.app */,
+				E4B69B5B0A3A1756003C02F2 /* emptyExampleDebug.app */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4C2422310CC54B6004149E2 /* openFrameworks */,
@@ -405,6 +408,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2DCEE8C311CE848600047601 /* IKHumanoid.h */,
+				2DCEE8C411CE848600047601 /* IKHumanoid.cpp */,
 				2D61A28A11CBC5C000BAB5DE /* IKbone.h */,
 				2D61A28B11CBC5C000BAB5DE /* IKbone.cpp */,
 				2D61A28511CBC4F600BAB5DE /* IKchain.h */,
@@ -519,7 +524,7 @@
 			);
 			name = emptyExample;
 			productName = myOFApp;
-			productReference = E4B69B5B0A3A1756003C02F2 /* emptyExample.app */;
+			productReference = E4B69B5B0A3A1756003C02F2 /* emptyExampleDebug.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -527,7 +532,7 @@
 /* Begin PBXProject section */
 		E4B69B4C0A3A1720003C02F2 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "emptyExample" */;
+			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "ikChain" */;
 			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = E4B69B4A0A3A1720003C02F2;
@@ -584,6 +589,7 @@
 				2DC2FFCD11CE36440068E5C4 /* ofxMatrix3x3.cpp in Sources */,
 				2DC2FFCE11CE36440068E5C4 /* ofxMatrix4x4.cpp in Sources */,
 				2DC2FFCF11CE36440068E5C4 /* ofxQuaternion.cpp in Sources */,
+				2DCEE8C511CE848600047601 /* IKHumanoid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -862,7 +868,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "emptyExample" */ = {
+		E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "ikChain" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E4B69B4E0A3A1720003C02F2 /* Debug */,
