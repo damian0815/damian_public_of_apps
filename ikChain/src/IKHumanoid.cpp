@@ -21,18 +21,20 @@ static IKHumanoid::Component COMPONENT_LIST[5] = {
 
 void IKHumanoid::setup( float scale, int num_spine_bones )
 {
-	root_pos = ofxVec2f( 0, 0 );
+	root_pos = ofxVec3f( 0, 0, 0 );
+	ofxQuaternion up;
+	
 	// spine
 	float spine_joint_length = (1.4f)/float(num_spine_bones);
 	for( int i=0; i<num_spine_bones; i++ )
 	{
-		spine.push_back( IKBone( spine_joint_length*scale, 0, 0.5f ) );
+		spine.push_back( IKBone( spine_joint_length*scale, up, 0.5f ) );
 	}
 	// head
-	spine.push_back( IKBone( 0.9f*scale, 0, 0.5f ) );
+	spine.push_back( IKBone( 0.9f*scale, up, 0.5f ) );
 
 	// convert spine to cartesian coordinates
-	vector<ofxVec2f> spine_pos = toCartesianSpace( C_SPINE );
+	vector<ofxVec3f> spine_pos = toCartesianSpace( C_SPINE );
 	// set head target pos
 	setTargetPos( C_SPINE, spine_pos.back() );
 	
@@ -46,20 +48,20 @@ void IKHumanoid::setup( float scale, int num_spine_bones )
 	for ( int i= 0; i<2;i ++ )
 	{
 		float dir = ((i==0)?(-1.0f):(1.0f));
-		vector<ofxVec2f> pos;
+		vector<ofxVec3f> pos;
 		// neck joint
 		printf("scale: %f\n", scale );
 		pos.push_back( spine_pos[spine_arm_branch] );
 		// shoulder
-		ofxVec2f delta = ofxVec2f( dir*1.0f, -0.1f )*scale;
+		ofxVec3f delta = ofxVec3f( dir*1.0f, -0.1f, 0 )*scale;
 		arms[i][0].setLength( delta.length() );
 		pos.push_back( pos.back()+delta );
 		// upper arm
-		delta = ofxVec2f( dir*1.0f, 0.0f )*scale;
+		delta = ofxVec3f( dir*1.0f, 0.0f, 0)*scale;
 		arms[i][1].setLength( delta.length() );
 		pos.push_back( pos.back()+delta );
 		// lower arm
-		delta = ofxVec2f( dir*1.5f, 0.0f )*scale;
+		delta = ofxVec3f( dir*1.5f, 0.0f, 0 )*scale;
 		arms[i][2].setLength( delta.length() );
 		pos.push_back( pos.back()+delta );
 		// store
@@ -78,19 +80,19 @@ void IKHumanoid::setup( float scale, int num_spine_bones )
 	for ( int i=0; i<2; i++ )
 	{
 		float dir = ((i==0)?(-1.0f):(1.0f));
-		vector<ofxVec2f> pos;
+		vector<ofxVec3f> pos;
 		// hip joint
 		pos.push_back( spine_pos[spine_leg_branch] );
 		// thigh
-		ofxVec2f delta = ofxVec2f( dir*0.5f, -0.4f )*scale;
+		ofxVec3f delta = ofxVec3f( dir*0.5f, -0.4f, 0 )*scale;
 		legs[i][0].setLength( delta.length() );
 		pos.push_back( pos.back()+delta );
 		// knee
-		delta = ofxVec2f( dir*-0.05f, -1.6f )*scale;
+		delta = ofxVec3f( dir*-0.05f, -1.6f, 0 )*scale;
 		legs[i][1].setLength( delta.length() );
 		pos.push_back( pos.back()+delta );
 		// foot
-		delta = ofxVec2f( dir*-0.05f, -2.2f )*scale;
+		delta = ofxVec3f( dir*-0.05f, -2.2f, 0 )*scale;
 		legs[i][2].setLength( delta.length() );
 		pos.push_back( pos.back()+delta );
 		// store
@@ -168,8 +170,8 @@ void IKHumanoid::dump()
 }
 
 void IKHumanoid::solveSimpleChain(const vector<IKBone>& bones, 
-								  vector<ofxVec2f>& bone_positions, 
-								  const ofxVec2f& target_pos,
+								  vector<ofxVec3f>& bone_positions, 
+								  const ofxVec3f& target_pos,
 								  bool set_target )
 {
 	// solve using constraint relaxation
@@ -181,8 +183,8 @@ void IKHumanoid::solveSimpleChain(const vector<IKBone>& bones,
 	else
 	{
 		// just try to point the last bone in the right direction
-		ofxVec2f delta = bone_positions[bones.size()]-bone_positions[bones.size()-1];
-		ofxVec2f target_delta = target_pos-bone_positions[bones.size()-1];
+		ofxVec3f delta = bone_positions[bones.size()]-bone_positions[bones.size()-1];
+		ofxVec3f target_delta = target_pos-bone_positions[bones.size()-1];
 		bone_positions[bones.size()] = bone_positions[bones.size()-1] +
 			target_delta.normalized()*bones[bones.size()-1].getLength();
 	}
@@ -191,16 +193,16 @@ void IKHumanoid::solveSimpleChain(const vector<IKBone>& bones,
 	for ( int bone_num = bones.size()-1; bone_num >= 0; bone_num-- )
 	{
 		// child_pos
-		ofxVec2f& b_c = bone_positions[bone_num+1];
+		ofxVec3f& b_c = bone_positions[bone_num+1];
 		// parent pos
-		ofxVec2f& b_p = bone_positions[bone_num];
+		ofxVec3f& b_p = bone_positions[bone_num];
 		
 		// now, the bone is the wrong length. correct its length to fulfil size constraint.
-		ofxVec2f delta = b_c - b_p;
+		ofxVec3f delta = b_c - b_p;
 		float length = delta.length();
 		length = max( 0.00001f, length );
 		// pointing from parent to child
-		ofxVec2f direction = delta/length;
+		ofxVec3f direction = delta/length;
 		
 		float desired_length = bones[bone_num].getLength();
 		float delta_length = desired_length - length;
@@ -231,15 +233,15 @@ void IKHumanoid::solve( int iterations )
 	{
 		printf("iteration %i\n", i );
 		// first put spine bones to cartesian space
-		vector<ofxVec2f> spine_bone_positions = toCartesianSpace( C_SPINE );
+		vector<ofxVec3f> spine_bone_positions = toCartesianSpace( C_SPINE );
 		// now solve for the spine
 		solveSimpleChain( spine, spine_bone_positions, head_target_pos, i==0 );
 
 		// put the rest of the bones to cartesian space
-		vector<ofxVec2f> arm_bone_positions[2];
+		vector<ofxVec3f> arm_bone_positions[2];
 		arm_bone_positions[0] = toCartesianSpace( C_ARM_L );
 		arm_bone_positions[1] = toCartesianSpace( C_ARM_R );
-		vector<ofxVec2f> leg_bone_positions[2];
+		vector<ofxVec3f> leg_bone_positions[2];
 		leg_bone_positions[0] = toCartesianSpace( C_LEG_L );
 		leg_bone_positions[1] = toCartesianSpace( C_LEG_R );
 
@@ -248,7 +250,7 @@ void IKHumanoid::solve( int iterations )
 		// average of spine neck, arm_l neck and arm_r neck calculated positions
 		solveSimpleChain( arms[0], arm_bone_positions[0], arm_target_pos[0], i==0 );
 		solveSimpleChain( arms[1], arm_bone_positions[1], arm_target_pos[1], i==0 );
-		ofxVec2f neck_pos = spine_bone_positions[spine_arm_branch]*0.8f;
+		ofxVec3f neck_pos = spine_bone_positions[spine_arm_branch]*0.8f;
 		neck_pos += arm_bone_positions[0][0]*0.1f;
 		neck_pos += arm_bone_positions[1][0]*0.1f;
 		spine_bone_positions[spine_arm_branch] = neck_pos;
@@ -259,7 +261,7 @@ void IKHumanoid::solve( int iterations )
 		// average of spine hip, leg_l hip and leg_r hip
 		solveSimpleChain( legs[0], leg_bone_positions[0], leg_target_pos[0], i==0 );
 		solveSimpleChain( legs[1], leg_bone_positions[1], leg_target_pos[1], i==0 );
-		ofxVec2f hip_pos = spine_bone_positions[spine_leg_branch]*0.5f;
+		ofxVec3f hip_pos = spine_bone_positions[spine_leg_branch]*0.5f;
 		hip_pos += leg_bone_positions[0][0]*0.25f;
 		hip_pos += leg_bone_positions[1][0]*0.25f;
 		spine_bone_positions[spine_leg_branch] = hip_pos;
@@ -287,49 +289,50 @@ void IKHumanoid::solve( int iterations )
 	
 }
 
-vector<ofxVec2f> IKHumanoid::toCartesianSpace( Component which )
+vector<ofxVec3f> IKHumanoid::toCartesianSpace( Component which )
 {
 	// put all the bones into 2d space
-	vector<ofxVec2f> bone_positions;
+	vector<ofxVec3f> bone_positions;
 	// start at the root
 	bone_positions.push_back( getRootPosFor( which ) );
 	// start pointing up
-	ofxVec2f dir( 0,1 );
-	dir.rotateRad( getStartAngleFor( which ) );
+	ofxVec3f dir( 0,1,0 );
+	dir = getStartAngleFor( which )*dir;
 	vector<IKBone>& bones = getBonesFor( which );
 	for ( int i=0; i<bones.size(); i++ )
 	{
 		// rotate our direction by the bone's angle
-		dir.rotateRad( bones[i].getAngle() );
+		dir = bones[i].getAngle() * dir;
 		// add on direction * length to get the end point of this bone
-		ofxVec2f next_pos = bone_positions.back() + dir*bones[i].getLength();
+		ofxVec3f next_pos = bone_positions.back() + dir*bones[i].getLength();
 		bone_positions.push_back( next_pos );
 	}
 	
 	return bone_positions;
 }
 
-void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec2f>& bone_positions )
+void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec3f>& bone_positions )
 {
 	vector<IKBone>& bones = getBonesFor( which );
 	assert( bone_positions.size() == bones.size()+1 );
 	
 	//getRootPosFor(which).set( bone_positions[0] );
-	ofxVec2f dir( 0, 1 );
-
-	float start_angle = getStartAngleFor( which );
-	dir.rotateRad( start_angle );
+	ofxVec3f dir( 0, 1, 0 );
+	dir = getStartAngleFor( which ) * dir;
 	for ( int i=0; i<bones.size(); i++ )
 	{
 		// get bone parent->child delta
-		ofxVec2f bone_delta = bone_positions[i+1]-bone_positions[i];
+		ofxVec3f bone_delta = bone_positions[i+1]-bone_positions[i];
 		// convert bone delta to a direction
 		bone_delta.normalize();
 		// -> angle
-		float angle = bone_delta.angleRad( dir );
+		ofxQuaternion angle;
+		angle.makeRotate( dir, bone_delta );
+		//float angle = bone_delta.angleRad( dir );
 		bones[i].setAngle( -angle );
 		// rotate our direction by the bone's angle (angles are all relative)
-		dir.rotateRad( -angle );
+		dir = bone_delta;
+		//dir.rotateRad( -angle );
 	}
 	
 }
@@ -339,6 +342,7 @@ void IKHumanoid::draw( int x, int y )
 {
 	ofPushMatrix();
 	ofTranslate( x, ofGetHeight()-y, 0 );
+	ofRotate( 70*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
 	ofScale( 1, -1, 1 );
 	for ( int i=0; i<5; i++ )
 	{
@@ -365,25 +369,35 @@ void IKHumanoid::draw( int x, int y )
 				break;
 		}
 		
-		vector<ofxVec2f> bone_positions = toCartesianSpace( which );
+		vector<ofxVec3f> bone_positions = toCartesianSpace( which );
 	
 		ofSetColor( 128, 255, 128 );
-		ofxVec2f root_pos = getRootPosFor( which );
+		ofxVec3f root_pos = getRootPosFor( which );
+		ofPushMatrix();
+		ofTranslate( 0, 0, root_pos.z );
 		ofCircle( root_pos.x, root_pos.y, 5 );
+		ofPopMatrix();
 		ofSetColor( 128, 128, 128 );
+		glBegin( GL_LINES );
 		for ( int i=0; i<bone_positions.size(); i++ )
 		{
 			if ( i < bone_positions.size()-1 )
 			{
-				ofLine( bone_positions[i].x, bone_positions[i].y, 
-					   bone_positions[i+1].x, bone_positions[i+1].y );
+				glVertex3f( bone_positions[i].x, bone_positions[i].y, bone_positions[i].z );
+				glVertex3f( bone_positions[i+1].x, bone_positions[i+1].y, bone_positions[i+1].z );
+/*				ofLine( bone_positions[i].x, bone_positions[i].y, 
+					   bone_positions[i+1].x, bone_positions[i+1].y );*/
 			}
 		}
+		glEnd();
 		ofSetColor( 255, 128, 128 );
-		ofxVec2f target_pos = getTargetPosFor( which );
+		ofxVec3f target_pos = getTargetPosFor( which );
+		ofPushMatrix();
+		ofTranslate( 0, 0, target_pos.z );
 		ofCircle(target_pos.x, 
 				 target_pos.y, 
 				 5 );
+		ofPopMatrix();
 	}
 	ofPopMatrix();
 }
@@ -408,7 +422,7 @@ vector<IKBone>& IKHumanoid::getBonesFor( Component which )
 	}
 }
 
-ofxVec2f& IKHumanoid::getTargetPosFor( Component which )
+ofxVec3f& IKHumanoid::getTargetPosFor( Component which )
 {
 	switch( which ) 
 	{
@@ -427,13 +441,13 @@ ofxVec2f& IKHumanoid::getTargetPosFor( Component which )
 	}
 }
 
-ofxVec2f& IKHumanoid::getRootPosFor( Component which )
+ofxVec3f& IKHumanoid::getRootPosFor( Component which )
 {
 	if ( which == C_SPINE )
 		return root_pos;
 	else
 	{
-		vector<ofxVec2f> pos = toCartesianSpace( C_SPINE );
+		vector<ofxVec3f> pos = toCartesianSpace( C_SPINE );
 		switch (which)
 		{
 			case C_ARM_R:
@@ -460,20 +474,25 @@ void IKHumanoid::resetToRest()
 	}
 }
 
-float IKHumanoid::getStartAngleFor( Component which )
+ofxQuaternion IKHumanoid::getStartAngleFor( Component which )
 {
+	ofxQuaternion angle;
 	switch(which)
 	{
 		case C_SPINE:
-			return 0;
+			return angle;
 		case C_ARM_R:
 		case C_ARM_L:
-			return spine[spine_arm_branch-1].getAngle();
+			for ( int i=0; i<=spine_arm_branch-1; i++ )
+				angle *= spine[i].getAngle();
+			return angle;
 		case C_LEG_R:
 		case C_LEG_L:
-			return spine[spine_leg_branch].getAngle();
+			for ( int i=0; i<=spine_leg_branch; i++ )
+				angle *= spine[i].getAngle();
+			return angle;
 		default:
-			return 0;
+			return angle;
 	}
 }
 

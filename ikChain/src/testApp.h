@@ -3,7 +3,6 @@
 
 
 #include "ofMain.h"
-#include "IKchain.h"
 #include "IKHumanoid.h"
 
 class testApp : public ofBaseApp{
@@ -27,6 +26,9 @@ private:
 	IKHumanoid human;
 	IKHumanoid::Component which_target;
 	bool do_target_set;
+	
+	float z;
+	float last_mx, last_my;
 	
 };
 

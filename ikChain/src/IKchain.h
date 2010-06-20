@@ -22,7 +22,7 @@ public:
 	// 0   = the start (==parent link) only 
 	// 1   = the end   (==child link) only
 	// 0.5 = start and end both move the same amount
-	void addBone( float length, float angle, float weight_centre=0.5f );
+	void addBone( float length, ofxQuaternion angle, float weight_centre=0.5f );
 	
 	// solve using relaxation method from current pose to new pose
 	void solve( int iterations = 10);

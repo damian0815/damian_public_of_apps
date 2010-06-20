@@ -12,5 +12,5 @@
 
 void IKBone::constrainAngle()
 {
-	angle = min( max_angle, max( min_angle, float(fmodf(angle+PI,TWO_PI)-PI) ) );
+	//angle = min( max_angle, max( min_angle, float(fmodf(angle+PI,TWO_PI)-PI) ) );
 }

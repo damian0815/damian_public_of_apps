@@ -17,8 +17,8 @@ class IKHumanoid
 {
 public:
 	IKHumanoid() : root_pos( 0, 0 ) {
-		arm_target_pos[0].set( -1, 1 ); arm_target_pos[1].set( 1, 1 );
-		leg_target_pos[0].set( -1, -1 ); leg_target_pos[0].set( 1, -1 );
+		arm_target_pos[0].set( -1, 1, 0 ); arm_target_pos[1].set( 1, 1, 0 );
+		leg_target_pos[0].set( -1, -1, 0 ); leg_target_pos[0].set( 1, -1, 0 );
 	};
 
 	// scale is a sizing for the skeleton, == 1 head length
@@ -34,7 +34,7 @@ public:
 	// set root/target positions
 	typedef enum _Component{ C_ARM_L, C_ARM_R, C_LEG_L, C_LEG_R, C_SPINE } Component;
 	void setRootPos( ofxVec2f new_root ) { root_pos = new_root; }
-	void setTargetPos( Component which, ofxVec2f new_target ) { getTargetPosFor( which ).set( new_target ); }
+	void setTargetPos( Component which, ofxVec3f new_target ) { getTargetPosFor( which ).set( new_target ); }
 	
 	// draw
 	void draw( int x, int y );
@@ -46,10 +46,10 @@ public:
 	
 private:
 	
-	ofxVec2f& getTargetPosFor( Component which );
+	ofxVec3f& getTargetPosFor( Component which );
 	vector<IKBone>& getBonesFor( Component which );
-	ofxVec2f& getRootPosFor( Component which );
-	float getStartAngleFor( Component which );
+	ofxVec3f& getRootPosFor( Component which );
+	ofxQuaternion getStartAngleFor( Component which );
 	
 	vector<IKBone> arms[2];
 	vector<IKBone> legs[2];
@@ -63,26 +63,26 @@ private:
 	/// returns a vector of (bones.size()+1) 2d coordinates;
 	/// result[0] is the root pos
 	/// result[bones.size()] is the last bone's endpoint
-	vector<ofxVec2f> toCartesianSpace( Component which );
+	vector<ofxVec3f> toCartesianSpace( Component which );
 	
 	/// update the bones[] vector from the given bone positions
 	/// doesn't update or check lengths
-	void fromCartesianSpace( Component which, vector<ofxVec2f>& bone_positions );
+	void fromCartesianSpace( Component which, vector<ofxVec3f>& bone_positions );
 	
 	
 	/// solve a simple chain
 	void solveSimpleChain(const vector<IKBone>& bones, 
-						  vector<ofxVec2f>& bone_positions, 
-						  const ofxVec2f& target_pos,
+						  vector<ofxVec3f>& bone_positions, 
+						  const ofxVec3f& target_pos,
 						  bool set_target );
 	
 	//ofxVec3f root_pos;
 	//ofxVec3f target_pos,
 	// root_pos == hip_pos
-	ofxVec2f root_pos;
-	ofxVec2f arm_target_pos[2];
-	ofxVec2f leg_target_pos[2];
-	ofxVec2f head_target_pos;
+	ofxVec3f root_pos;
+	ofxVec3f arm_target_pos[2];
+	ofxVec3f leg_target_pos[2];
+	ofxVec3f head_target_pos;
 	
 };
 

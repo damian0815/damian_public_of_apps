@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D61A28711CBC4F600BAB5DE /* IKchain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D61A28611CBC4F600BAB5DE /* IKchain.cpp */; };
 		2D61A28C11CBC5C000BAB5DE /* IKbone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D61A28B11CBC5C000BAB5DE /* IKbone.cpp */; };
 		2DC2FFCD11CE36440068E5C4 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2FFC011CE36440068E5C4 /* ofxMatrix3x3.cpp */; };
 		2DC2FFCE11CE36440068E5C4 /* ofxMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2FFC211CE36440068E5C4 /* ofxMatrix4x4.cpp */; };
@@ -584,7 +583,6 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				2D61A28711CBC4F600BAB5DE /* IKchain.cpp in Sources */,
 				2D61A28C11CBC5C000BAB5DE /* IKbone.cpp in Sources */,
 				2DC2FFCD11CE36440068E5C4 /* ofxMatrix3x3.cpp in Sources */,
 				2DC2FFCE11CE36440068E5C4 /* ofxMatrix4x4.cpp in Sources */,
