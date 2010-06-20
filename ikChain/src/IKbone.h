@@ -27,8 +27,11 @@ public:
 	/// set rest angle and extension in either direction. 
 	void setRestAngle( float a, float min = -PI/2, float max = PI/2 ) 
 		{ rest_angle = a; min_angle = a+min; max_angle=a+max; }
+	void setAngleLimits( float min = -PI/2, float max = PI/2 )
+		{ min_angle = rest_angle+min; max_angle = rest_angle+max; }
 
 	float getAngle() const { return angle; }
+	float getRestAngle() const { return rest_angle; }
 	float getLength() const { return length; }
 	float getWeightCentre() const { return weight_centre; }
 	void setAngle( float a ) { angle = a; }

@@ -28,6 +28,9 @@ public:
 	// solve using relaxation method from current pose to new pose
 	void solve( int iterations = 10);
 	
+	// reset to rest position
+	void resetToRest();
+	
 	// set root/target positions
 	typedef enum _Component{ C_ARM_L, C_ARM_R, C_LEG_L, C_LEG_R, C_SPINE } Component;
 	void setRootPos( ofxVec2f new_root ) { root_pos = new_root; }
@@ -46,6 +49,7 @@ private:
 	ofxVec2f& getTargetPosFor( Component which );
 	vector<IKBone>& getBonesFor( Component which );
 	ofxVec2f& getRootPosFor( Component which );
+	float getStartAngleFor( Component which );
 	
 	vector<IKBone> arms[2];
 	vector<IKBone> legs[2];
@@ -59,11 +63,11 @@ private:
 	/// returns a vector of (bones.size()+1) 2d coordinates;
 	/// result[0] is the root pos
 	/// result[bones.size()] is the last bone's endpoint
-	vector<ofxVec2f> toCartesianSpace( Component which, float start_angle=0.0f );
+	vector<ofxVec2f> toCartesianSpace( Component which );
 	
 	/// update the bones[] vector from the given bone positions
 	/// doesn't update or check lengths
-	void fromCartesianSpace( Component which, vector<ofxVec2f>& bone_positions, float start_angle=0.0f );
+	void fromCartesianSpace( Component which, vector<ofxVec2f>& bone_positions );
 	
 	
 	/// solve a simple chain

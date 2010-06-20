@@ -112,18 +112,17 @@ void IKHumanoid::setup( float scale, int num_spine_bones )
 	
 	// set angle constraints for particular joints
 	// shoulders only move a very small distance
-	float angle = arms[0][0].getAngle();
-	arms[0][0].setRestAngle( angle, -PI/16, PI/16 );
-	angle = arms[1][0].getAngle();
-	arms[1][0].setRestAngle( angle, -PI/16, PI/16 );
+	arms[0][0].setAngleLimits( -PI/16, PI/16 );
+	arms[0][1].setAngleLimits( -PI/8, PI/2 );
+	arms[0][2].setAngleLimits( -PI/16, 3*PI/4 );
+	arms[1][0].setAngleLimits( -PI/16, PI/16 );
+	arms[1][1].setAngleLimits( -PI/2, PI/8 );
+	arms[1][2].setAngleLimits( -3*PI/4, PI/16 );
 	// waist to thigh doesn't move
-	angle = legs[0][0].getAngle();
-	legs[0][0].setRestAngle( angle, 0, 0 );
-	angle = legs[1][0].getAngle();
-	legs[1][0].setRestAngle( angle, 0, 0 );
+	legs[0][0].setAngleLimits( 0, 0 );
+	legs[1][0].setAngleLimits( 0, 0 );
 	// waist to spine doesn't move
-	angle = spine[0].getAngle();
-	spine[0].setRestAngle( angle, 0, 0 );
+	spine[0].setAngleLimits( 0, 0 );
 
 	// anchor the waist
 	getBone( C_SPINE, 0 ).setWeightCentre( 1 );
@@ -134,7 +133,8 @@ void IKHumanoid::setup( float scale, int num_spine_bones )
 void IKHumanoid::dump()
 {
 	// dump
-	vector<ofxVec2f> pos = toCartesianSpace( C_SPINE );
+	/*
+	vector<ofxVec2f> pos = toCartesianSpace( C_SPINE, 0 );
 	printf("Spine: \n");
 	for ( int i=0; i<pos.size(); i++ )
 	{
@@ -164,7 +164,7 @@ void IKHumanoid::dump()
 	{
 		printf(" (%5.1f %5.1f)", pos[i].x, pos[i].y );
 	}
-
+*/
 }
 
 void IKHumanoid::solveSimpleChain(const vector<IKBone>& bones, 
@@ -176,8 +176,18 @@ void IKHumanoid::solveSimpleChain(const vector<IKBone>& bones,
 	// after http://www.ryanjuckett.com/programming/animation/22-constraint-relaxation-ik-in-2d
 
 	// push the last bone to the target position
-	if ( set_target )
+	if ( true )
 		bone_positions[bones.size()] = target_pos;
+	else
+	{
+		// just try to point the last bone in the right direction
+		ofxVec2f delta = bone_positions[bones.size()]-bone_positions[bones.size()-1];
+		ofxVec2f target_delta = target_pos-bone_positions[bones.size()-1];
+		bone_positions[bones.size()] = bone_positions[bones.size()-1] +
+			target_delta.normalized()*bones[bones.size()-1].getLength();
+	}
+
+	
 	for ( int bone_num = bones.size()-1; bone_num >= 0; bone_num-- )
 	{
 		// child_pos
@@ -220,21 +230,19 @@ void IKHumanoid::solve( int iterations )
 	for ( int i=0; i<iterations; i++ )
 	{
 		printf("iteration %i\n", i );
-		// first put all bones to cartesian space
+		// first put spine bones to cartesian space
 		vector<ofxVec2f> spine_bone_positions = toCartesianSpace( C_SPINE );
-		vector<ofxVec2f> arm_bone_positions[2];
-		float arm_branch_angle = (spine_bone_positions[spine_arm_branch+1] - 
-								  spine_bone_positions[spine_arm_branch]).angleRad( ofxVec2f( 0, 1 ) );
-		arm_bone_positions[0] = toCartesianSpace( C_ARM_L, -arm_branch_angle );
-		arm_bone_positions[1] = toCartesianSpace( C_ARM_R, -arm_branch_angle );
-		vector<ofxVec2f> leg_bone_positions[2];
-		float leg_branch_angle = (spine_bone_positions[spine_leg_branch+1] - 
-								  spine_bone_positions[spine_leg_branch]).angleRad( ofxVec2f( 0, 1 ) );
-		leg_bone_positions[0] = toCartesianSpace( C_LEG_L, -leg_branch_angle );
-		leg_bone_positions[1] = toCartesianSpace( C_LEG_R, -leg_branch_angle );
-
 		// now solve for the spine
 		solveSimpleChain( spine, spine_bone_positions, head_target_pos, i==0 );
+
+		// put the rest of the bones to cartesian space
+		vector<ofxVec2f> arm_bone_positions[2];
+		arm_bone_positions[0] = toCartesianSpace( C_ARM_L );
+		arm_bone_positions[1] = toCartesianSpace( C_ARM_R );
+		vector<ofxVec2f> leg_bone_positions[2];
+		leg_bone_positions[0] = toCartesianSpace( C_LEG_L );
+		leg_bone_positions[1] = toCartesianSpace( C_LEG_R );
+
 		
 		// next, solve the two arms, setting the neck position to be a weighted 
 		// average of spine neck, arm_l neck and arm_r neck calculated positions
@@ -260,10 +268,10 @@ void IKHumanoid::solve( int iterations )
 
 		// convert back to angles
 		fromCartesianSpace( C_SPINE, spine_bone_positions );
-		fromCartesianSpace( C_ARM_L, arm_bone_positions[0], arm_branch_angle );
-		fromCartesianSpace( C_ARM_R, arm_bone_positions[1], arm_branch_angle );
-		fromCartesianSpace( C_LEG_L, leg_bone_positions[0], leg_branch_angle );
-		fromCartesianSpace( C_LEG_R, leg_bone_positions[1], leg_branch_angle );
+		fromCartesianSpace( C_ARM_L, arm_bone_positions[0] );
+		fromCartesianSpace( C_ARM_R, arm_bone_positions[1] );
+		fromCartesianSpace( C_LEG_L, leg_bone_positions[0] );
+		fromCartesianSpace( C_LEG_R, leg_bone_positions[1] );
 		
 		// constrain angles
 		for ( int component = 0; component<5; component++ )
@@ -279,8 +287,7 @@ void IKHumanoid::solve( int iterations )
 	
 }
 
-
-vector<ofxVec2f> IKHumanoid::toCartesianSpace( Component which, float start_angle )
+vector<ofxVec2f> IKHumanoid::toCartesianSpace( Component which )
 {
 	// put all the bones into 2d space
 	vector<ofxVec2f> bone_positions;
@@ -288,7 +295,7 @@ vector<ofxVec2f> IKHumanoid::toCartesianSpace( Component which, float start_angl
 	bone_positions.push_back( getRootPosFor( which ) );
 	// start pointing up
 	ofxVec2f dir( 0,1 );
-	dir.rotateRad( start_angle );
+	dir.rotateRad( getStartAngleFor( which ) );
 	vector<IKBone>& bones = getBonesFor( which );
 	for ( int i=0; i<bones.size(); i++ )
 	{
@@ -302,13 +309,15 @@ vector<ofxVec2f> IKHumanoid::toCartesianSpace( Component which, float start_angl
 	return bone_positions;
 }
 
-void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec2f>& bone_positions, float start_angle )
+void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec2f>& bone_positions )
 {
 	vector<IKBone>& bones = getBonesFor( which );
 	assert( bone_positions.size() == bones.size()+1 );
 	
 	//getRootPosFor(which).set( bone_positions[0] );
 	ofxVec2f dir( 0, 1 );
+
+	float start_angle = getStartAngleFor( which );
 	dir.rotateRad( start_angle );
 	for ( int i=0; i<bones.size(); i++ )
 	{
@@ -362,9 +371,6 @@ void IKHumanoid::draw( int x, int y )
 		ofxVec2f root_pos = getRootPosFor( which );
 		ofCircle( root_pos.x, root_pos.y, 5 );
 		ofSetColor( 128, 128, 128 );
-		ofBeginShape();
-		ofNoFill();
-		ofCurveVertex( bone_positions[0].x, bone_positions[0].y );
 		for ( int i=0; i<bone_positions.size(); i++ )
 		{
 			if ( i < bone_positions.size()-1 )
@@ -372,10 +378,7 @@ void IKHumanoid::draw( int x, int y )
 				ofLine( bone_positions[i].x, bone_positions[i].y, 
 					   bone_positions[i+1].x, bone_positions[i+1].y );
 			}
-			ofCurveVertex( bone_positions[i].x, bone_positions[i].y );
 		}
-		ofCurveVertex( bone_positions[bone_positions.size()-1].x, bone_positions[bone_positions.size()-1].y );
-		ofEndShape();
 		ofSetColor( 255, 128, 128 );
 		ofxVec2f target_pos = getTargetPosFor( which );
 		ofCircle(target_pos.x, 
@@ -444,4 +447,34 @@ ofxVec2f& IKHumanoid::getRootPosFor( Component which )
 		}
 	}
 }
+
+void IKHumanoid::resetToRest()
+{
+	for ( int i=0; i<5; i++ )
+	{
+		vector<IKBone>& bones = getBonesFor( COMPONENT_LIST[i] );
+		for ( int j=0; j<bones.size(); j++ )
+		{
+			bones[j].setAngle( bones[j].getRestAngle() );
+		}
+	}
+}
+
+float IKHumanoid::getStartAngleFor( Component which )
+{
+	switch(which)
+	{
+		case C_SPINE:
+			return 0;
+		case C_ARM_R:
+		case C_ARM_L:
+			return spine[spine_arm_branch-1].getAngle();
+		case C_LEG_R:
+		case C_LEG_L:
+			return spine[spine_leg_branch].getAngle();
+		default:
+			return 0;
+	}
+}
+
 
