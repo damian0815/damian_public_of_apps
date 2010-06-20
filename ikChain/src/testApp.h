@@ -4,6 +4,7 @@
 
 #include "ofMain.h"
 #include "IKchain.h"
+#include "IKHumanoid.h"
 
 class testApp : public ofBaseApp{
 
@@ -24,6 +25,10 @@ class testApp : public ofBaseApp{
 private:
 	
 	IKChain chain;
+	
+	IKHumanoid human;
+	IKHumanoid::Component which_target;
+	bool do_target_set;
 	
 };
 

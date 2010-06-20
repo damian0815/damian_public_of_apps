@@ -28,6 +28,7 @@ public:
 	float getLength() const { return length; }
 	float getWeightCentre() const { return weight_centre; }
 	void setAngle( float a ) { angle = a; }
+	void setLength( float l ) { length = l; }
 	void setWeightCentre( float wc ) { weight_centre = wc; }
 	
 private:
