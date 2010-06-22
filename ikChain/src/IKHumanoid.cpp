@@ -178,16 +178,16 @@ void IKHumanoid::solveSimpleChain(const vector<IKBone>& bones,
 	// after http://www.ryanjuckett.com/programming/animation/22-constraint-relaxation-ik-in-2d
 
 	// push the last bone to the target position
-	if ( true )
+	//if ( true )
 		bone_positions[bones.size()] = target_pos;
-	else
+	/*else
 	{
 		// just try to point the last bone in the right direction
 		ofxVec3f delta = bone_positions[bones.size()]-bone_positions[bones.size()-1];
 		ofxVec3f target_delta = target_pos-bone_positions[bones.size()-1];
 		bone_positions[bones.size()] = bone_positions[bones.size()-1] +
 			target_delta.normalized()*bones[bones.size()-1].getLength();
-	}
+	}*/
 
 	
 	for ( int bone_num = bones.size()-1; bone_num >= 0; bone_num-- )
@@ -285,9 +285,8 @@ void IKHumanoid::solve( int iterations )
 			}
 		}		
 	}
-	
-	
 }
+
 
 vector<ofxVec3f> IKHumanoid::toCartesianSpace( Component which )
 {

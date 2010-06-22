@@ -63,8 +63,15 @@ void testApp::keyPressed(int key){
 		case 'Z':
 			z -= 1.0f;
 			break;
+		case '6':
+			ofSetFrameRate( 60.0f );
+			break;
+		case '7':
+			ofSetFrameRate( 24.0f );
+			break;
 		default:
 			break;
+			
 	}
 
 }
