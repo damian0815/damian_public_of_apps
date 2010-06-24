@@ -14,26 +14,32 @@ void testApp::setup(){
 	
 	do_target_set = false;
 	which_target = IKHumanoid::C_SPINE;
+
+	model.setup( "test", "man_good/man_goodtmp.xsf" );
+	model.dumpSkeleton();
+	human2.setup( 50.0f );
+	human.fromCal3DModel( model, 50.0f );
 	
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
 
-	if ( last_mx > 0 )
-		human.setTargetPos( which_target, ofxVec3f( last_mx-ofGetWidth()/2, ofGetHeight()/2-last_my, z ) );
-		
 	human.resetToRest();
 	human.solve( 10 );
+	
+	//human2.resetToRest();
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
 	human.draw( ofGetWidth()/2, ofGetHeight()/2 );
+	human2.draw( ofGetWidth()/4, ofGetHeight()/2 );
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+	ofxVec3f pos;
 	switch( key )
 	{
 		case '1':
@@ -58,10 +64,14 @@ void testApp::keyPressed(int key){
 			break;
 			
 		case 'z':
-			z += 1.0f;
+			pos = human.getTargetPos( which_target );
+			pos.z += 1.0f;
+			human.setTargetPos( which_target, pos );
 			break;
 		case 'Z':
-			z -= 1.0f;
+			pos = human.getTargetPos( which_target );
+			pos.z -= 1.0f;
+			human.setTargetPos( which_target, pos );
 			break;
 		case '6':
 			ofSetFrameRate( 60.0f );
@@ -90,23 +100,31 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
 	
-	human.setTargetPos( which_target, ofxVec3f( x-ofGetWidth()/2, ofGetHeight()/2-y, z ) );
+	if ( last_mx > 0 )
+	{
+		ofxVec3f pos = human.getTargetPos( which_target );
+		pos.x += (x-last_mx);
+		pos.y -= (y-last_my);
+		human.setTargetPos( which_target, pos );
+	}
 	last_mx = x;
 	last_my = y;
-
+	
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-	human.setTargetPos( which_target, ofxVec3f( x-ofGetWidth()/2, ofGetHeight()/2-y, z ) );
-	last_mx = x;
-	last_my = y;
+	
+	 last_mx = x;
+	 last_my = y;
+	
 
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
 
+	last_mx = -1;
 }
 
 //--------------------------------------------------------------

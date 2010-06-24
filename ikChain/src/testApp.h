@@ -4,6 +4,7 @@
 
 #include "ofMain.h"
 #include "IKHumanoid.h"
+#include "Cal3DModel.h"
 
 class testApp : public ofBaseApp{
 
@@ -29,6 +30,11 @@ private:
 	
 	float z;
 	float last_mx, last_my;
+	
+	
+	
+	Cal3DModel model;
+	IKHumanoid human2;
 	
 };
 

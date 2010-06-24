@@ -10,6 +10,7 @@
 #include "IKHumanoid.h"
 #include "ofMain.h"
 #include <assert.h>
+#include "Cal3d.h"
 
 static IKHumanoid::Component COMPONENT_LIST[5] = { 
 	IKHumanoid::C_SPINE, 
@@ -21,7 +22,7 @@ static IKHumanoid::Component COMPONENT_LIST[5] = {
 
 void IKHumanoid::setup( float scale, int num_spine_bones )
 {
-	root_pos = ofxVec3f( 0, 0, 0 );
+	root_pos.set( 0, 0, 0 );
 	ofxQuaternion up;
 	
 	// spine
@@ -231,7 +232,6 @@ void IKHumanoid::solve( int iterations )
 	
 	for ( int i=0; i<iterations; i++ )
 	{
-		printf("iteration %i\n", i );
 		// first put spine bones to cartesian space
 		vector<ofxVec3f> spine_bone_positions = toCartesianSpace( C_SPINE );
 		// now solve for the spine
@@ -333,6 +333,7 @@ void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec3f>& bone_pos
 		dir = bone_delta;
 		//dir.rotateRad( -angle );
 	}
+	
 	
 }
 
@@ -492,6 +493,210 @@ ofxQuaternion IKHumanoid::getStartAngleFor( Component which )
 			return angle;
 		default:
 			return angle;
+	}
+}
+
+
+
+void IKHumanoid::fromCal3DModel( Cal3DModel& m , float scale )
+{
+	// start with spine
+	CalCoreSkeleton* skeleton = m.getCoreSkeleton();
+
+	string root_name = "root";
+	int root_id = skeleton->getCoreBoneId( root_name );
+	string leg_branch_name = "spine_lo";
+	string arm_branch_name = "neck";
+	
+	CalCoreBone* leg_branch = skeleton->getCoreBone( leg_branch_name );
+	int leg_branch_id = leg_branch->getId();
+	CalCoreBone* arm_branch = skeleton->getCoreBone( arm_branch_name );
+	int arm_branch_id = arm_branch->getId();
+	int num_spine_joints = 0;
+	// count bones between arm branch and leg branch == spine bone count
+	int curr = arm_branch_id;
+	while( curr != -1 && curr != leg_branch_id )
+	{
+		curr = skeleton->getCoreBone( curr )->getParentId();
+		num_spine_joints++;
+	}
+	if ( curr == -1 )
+	{
+		printf( "couldn't find leg branch %i:'%s'\n", leg_branch_id, leg_branch_name.c_str() );
+		assert( false );
+	}
+	
+	// check correct number of spine joints
+	int expected_spine_joints = spine_arm_branch-spine_leg_branch;
+	if ( num_spine_joints != expected_spine_joints )
+	{
+		// 
+		printf("wrong number of spine joints: expected %i, found %i\n", expected_spine_joints, num_spine_joints );
+		assert(false);
+	}
+	
+	// apply spine
+	string spine_top_name = "spine_lo";
+	int spine_top_id = skeleton->getCoreBoneId(spine_top_name);
+	string left_leg_top_name = "hip l";
+	string left_leg_bottom_name = "foot l";
+	int left_leg_top_id = skeleton->getCoreBoneId(left_leg_top_name);
+	int left_leg_bottom_id = skeleton->getCoreBoneId(left_leg_bottom_name);
+	string right_leg_top_name = "hip r";
+	string right_leg_bottom_name = "foot r";
+	int right_leg_top_id = skeleton->getCoreBoneId(right_leg_top_name);
+	int right_leg_bottom_id = skeleton->getCoreBoneId(right_leg_bottom_name);
+	string left_arm_top_name = "shoulder l";
+	int left_arm_top_id = skeleton->getCoreBoneId(left_arm_top_name);
+	string right_arm_top_name = "shoulder r";
+	int right_arm_top_id = skeleton->getCoreBoneId(right_arm_top_name);
+	// start at spine top, get children
+	vector<int> spine_ids;
+	list<int> children;
+	children.push_back( spine_top_id );
+	while ( !children.empty() )
+	{
+		// skip left_arm_top and right_arm_top
+		for ( list<int>::iterator it = children.begin(); it != children.end(); ++it )
+		{
+			if ( *it == left_arm_top_id || *it == right_arm_top_id )
+				continue;
+			spine_ids.push_back( *it );
+		}
+		children = skeleton->getCoreBone( spine_ids.back() )->getListChildId();
+	}
+	
+	// now have spine
+	vector<ofxVec3f> spine_pos = toCartesianSpace( C_SPINE );
+	vector<IKBone>& bones = getBonesFor( C_SPINE );
+	assert( spine_pos.size() == spine_ids.size() );
+	printf("spine:\n");
+	for ( int i=0; i<spine_ids.size(); i++ )
+	{
+		CalVector pos = skeleton->getCoreBone( spine_ids[i] )->getTranslationAbsolute();
+		printf(" %6.3f %6.3f %6.3f '%s'\n", pos.x, pos.y, pos.z, 
+			   skeleton->getCoreBone( spine_ids[i] )->getName().c_str() );
+		spine_pos[i].set( pos.x, pos.y, pos.z );
+		spine_pos[i] *= scale;
+/*		if ( i== 0 )
+			setRootPos( spine_pos[i] );*/
+		if ( i>0 )
+		{
+			bones[i-1].setLength( (spine_pos[i]-spine_pos[i-1]).length() );
+			//printf("%f, ", bones[i-1].getLength() );
+		}
+	}
+//	printf("\n");
+
+	fromCartesianSpace( C_SPINE, spine_pos );
+
+	// now arms
+	for ( int i=0; i<2; i++ )
+	{
+		vector<int> ids;
+		ids.push_back( arm_branch_id );
+		list<int> children;
+		children.push_back( i==0?left_arm_top_id:right_arm_top_id );
+		bool skip_first = true;
+		while ( !children.empty() )
+		{
+			// skip left_arm_top and right_arm_top
+			if ( skip_first )
+			{
+				skip_first = false;
+			}
+			else
+				ids.push_back( children.back() );
+			children = skeleton->getCoreBone( children.back() )->getListChildId();
+		}
+		
+		// now have arm
+		Component which = (i==0?C_ARM_L:C_ARM_R);
+		vector<ofxVec3f> positions = toCartesianSpace( which );
+		vector<IKBone>& bones = getBonesFor( which );
+		assert( positions.size() == ids.size() );
+		printf("arm: \n");
+		for ( int i=0; i<ids.size(); i++ )
+		{
+			CalVector pos = skeleton->getCoreBone( ids[i] )->getTranslationAbsolute();
+			printf(" %6.3f %6.3f %6.3f '%s'\n", pos.x, pos.y, pos.z, 
+				   skeleton->getCoreBone( ids[i] )->getName().c_str() );
+			positions[i].set( pos.x, pos.y, pos.z );
+			positions[i]*=scale;
+			if ( i>0 )
+			{
+				bones[i-1].setLength( (positions[i]-positions[i-1]).length() );
+				//printf("%f, ", bones[i-1].getLength() );
+			}
+		}
+		fromCartesianSpace( which, positions );
+	}	
+	
+	
+	// now legs
+	for ( int i=0; i<2; i++ )
+	{
+		vector<int> ids;
+		int curr =( i==0?left_leg_bottom_id:right_leg_bottom_id );
+		int top_id = (i==0?left_leg_top_id:right_leg_top_id);
+		
+		while( curr != top_id )
+		{
+			ids.insert( ids.begin(), curr );
+			curr = skeleton->getCoreBone( curr )->getParentId();
+		}
+		ids.insert( ids.begin(), top_id );
+
+		// now have leg
+		Component which = (i==0?C_LEG_L:C_LEG_R);
+		vector<ofxVec3f> positions = toCartesianSpace( which );
+		vector<IKBone>& bones = getBonesFor( which );
+		assert( positions.size() == ids.size() );
+		printf("leg: \n");
+		
+		for ( int i=0; i<ids.size(); i++ )
+		{
+			CalVector pos = skeleton->getCoreBone( ids[i] )->getTranslationAbsolute();
+			printf(" %6.3f %6.3f %6.3f '%s'\n", pos.x, pos.y, pos.z, 
+				   skeleton->getCoreBone( ids[i] )->getName().c_str() );
+			positions[i].set( pos.x, pos.y, pos.z );
+			positions[i]*=scale;
+			if ( i == 0 )
+			{
+				//positions[i];
+			}
+			if ( i>0 )
+			{
+				bones[i-1].setLength( (positions[i]-positions[i-1]).length() );
+				//printf("%f, ", bones[i-1].getLength() );
+			}
+		}
+		fromCartesianSpace( which, positions );
+	}	
+	
+	
+	// set current pose as rest pose
+	setCurrentAsRest();
+	
+}
+		   
+void IKHumanoid::toCal3DModel( Cal3DModel& m )
+{
+}
+		   
+	
+void IKHumanoid::setCurrentAsRest()
+{
+	for (int i=0; i<5; i++ )
+	{
+		Component which = COMPONENT_LIST[i];
+		vector<IKBone>& bones = getBonesFor( which );
+		for ( int j=0; j<bones.size(); j++ )
+		{
+			bones[j].setCurrentAsRest();
+		}
+		vector<ofxVec3f> pos = toCartesianSpace( which );
+		setTargetPos( which, pos.back() );
 	}
 }
 

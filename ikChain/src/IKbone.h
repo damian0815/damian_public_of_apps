@@ -40,6 +40,9 @@ public:
 	
 	void constrainAngle();
 	
+	// set current pose as rest pose
+	void setCurrentAsRest() { rest_angle = angle; }
+	
 private:
 	
 	
