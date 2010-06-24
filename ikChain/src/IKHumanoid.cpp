@@ -497,11 +497,106 @@ ofxQuaternion IKHumanoid::getStartAngleFor( Component which )
 }
 
 
+IKHumanoid::Cal3DModelMapping::Cal3DModelMapping()
+{}
+
+bool IKHumanoid::Cal3DModelMapping::setup( CalCoreSkeleton* skeleton, map< IKHumanoid::Component, pair<string,string> > bone_names,
+									 string spine_arm_attach_name )
+{
+	spine_arm_attach_id = skeleton->getCoreBoneId( spine_arm_attach_name );
+	if ( spine_arm_attach_id == -1 )
+	{
+		printf("couldn't map from spine arm attach '%s' to id\n", spine_arm_attach_name.c_str() );
+		return false;
+	}
+	
+	// go through the components
+	for ( int c=0; c<5; c++ )
+	{
+		Component which = COMPONENT_LIST[c];
+		string base_name = bone_names[which].first;
+		string tip_name = bone_names[which].second;
+		
+		// start at the tip then work backward to the base
+		int base_id = skeleton->getCoreBoneId( base_name );
+		int tip_id = skeleton->getCoreBoneId( tip_name );
+		int curr = tip_id;
+		while( curr != -1 && curr != base_id )
+		{
+			bones[which].insert( bones[which].begin(), curr );
+			curr = skeleton->getCoreBone( curr )->getParentId();
+		}
+		if ( curr == -1 )
+		{
+			printf("problem occurred finding cal3d boneId chain from '%s' (%i) to '%s' (%i)\n", base_name.c_str(), base_id,
+				   tip_name.c_str(), tip_id );
+			printf("chain is currently: [");
+			for ( int i=0; i<bones[which].size(); i++ )
+			{
+				printf(" %2i", bones[which][i]);
+			}
+			printf(" ]\n");
+			return false;
+		}
+	}		
+
+	return true;
+	// done
+}
+
+
+//ofxVec3f& operator=(ofxVec3f& a, const CalVector& b) { a.set( b.x, b.y, b.z ); return *a; }
+
+void IKHumanoid::fromCal3DModel( Cal3DModel& m, const Cal3DModelMapping& mapping, float scale )
+{
+	CalCoreSkeleton* skeleton = m.getSkeleton()->getCoreSkeleton();
+
+	// loop through all components
+	for ( int c=0; c<5; c++ )
+	{
+		// we want to fetch all the bones in this component, read off their absolute translation and rotation
+		// and set on our own model.
+		Component which = COMPONENT_LIST[c];
+		vector<IKBone>& bones = getBonesFor( which );
+		
+		// set to right size
+		bones.resize( mapping.getNumBones( which ) );
+		vector<ofxVec3f> positions;
+		positions.resize( mapping.getNumBones( which )+1 );
+
+		// set root position
+		int base_bone_id = mapping.getBoneIdBase( which );
+		CalCoreBone* base_bone = skeleton->getCoreBone( mapping.getBoneIdBase( which ) );
+		CalCoreBone* root_bone = skeleton->getCoreBone( base_bone->getParentId() );
+		CalVector root_pos = root_bone->getTranslationAbsolute();;
+		positions[0].set( root_pos.x, root_pos.y, root_pos.z );
+		
+		// go through bones
+		for ( int i=0; i<mapping.getNumBones( which ); i++ )
+		{
+			// get bone 
+			CalCoreBone* bone = skeleton->getCoreBone( mapping.getBoneId( which, i ) );
+			// read off translation
+			CalVector p = bone->getTranslationAbsolute();
+			positions[i+1].set( p.x, p.y, p.z );
+			// read off length
+			bones[i].setLength( (positions[i+1]-positions[i]).length() );
+		}
+		
+		// set
+		fromCartesianSpace( which, positions);
+	}	
+
+	// set current positions as default
+	setCurrentAsRest();
+
+}
+
 
 void IKHumanoid::fromCal3DModel( Cal3DModel& m , float scale )
 {
 	// start with spine
-	CalCoreSkeleton* skeleton = m.getCoreSkeleton();
+	CalCoreSkeleton* skeleton = m.getSkeleton()->getCoreSkeleton();
 
 	string root_name = "root";
 	int root_id = skeleton->getCoreBoneId( root_name );

@@ -132,45 +132,6 @@
 		2DBE5F3C11D13C45003053CE /* AnimadeadModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimadeadModel.h; sourceTree = "<group>"; };
 		2DBE5F3D11D13C45003053CE /* AnimadeadModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimadeadModel.cpp; sourceTree = "<group>"; };
 		2DBE620711D229AE003053CE /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		2DBE620D11D229AE003053CE /* animation.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = animation.Plo; sourceTree = "<group>"; };
-		2DBE620E11D229AE003053CE /* animation_action.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = animation_action.Plo; sourceTree = "<group>"; };
-		2DBE620F11D229AE003053CE /* animation_cycle.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = animation_cycle.Plo; sourceTree = "<group>"; };
-		2DBE621011D229AE003053CE /* bone.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bone.Plo; sourceTree = "<group>"; };
-		2DBE621111D229AE003053CE /* buffersource.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buffersource.Plo; sourceTree = "<group>"; };
-		2DBE621211D229AE003053CE /* cal3d_wrapper.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cal3d_wrapper.Plo; sourceTree = "<group>"; };
-		2DBE621311D229AE003053CE /* coreanimation.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coreanimation.Plo; sourceTree = "<group>"; };
-		2DBE621411D229AE003053CE /* corebone.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = corebone.Plo; sourceTree = "<group>"; };
-		2DBE621511D229AE003053CE /* corekeyframe.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = corekeyframe.Plo; sourceTree = "<group>"; };
-		2DBE621611D229AE003053CE /* corematerial.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = corematerial.Plo; sourceTree = "<group>"; };
-		2DBE621711D229AE003053CE /* coremesh.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coremesh.Plo; sourceTree = "<group>"; };
-		2DBE621811D229AE003053CE /* coremodel.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coremodel.Plo; sourceTree = "<group>"; };
-		2DBE621911D229AE003053CE /* coremorphanimation.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coremorphanimation.Plo; sourceTree = "<group>"; };
-		2DBE621A11D229AE003053CE /* coreskeleton.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coreskeleton.Plo; sourceTree = "<group>"; };
-		2DBE621B11D229AE003053CE /* coresubmesh.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coresubmesh.Plo; sourceTree = "<group>"; };
-		2DBE621C11D229AE003053CE /* coresubmorphtarget.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coresubmorphtarget.Plo; sourceTree = "<group>"; };
-		2DBE621D11D229AE003053CE /* coretrack.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coretrack.Plo; sourceTree = "<group>"; };
-		2DBE621E11D229AE003053CE /* error.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = error.Plo; sourceTree = "<group>"; };
-		2DBE621F11D229AE003053CE /* global.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = global.Plo; sourceTree = "<group>"; };
-		2DBE622011D229AE003053CE /* hardwaremodel.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hardwaremodel.Plo; sourceTree = "<group>"; };
-		2DBE622111D229AE003053CE /* loader.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = loader.Plo; sourceTree = "<group>"; };
-		2DBE622211D229AE003053CE /* matrix.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = matrix.Plo; sourceTree = "<group>"; };
-		2DBE622311D229AE003053CE /* mesh.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mesh.Plo; sourceTree = "<group>"; };
-		2DBE622411D229AE003053CE /* mixer.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mixer.Plo; sourceTree = "<group>"; };
-		2DBE622511D229AE003053CE /* model.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = model.Plo; sourceTree = "<group>"; };
-		2DBE622611D229AE003053CE /* morphtargetmixer.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = morphtargetmixer.Plo; sourceTree = "<group>"; };
-		2DBE622711D229AE003053CE /* physique.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = physique.Plo; sourceTree = "<group>"; };
-		2DBE622811D229AE003053CE /* platform.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = platform.Plo; sourceTree = "<group>"; };
-		2DBE622911D229AE003053CE /* quaternion.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quaternion.Plo; sourceTree = "<group>"; };
-		2DBE622A11D229AE003053CE /* renderer.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = renderer.Plo; sourceTree = "<group>"; };
-		2DBE622B11D229AE003053CE /* saver.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = saver.Plo; sourceTree = "<group>"; };
-		2DBE622C11D229AE003053CE /* skeleton.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skeleton.Plo; sourceTree = "<group>"; };
-		2DBE622D11D229AE003053CE /* springsystem.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = springsystem.Plo; sourceTree = "<group>"; };
-		2DBE622E11D229AE003053CE /* streamsource.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = streamsource.Plo; sourceTree = "<group>"; };
-		2DBE622F11D229AE003053CE /* submesh.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = submesh.Plo; sourceTree = "<group>"; };
-		2DBE623011D229AE003053CE /* tinyxml.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tinyxml.Plo; sourceTree = "<group>"; };
-		2DBE623111D229AE003053CE /* tinyxmlerror.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tinyxmlerror.Plo; sourceTree = "<group>"; };
-		2DBE623211D229AE003053CE /* tinyxmlparser.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tinyxmlparser.Plo; sourceTree = "<group>"; };
-		2DBE623311D229AE003053CE /* vector.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vector.Plo; sourceTree = "<group>"; };
 		2DBE623411D229AE003053CE /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = animation.cpp; sourceTree = "<group>"; };
 		2DBE623511D229AE003053CE /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animation.h; sourceTree = "<group>"; };
 		2DBE623611D229AE003053CE /* animation_action.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = animation_action.cpp; sourceTree = "<group>"; };
@@ -374,7 +335,6 @@
 		2DBE620B11D229AE003053CE /* cal3d */ = {
 			isa = PBXGroup;
 			children = (
-				2DBE620C11D229AE003053CE /* .deps */,
 				2DBE623411D229AE003053CE /* animation.cpp */,
 				2DBE623511D229AE003053CE /* animation.h */,
 				2DBE623611D229AE003053CE /* animation_action.cpp */,
@@ -460,52 +420,6 @@
 				2DBE628611D229AE003053CE /* vector.h */,
 			);
 			path = cal3d;
-			sourceTree = "<group>";
-		};
-		2DBE620C11D229AE003053CE /* .deps */ = {
-			isa = PBXGroup;
-			children = (
-				2DBE620D11D229AE003053CE /* animation.Plo */,
-				2DBE620E11D229AE003053CE /* animation_action.Plo */,
-				2DBE620F11D229AE003053CE /* animation_cycle.Plo */,
-				2DBE621011D229AE003053CE /* bone.Plo */,
-				2DBE621111D229AE003053CE /* buffersource.Plo */,
-				2DBE621211D229AE003053CE /* cal3d_wrapper.Plo */,
-				2DBE621311D229AE003053CE /* coreanimation.Plo */,
-				2DBE621411D229AE003053CE /* corebone.Plo */,
-				2DBE621511D229AE003053CE /* corekeyframe.Plo */,
-				2DBE621611D229AE003053CE /* corematerial.Plo */,
-				2DBE621711D229AE003053CE /* coremesh.Plo */,
-				2DBE621811D229AE003053CE /* coremodel.Plo */,
-				2DBE621911D229AE003053CE /* coremorphanimation.Plo */,
-				2DBE621A11D229AE003053CE /* coreskeleton.Plo */,
-				2DBE621B11D229AE003053CE /* coresubmesh.Plo */,
-				2DBE621C11D229AE003053CE /* coresubmorphtarget.Plo */,
-				2DBE621D11D229AE003053CE /* coretrack.Plo */,
-				2DBE621E11D229AE003053CE /* error.Plo */,
-				2DBE621F11D229AE003053CE /* global.Plo */,
-				2DBE622011D229AE003053CE /* hardwaremodel.Plo */,
-				2DBE622111D229AE003053CE /* loader.Plo */,
-				2DBE622211D229AE003053CE /* matrix.Plo */,
-				2DBE622311D229AE003053CE /* mesh.Plo */,
-				2DBE622411D229AE003053CE /* mixer.Plo */,
-				2DBE622511D229AE003053CE /* model.Plo */,
-				2DBE622611D229AE003053CE /* morphtargetmixer.Plo */,
-				2DBE622711D229AE003053CE /* physique.Plo */,
-				2DBE622811D229AE003053CE /* platform.Plo */,
-				2DBE622911D229AE003053CE /* quaternion.Plo */,
-				2DBE622A11D229AE003053CE /* renderer.Plo */,
-				2DBE622B11D229AE003053CE /* saver.Plo */,
-				2DBE622C11D229AE003053CE /* skeleton.Plo */,
-				2DBE622D11D229AE003053CE /* springsystem.Plo */,
-				2DBE622E11D229AE003053CE /* streamsource.Plo */,
-				2DBE622F11D229AE003053CE /* submesh.Plo */,
-				2DBE623011D229AE003053CE /* tinyxml.Plo */,
-				2DBE623111D229AE003053CE /* tinyxmlerror.Plo */,
-				2DBE623211D229AE003053CE /* tinyxmlparser.Plo */,
-				2DBE623311D229AE003053CE /* vector.Plo */,
-			);
-			path = .deps;
 			sourceTree = "<group>";
 		};
 		2DC2FFBB11CE36300068E5C4 /* addons */ = {

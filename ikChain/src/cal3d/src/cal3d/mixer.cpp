@@ -145,66 +145,69 @@ static void addExtraKeyframeForLoopedAnim(CalCoreAnimation* pCoreAnimation)
 
 bool CalMixer::blendCycle(int id, float weight, float delay)
 {
-  if((id < 0) || (id >= (int)m_vectorAnimation.size()))
-  {
-    CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
-    return false;
-  }
+	if((id < 0) || (id >= (int)m_vectorAnimation.size()))
+	{
+		CalError::setLastError(CalError::INVALID_HANDLE, __FILE__, __LINE__);
+		return false;
+	}
 
-  // get the animation for the given id
-  CalAnimation *pAnimation = m_vectorAnimation[id];
+	// get the animation for the given id
+	CalAnimation *pAnimation = m_vectorAnimation[id];
 
-  // create a new animation instance if it is not active yet
-  if(pAnimation == 0)
-  {
-    // take the fast way out if we are trying to clear an inactive animation
-    if(weight == 0.0f) return true;
+	// create a new animation instance if it is not active yet
+	if(pAnimation == 0)
+	{
+		// take the fast way out if we are trying to clear an inactive animation
+		if(weight == 0.0f) 
+			return true;
 
-    // get the core animation
-    CalCoreAnimation *pCoreAnimation = m_pModel->getCoreModel()->getCoreAnimation(id);
-    if(pCoreAnimation == 0) return false;
+		// get the core animation
+		CalCoreAnimation *pCoreAnimation = m_pModel->getCoreModel()->getCoreAnimation(id);
+		if(pCoreAnimation == 0) 
+			return false;
 
-    // Ensure that the animation's first and last key frame match for proper
-    // looping.
-    ::addExtraKeyframeForLoopedAnim(pCoreAnimation);
+		// Ensure that the animation's first and last key frame match for proper
+		// looping.
+		::addExtraKeyframeForLoopedAnim(pCoreAnimation);
 
-    // allocate a new animation cycle instance
-    CalAnimationCycle *pAnimationCycle = new CalAnimationCycle(pCoreAnimation);
-    if(pAnimationCycle == 0)
-    {
-      CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
-      return false;
-    }
+		// allocate a new animation cycle instance
+		CalAnimationCycle *pAnimationCycle = new CalAnimationCycle(pCoreAnimation);
+		if(pAnimationCycle == 0)
+		{
+			CalError::setLastError(CalError::MEMORY_ALLOCATION_FAILED, __FILE__, __LINE__);
+			return false;
+		}
 
-    // insert new animation into the tables
-    m_vectorAnimation[id] = pAnimationCycle;
-    m_listAnimationCycle.push_front(pAnimationCycle);
+		// insert new animation into the tables
+		m_vectorAnimation[id] = pAnimationCycle;
+		m_listAnimationCycle.push_front(pAnimationCycle);
 
-    // blend the animation
-    return pAnimationCycle->blend(weight, delay);
-  }
+		// blend the animation
+		return pAnimationCycle->blend(weight, delay);
+	}
 
-  // check if this is really a animation cycle instance
-  if(pAnimation->getType() != CalAnimation::TYPE_CYCLE)
-  {
-      CalError::setLastError(CalError::INVALID_ANIMATION_TYPE, __FILE__, __LINE__);
-      return false;
-  }
+	// check if this is really a animation cycle instance
+	if(pAnimation->getType() != CalAnimation::TYPE_CYCLE)
+	{
+		CalError::setLastError(CalError::INVALID_ANIMATION_TYPE, __FILE__, __LINE__);
+		return false;
+	}
 
-  // clear the animation cycle from the active vector if the target weight is zero
-  if(weight == 0.0f)
-  {
-      m_vectorAnimation[id] = 0;
-  }
+	// clear the animation cycle from the active vector if the target weight is zero
+	if(weight == 0.0f)
+	{
+		m_vectorAnimation[id] = 0;
+	}
 
-  // cast it to an animation cycle
-  CalAnimationCycle *pAnimationCycle;
-  pAnimationCycle = (CalAnimationCycle *)pAnimation;
+	// cast it to an animation cycle
+	CalAnimationCycle *pAnimationCycle;
+	pAnimationCycle = (CalAnimationCycle *)pAnimation;
 
-  // blend the animation cycle
-  pAnimationCycle->blend(weight, delay);
-  pAnimationCycle->checkCallbacks(0,m_pModel);
-  return true;
+	// blend the animation cycle
+	pAnimationCycle->blend(weight, delay);
+	pAnimationCycle->checkCallbacks(0,m_pModel);
+
+	return true;
 }
 
  /*****************************************************************************/

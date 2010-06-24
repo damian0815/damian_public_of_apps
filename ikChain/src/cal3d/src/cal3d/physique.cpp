@@ -981,6 +981,7 @@ void CalPhysique::update()
       // check if the submesh handles vertex data internally
       if((*iteratorSubmesh)->hasInternalData())
       {
+		  printf("has interal data\n");
         // calculate the transformed vertices and store them in the submesh
         std::vector<CalVector>& vectorVertex = (*iteratorSubmesh)->getVectorVertex();
         calculateVertices(*iteratorSubmesh, (float *)&vectorVertex[0]);

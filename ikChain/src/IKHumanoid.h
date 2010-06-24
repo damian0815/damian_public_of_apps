@@ -46,10 +46,44 @@ public:
 	int getNumBones( Component which ) { return getBonesFor( which ).size(); }
 	IKBone& getBone( Component which, int i ) { assert( i < getNumBones( which ) ); return getBonesFor(which).at(i); }
 
-	// load scale, structure, rest pose from Cal3DModel
-	void toCal3DModel( Cal3DModel& c );
+	
+	class Cal3DModelMapping
+	{
+	public:
+		Cal3DModelMapping();
+		
+		/// construct. bone_names maps from Components to pairs of strings giving the names of 
+		/// the base (.first) and tip (.second) bones in this Component in the Cal3D model.
+		bool setup( CalCoreSkeleton* skeleton, map< Component, pair<string,string> > bone_names,
+						  string spine_arm_attach_name );
+		
+		/// return the cal3d bone id for the bone at the base of this component
+		int getBoneIdBase( Component which )		const { return (*bones.find(which)).second.front(); }
+		/// return the cal3d bone id for the bone at the base of this component
+		int getBoneIdTip( Component which )			const { return (*bones.find(which)).second.back(); }
+		/// return the number of cal3d bones in this component
+		int getNumBones( Component which )			const { return (*bones.find(which)).second.size(); }
+		/// return the cal3d bone id for the bone at position pos (with 0=base) in this component
+		int getBoneId( Component which, int pos )	const { return (*bones.find(which)).second.at(pos); }
+		
+		/// return the cal3d bone id for the spinal bone at which the arms are attached
+		int getSpineArmAttachBoneId() { return spine_arm_attach_id; }
+		
+	private:
+		map< Component, vector<int> > bones;
+		
+		int spine_arm_attach_id;
+	};
+	
 	// push current pose to the given Cal3DModel
+	void toCal3DModel( Cal3DModel& c );
+	// load scale, structure, rest pose from Cal3DModel
 	void fromCal3DModel( Cal3DModel& c, float scale );
+	
+
+	// load scale, structure, rest pose from Cal3DModel
+	void fromCal3DModel( Cal3DModel& c, const Cal3DModelMapping& mapping, float scale );
+	
 	
 private:
 	// set current position as rest position

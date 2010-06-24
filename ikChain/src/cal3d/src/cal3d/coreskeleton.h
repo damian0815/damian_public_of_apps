@@ -30,6 +30,7 @@ public:
 
   int addCoreBone(CalCoreBone *pCoreBone);
   void calculateState();
+  int getNumBones() { return m_vectorCoreBone.size(); }
   CalCoreBone* getCoreBone(int coreBoneId);
   CalCoreBone* getCoreBone(const std::string& strName);
   int getCoreBoneId(const std::string& strName);

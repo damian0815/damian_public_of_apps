@@ -15,26 +15,50 @@ void testApp::setup(){
 	do_target_set = false;
 	which_target = IKHumanoid::C_SPINE;
 
-	model.setup( "test", "man_good/man_goodtmp.xsf" );
+	bool loaded_model = model.setup( "test", "man_good/man_goodtmp.xsf", "man_good/man_goodMan.xmf" );
+	if ( !loaded_model )
+	{
+		printf("couldn't load model");
+		assert(false);
+	}
 	model.dumpSkeleton();
 	human2.setup( 50.0f );
 	human.fromCal3DModel( model, 50.0f );
 	
+	// map of model bone names for each component
+	map< IKHumanoid::Component, pair<string,string> > bone_names;
+	bone_names[IKHumanoid::C_SPINE] = make_pair( "spine_lo", "head" );
+	bone_names[IKHumanoid::C_LEG_L] = make_pair( "hip l", "foot l" );
+	bone_names[IKHumanoid::C_LEG_R] = make_pair( "hip r", "foot r" );
+	bone_names[IKHumanoid::C_ARM_L] = make_pair( "shoulder l", "hand l" );
+	bone_names[IKHumanoid::C_ARM_R] = make_pair( "shoulder r", "hand r" );
+	string spine_arm_attach_name = "neck";
+	// construct the mapping
+	IKHumanoid::Cal3DModelMapping mapping;
+	mapping.setup(model.getSkeleton()->getCoreSkeleton(), bone_names, spine_arm_attach_name );
+										  
+	// go from cal3d model to IKHumanoid
+	human2.fromCal3DModel( model, mapping, 50.0f );
+	
 }
 
 //--------------------------------------------------------------
-void testApp::update(){
+void testApp::update()
+{
 
 	human.resetToRest();
 	human.solve( 10 );
 	
 	//human2.resetToRest();
+	
+	model.updateMesh( );
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
 	human.draw( ofGetWidth()/2, ofGetHeight()/2 );
 	human2.draw( ofGetWidth()/4, ofGetHeight()/2 );
+	model.draw( 50.0f );
 }
 
 //--------------------------------------------------------------
