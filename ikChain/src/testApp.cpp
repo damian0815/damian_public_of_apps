@@ -64,6 +64,8 @@ void testApp::setup(){
 	human2.setupFromCal3DModel( &model2, mapping );
 	
 	
+	character.setup( model2.getSkeleton() );
+	
 }
 
 //--------------------------------------------------------------
@@ -72,14 +74,15 @@ void testApp::update()
 
 	human.resetToRest();
 	//human.solve( 10 );
-	
 	//human2.resetToRest();
-	
-	human.updateCal3DModel();
+	//human.updateCal3DModel();
 	
 	//human2.setupFromCal3DModel( &model, mapping );
 	
 	model.updateMesh();
+	
+	character.resetToRest();
+	character.solve( 10 );
 }
 
 //--------------------------------------------------------------
@@ -104,6 +107,12 @@ void testApp::draw(){
 	glRotatef( 20*sinf( ofGetElapsedTimef()/2.5), 1, 0, 0 );
 	model.draw( 30.0f );
 	glPopMatrix();
+	glPushMatrix();
+	glTranslatef( 0, -ofGetHeight()/4, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/2.5), 1, 0, 0 );
+	model2.draw( 30.0f );
+	glPopMatrix();
 	
 	
 	glPushMatrix();
@@ -119,6 +128,13 @@ void testApp::draw(){
 	model2.drawBones( 30.0f );
 	glPopMatrix();
 	
+	
+	glPushMatrix();
+	glTranslatef( ofGetWidth()/4, ofGetHeight()/4, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/2.5), 1, 0, 0 );
+	character.draw( 30.0f );
+	glPopMatrix();
 	
 }
 
@@ -151,13 +167,21 @@ void testApp::keyPressed(int key){
 			
 		case 'z':
 			pos = human.getTargetPos( which_target );
-			pos.z += 1.0f;
+			pos.z += 0.1f;
 			human.setTargetPos( which_target, pos );
+			pos = character.getTarget( character.getLeafId( (int)which_target) );
+			pos.z += 0.1f;
+			character.setTarget( character.getLeafId( (int)which_target), pos );
 			break;
 		case 'Z':
 			pos = human.getTargetPos( which_target );
-			pos.z -= 1.0f;
+			pos.z -= 0.1f;
 			human.setTargetPos( which_target, pos );
+
+			pos = character.getTarget( character.getLeafId( (int)which_target) );
+			pos.z -= 0.1f;
+			character.setTarget( character.getLeafId( (int)which_target), pos );
+			
 			break;
 		case '6':
 			ofSetFrameRate( 60.0f );
@@ -206,6 +230,12 @@ void testApp::mouseDragged(int x, int y, int button){
 		pos.x += (x-last_mx)*0.02f;
 		pos.y += (y-last_my)*0.02f;
 		human.setTargetPos( which_target, pos );
+		
+		
+		pos = character.getTarget( character.getLeafId( (int)which_target) );
+		pos.x += (x-last_mx)*0.02f;
+		pos.y += (y-last_my)*0.02f;
+		character.setTarget( character.getLeafId( (int)which_target), pos );
 	}
 	last_mx = x;
 	last_my = y;

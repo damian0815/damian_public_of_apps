@@ -5,6 +5,7 @@
 #include "ofMain.h"
 #include "IKHumanoid.h"
 #include "Cal3DModel.h"
+#include "IKCharacter.h"
 
 class testApp : public ofBaseApp{
 
@@ -36,7 +37,9 @@ private:
 	
 	Cal3DModel model;
 	Cal3DModel model2;
+
 	
+	IKCharacter character;
 };
 
 #endif
