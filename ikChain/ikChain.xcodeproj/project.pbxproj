@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D26F08511D51F62000E963A /* IKCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D26F08411D51F62000E963A /* IKCharacter.cpp */; };
 		2D61A28C11CBC5C000BAB5DE /* IKbone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D61A28B11CBC5C000BAB5DE /* IKbone.cpp */; };
 		2DBE5F3B11D13786003053CE /* Cal3DModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE5F3A11D13786003053CE /* Cal3DModel.cpp */; };
 		2DBE5F3E11D13C45003053CE /* AnimadeadModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE5F3D11D13C45003053CE /* AnimadeadModel.cpp */; };
@@ -123,6 +124,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D26F08311D51F62000E963A /* IKCharacter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IKCharacter.h; sourceTree = "<group>"; };
+		2D26F08411D51F62000E963A /* IKCharacter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IKCharacter.cpp; sourceTree = "<group>"; };
 		2D61A28511CBC4F600BAB5DE /* IKchain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IKchain.h; sourceTree = "<group>"; };
 		2D61A28611CBC4F600BAB5DE /* IKchain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IKchain.cpp; sourceTree = "<group>"; };
 		2D61A28A11CBC5C000BAB5DE /* IKbone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IKbone.h; sourceTree = "<group>"; };
@@ -652,6 +655,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2D26F08311D51F62000E963A /* IKCharacter.h */,
+				2D26F08411D51F62000E963A /* IKCharacter.cpp */,
 				2DBE5F3C11D13C45003053CE /* AnimadeadModel.h */,
 				2DBE5F3D11D13C45003053CE /* AnimadeadModel.cpp */,
 				2DCEE8C311CE848600047601 /* IKHumanoid.h */,
@@ -877,6 +882,7 @@
 				2DBE62AC11D229AE003053CE /* tinyxmlerror.cpp in Sources */,
 				2DBE62AD11D229AE003053CE /* tinyxmlparser.cpp in Sources */,
 				2DBE62AE11D229AE003053CE /* vector.cpp in Sources */,
+				2D26F08511D51F62000E963A /* IKCharacter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,7 +17,7 @@
 class IKHumanoid
 {
 public:
-	IKHumanoid() : root_pos( 0, 0 ), model(0) {
+	IKHumanoid() : model(0) {
 		arm_target_pos[0].set( -1, 1, 0 ); arm_target_pos[1].set( 1, 1, 0 );
 		leg_target_pos[0].set( -1, -1, 0 ); leg_target_pos[0].set( 1, -1, 0 );
 	};
@@ -34,7 +34,6 @@ public:
 	
 	// set root/target positions
 	typedef enum _Component{ C_ARM_L, C_ARM_R, C_LEG_L, C_LEG_R, C_SPINE } Component;
-	void setRootPos( ofxVec3f new_root ) { root_pos = new_root; }
 	void setTargetPos( Component which, ofxVec3f new_target ) { getTargetPosFor( which ).set( new_target ); }
 	ofxVec3f getTargetPos( Component which ) { return getTargetPosFor( which ); }
 	
@@ -90,7 +89,7 @@ private:
 	void setCurrentAsRest();
 	
 	ofxVec3f& getTargetPosFor( Component which );
-	ofxVec3f& getRootPosFor( Component which );
+	ofxVec3f getRootPosFor( Component which );
 	ofxQuaternion getStartAngleFor( Component which );
 	vector<IKBone>& getBonesFor( Component which );
 	
@@ -127,12 +126,14 @@ private:
 	//ofxVec3f root_pos;
 	//ofxVec3f target_pos,
 	// root_pos == hip_pos
-	ofxVec3f root_pos;
+//	ofxVec3f root_pos;
 	ofxQuaternion root_angle;
 
 	ofxVec3f arm_target_pos[2];
 	ofxVec3f leg_target_pos[2];
 	ofxVec3f head_target_pos;
+	
+	map<Component, vector<ofxVec3f> > saved_cartesian_import;
 
 	Cal3DModel* model;
 	Cal3DModelMapping mapping;

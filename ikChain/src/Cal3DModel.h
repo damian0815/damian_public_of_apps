@@ -21,6 +21,7 @@ public:
 	bool setup( string name, string skeleton_file, string mesh_file );
 
 	void draw( float scale = 1.0f );
+	void drawBones( float scale );
 	
 	/// update the mesh based on the current skeleton state
 	void updateMesh( );
@@ -42,5 +43,7 @@ private:
 	CalModel* instance;
 
 	void dumpSkeletonImp( CalCoreBone* root, string prefix );
+
 	
+	void drawBones(  int bone_id, float scale );
 };

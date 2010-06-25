@@ -2,6 +2,7 @@
 #include "ofxVectorMath.h"
 
 IKHumanoid::Cal3DModelMapping mapping;
+IKHumanoid::Cal3DModelMapping mapping2;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -19,7 +20,6 @@ void testApp::setup(){
 
 	
  
-	 bool loaded_model = model.setup( "test", "man_good/man_goodtmp.csf", "man_good/man_goodMan.cmf" );
 	// map of model bone names for each component
 	map< IKHumanoid::Component, pair<string,string> > bone_names;
 	bone_names[IKHumanoid::C_SPINE] = make_pair( "spine_lo", "head" );
@@ -44,12 +44,13 @@ void testApp::setup(){
 
 */
  
- if ( !loaded_model )
+	bool loaded_model = model.setup( "test", "man_good/man_goodtmp.csf", "man_good/man_goodMan.cmf" );
+	if ( !loaded_model )
 	{
 		printf("couldn't load model");
 		assert(false);
 	}
-	model.dumpSkeleton();
+	model2.setup( "test2", "man_good/man_goodtmp.csf", "man_good/man_goodMan.cmf" );
 	human.setup( );
 	human2.setup( );
 	//human.fromCal3DModel( model, 50.0f );
@@ -58,6 +59,9 @@ void testApp::setup(){
 	// construct the mapping
 	mapping.setup(model.getSkeleton()->getCoreSkeleton(), bone_names, root_name, spine_arm_attach_name );
 	human.setupFromCal3DModel( &model, mapping );
+
+	mapping2.setup(model2.getSkeleton()->getCoreSkeleton(), bone_names, root_name, spine_arm_attach_name );
+	human2.setupFromCal3DModel( &model2, mapping );
 	
 	
 }
@@ -67,7 +71,7 @@ void testApp::update()
 {
 
 	human.resetToRest();
-	human.solve( 10 );
+	//human.solve( 10 );
 	
 	//human2.resetToRest();
 	
@@ -98,8 +102,24 @@ void testApp::draw(){
 	glPushMatrix();
 	glRotatef( 20*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
 	glRotatef( 20*sinf( ofGetElapsedTimef()/2.5), 1, 0, 0 );
-	model.draw( 50.0f );
+	model.draw( 30.0f );
 	glPopMatrix();
+	
+	
+	glPushMatrix();
+	glTranslatef( ofGetWidth()/3, 3*ofGetHeight()/4, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/2.5), 1, 0, 0 );
+	model.drawBones( 30.0f );
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef( 2*ofGetWidth()/3, 3*ofGetHeight()/4, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/2.5), 1, 0, 0 );
+	model2.drawBones( 30.0f );
+	glPopMatrix();
+	
+	
 }
 
 //--------------------------------------------------------------

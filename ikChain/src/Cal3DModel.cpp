@@ -200,6 +200,42 @@ void Cal3DModel::draw( float scale )
 	pCalRenderer->endRendering();
 }
 
+void Cal3DModel::drawBones( int bone_id, float scale )
+{
+	CalSkeleton* skeleton = instance->getSkeleton();
+	CalBone* bone = skeleton->getBone( bone_id );
+	int parent_id = bone->getCoreBone()->getParentId();
+	if ( parent_id != -1 )
+	{
+		CalBone* parent = skeleton->getBone( parent_id );
+		glBegin( GL_LINES );
+		CalVector v = parent->getTranslationAbsolute();
+		v*=scale;
+		glVertex3f( v.x, v.y, v.z );
+		v = bone->getTranslationAbsolute();
+		v*=scale;
+		glVertex3f( v.x, v.y, v.z );
+		glEnd();
+	}
+	
+	list<int> children = bone->getCoreBone()->getListChildId();
+	for ( list<int>::iterator it = children.begin(); 
+		 it != children.end();
+		 ++it )
+	{
+		drawBones( *it, scale );
+	}
+}
+
+void Cal3DModel::drawBones( float scale )
+{
+	vector<int> roots = instance->getSkeleton()->getCoreSkeleton()->getVectorRootCoreBoneId();
+	for ( int i=0; i<roots.size(); i++ )
+	{
+		drawBones( roots[i], scale  );
+	}
+}
+
 void Cal3DModel::rotateBoneX( int id, float amount )
 {
 	CalBone* bone = instance->getSkeleton()->getBone( id );

@@ -25,6 +25,7 @@ class testApp : public ofBaseApp{
 private:
 	
 	IKHumanoid human;
+	IKHumanoid human2;
 	IKHumanoid::Component which_target;
 	bool do_target_set;
 	
@@ -34,7 +35,7 @@ private:
 	
 	
 	Cal3DModel model;
-	IKHumanoid human2;
+	Cal3DModel model2;
 	
 };
 

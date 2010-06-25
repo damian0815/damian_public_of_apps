@@ -29,7 +29,6 @@ static IKHumanoid::Component COMPONENT_LIST[5] = {
 
 void IKHumanoid::setup( float scale, int num_spine_bones )
 {
-	root_pos.set( 0, 0, 0 );
 	for ( int i=0; i<5; i++ )
 	{
 		setBaseOffsetFor( COMPONENT_LIST[i], ofxVec3f(0,0,0) );
@@ -286,8 +285,9 @@ void IKHumanoid::solve( int iterations )
 		fromCartesianSpace( C_SPINE, spine_bone_positions );
 		fromCartesianSpace( C_ARM_L, arm_bone_positions[0] );
 		fromCartesianSpace( C_ARM_R, arm_bone_positions[1] );
+		/*
 		fromCartesianSpace( C_LEG_L, leg_bone_positions[0] );
-		fromCartesianSpace( C_LEG_R, leg_bone_positions[1] );
+		fromCartesianSpace( C_LEG_R, leg_bone_positions[1] );*/
 		
 		// constrain angles
 		for ( int component = 0; component<5; component++ )
@@ -331,51 +331,16 @@ ofxQuaternion orientationFromDirection(ofxVec3f vDirection)
 
 
 
-/*
-vector<ofxVec3f> IKHumanoid::toCartesianSpace( Component which )
-{
-	// put all the bones into 2d space
-	vector<ofxVec3f> bone_positions;
-	
-	ofxQuaternion orientation;
-	ofxVec3f base_offset = getBaseOffsetFor( which );
-	bone_positions.push_back( getRootPosFor( which )+base_offset );
-	
-	ofxVec3f dir( 0, 1, 0 );
-	
-	vector<IKBone>& bones = getBonesFor( which );
-	for ( int i=0; i<bones.size(); i++ )
-	{
-		
-		// rotate our direction by the bone's angle
-		dir = dir*bones[i].getAngle();
-		// add on direction * length to get the end point of this bone
-		ofxVec3f next_pos = bone_positions.back() + dir*bones[i].getLength();
-		bone_positions.push_back( next_pos );
-
-		// update orientation
-		orientation *= bones[i].getAngle();
-
-	}
-	
-	return bone_positions;
-}
-*/
-
 vector<ofxVec3f> IKHumanoid::toCartesianSpace( Component which )
 {
 	// put all the bones into 2d space
 	vector<ofxVec3f> bone_positions;
 
-	// start at the root
-	/*ofxVec3f base_offset = getStartAngleFor(which).inverse()*getBaseOffsetFor( which );
-	ofxVec3f dir = base_offset.normalized();*/
+	/*// start at the root
 	ofxVec3f dir = UP*getStartAngleFor(which);
 	bone_positions.push_back( getRootPosFor( which )+getBaseOffsetFor(which)*getStartAngleFor(which) );
 	
-/*	ofxVec3f base_offset = getBaseOffsetFor( which );
-	bone_positions.push_back( getRootPosFor( which )+ base_offset );
-	ofxVec3f dir = base_offset.normalized();*/
+	
 	
 	vector<IKBone>& bones = getBonesFor( which );
 	for ( int i=0; i<bones.size(); i++ )
@@ -385,68 +350,84 @@ vector<ofxVec3f> IKHumanoid::toCartesianSpace( Component which )
 		// add on direction * length to get the end point of this bone
 		ofxVec3f next_pos = bone_positions.back() + dir*bones[i].getLength();
 		bone_positions.push_back( next_pos );
-	}
+	}*/
+	
+	ofxQuaternion parent_rotation_space = getStartAngleFor( which );
+
+	// first position is (root pos + base_offset*
+	bone_positions.push_back( getRootPosFor( which ) + getBaseOffsetFor(which) );
+	
+	vector<IKBone>& bones = getBonesFor( which );
+	for ( int i=0; i<bones.size(); i++ )
+	{
+		// add on direction * length to get the end point of this bone
+		ofxVec3f next_pos = bone_positions.back() + UP*bones[i].getLength()*parent_rotation_space*bones[i].getAngle();
+		bone_positions.push_back( next_pos );
+		parent_rotation_space *= bones[i].getAngle();
+	}		
 	
 	return bone_positions;
 }
-/*
+
 
 void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec3f>& bone_positions )
 {
+	saved_cartesian_import[which] = bone_positions;
+	
 	vector<IKBone>& bones = getBonesFor( which );
 	//assert( bone_positions.size() == bones.size()+1 );
 	
-	// starting direction is root->base_offset
-	//	ofxVec3f base_offset = getStartAngleFor(which)*getBaseOffsetFor( which );
-	//	ofxVec3f dir = base_offset.normalized();
-
-	ofxQuaternion orientation;
+	ofxQuaternion parent_rotation_space = getStartAngleFor( which );
 	
 	for ( int i=0; i<bones.size(); i++ )
 	{
 		// get bone parent->child delta
 		ofxVec3f bone_delta = bone_positions[i+1]-bone_positions[i];
 		// convert bone delta to a direction
-		bone_delta.normalize();
-		// cancel the current orientation
-		bone_delta = bone_delta*orientation.inverse();
-		// -> angle
-		ofxQuaternion angle = orientationFromDirection( bone_delta );
-		bones[i].setAngle( angle );
-		// new orientation for relative
-		orientation = angle;
-	}
-	
-	
-}*/
+		ofxVec3f curr_dir = bone_delta.normalized();
 
-
-
-
-void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec3f>& bone_positions )
-{
-	vector<IKBone>& bones = getBonesFor( which );
-	//assert( bone_positions.size() == bones.size()+1 );
+		// now bring this direction into the parent bone's space
+		curr_dir = curr_dir*parent_rotation_space.inverse();
+		
+		// now we have the delta relative to the parent
+		
+		// make a direction vector for rest,
+		// and calculate a quaternion to bring rest_dir to bone_dir
+		ofxVec3f rest_dir = UP*bones[i].getRestAngle();
+		ofxQuaternion rot;
+		rot.makeRotate( rest_dir, curr_dir );
+		
+		// store
+		bones[i].setAngle( bones[i].getRestAngle()*rot );
+		
+		// apply for next time
+		parent_rotation_space *= rot;
 	
-	// starting direction is root->base
-	// which is expressed as a direction in root bone space
-	ofxVec3f dir = UP*getStartAngleFor(which);
-	
-	for ( int i=0; i<bones.size(); i++ )
-	{
-		// get bone parent->child delta
-		ofxVec3f bone_delta = bone_positions[i+1]-bone_positions[i];
-		// convert bone delta to a direction
-		bone_delta.normalize();
-		// -> angle
+	}		
+		/*
+		
+		 
+		 // starting direction is root->base
+		 // which is expressed as a direction in root bone space
+		 ofxVec3f dir = UP*getStartAngleFor(which);
+		
+		 for ( int i=0; i<bones.size(); i++ )
+		 {
+		 // get bone parent->child delta
+		 ofxVec3f bone_delta = bone_positions[i+1]-bone_positions[i];
+		 // convert bone delta to a direction
+		 bone_delta.normalize();
+		 // -> angle
 		ofxQuaternion angle;
+		
 		angle.makeRotate( dir, bone_delta );
 		//float angle = bone_delta.angleRad( dir );
 		bones[i].setAngle( angle );
 		// rotate our direction by the bone's angle (angles are all relative)
 		dir = dir*angle;
-		//dir.rotateRad( -angle );
-	}
+		//dir.rotateRad( -angle );*/
+		
+	
 	
 	
 }
@@ -522,13 +503,28 @@ void IKHumanoid::draw( int x, int y )
 		ofSetColor( 255, 128, 128 );
 		ofxVec3f target_pos = getTargetPosFor( which );
 		ofPushMatrix();
-		ofTranslate( 0, 0, target_pos.z );
 		ofNoFill();
-		ofCircle(target_pos.x, 
-				 target_pos.y, 
-				 1 );
+		glBegin( GL_TRIANGLES );
+		glVertex3f( target_pos.x-0.1, target_pos.y-0.05, target_pos.z );
+		glVertex3f( target_pos.x+0.1, target_pos.y-0.05, target_pos.z );
+		glVertex3f( target_pos.x, target_pos.y+0.05, target_pos.z );
+		glEnd();
 		ofPopMatrix();
 	}
+	
+
+	for ( int c=0; c<5; c++ )
+	{
+		Component which = COMPONENT_LIST[c];
+		glColor3f( 0.8, 0.2, 0.2f );
+		glBegin( GL_LINE_STRIP );
+		for ( int i=0;i<saved_cartesian_import[which].size(); i++) 
+		{
+			ofxVec3f p = saved_cartesian_import[which][i];
+			glVertex3f( p.x, p.y, p.z );
+		}
+		glEnd();
+	}	
 	ofPopMatrix();
 }
 
@@ -571,10 +567,10 @@ ofxVec3f& IKHumanoid::getTargetPosFor( Component which )
 	}
 }
 
-ofxVec3f& IKHumanoid::getRootPosFor( Component which )
+ofxVec3f IKHumanoid::getRootPosFor( Component which )
 {
 	if ( which == C_SPINE )
-		return root_pos;
+		return ofxVec3f(0,0,0);
 	else
 	{
 		vector<ofxVec3f> pos = toCartesianSpace( C_SPINE );
@@ -585,9 +581,9 @@ ofxVec3f& IKHumanoid::getRootPosFor( Component which )
 				return pos[spine_arm_branch];
 			case C_LEG_L:
 			case C_LEG_R:
-				return root_pos;
+				return ofxVec3f(0,0,0);
 			default:
-				return root_pos;
+				return ofxVec3f(0,0,0);
 		}
 	}
 }
@@ -606,7 +602,8 @@ void IKHumanoid::resetToRest()
 
 ofxQuaternion IKHumanoid::getStartAngleFor( Component which )
 {
-	ofxQuaternion angle;
+	ofxQuaternion angle = root_angle;
+	
 	switch(which)
 	{
 		case C_SPINE:
@@ -693,15 +690,15 @@ void IKHumanoid::updateCal3DModel()
 {
 	CalSkeleton* skeleton = model->getSkeleton();
 	
-//	skeleton->getBone( mapping.getRootBoneId() )->setRotation( CalQuaternion( QINV*root_angle.x(), QINV*root_angle.y(), QINV*root_angle.z(), root_angle.w() ) );
-//	skeleton->getBone( mapping.getRootBoneId() )->setTranslation( CalVector( root_pos.x, root_pos.y, root_pos.z ) );
+	// update root
+	skeleton->getBone( mapping.getRootBoneId() )->setRotation( CalQuaternion( QINV*root_angle.x(), QINV*root_angle.y(), QINV*root_angle.z(), root_angle.w() ) );
+	//skeleton->getBone( mapping.getRootBoneId() )->setTranslation( CalVector( VINV*root_pos.x, root_pos.y, root_pos.z ) );
 	
 	// run through all our bones + push angles to the cal3d model
 	for ( int c=0; c<5; c++ )
 	{
 		
 		Component which = COMPONENT_LIST[c];
-//		Component which = (c==0?C_SPINE:C_ARM_L);
 		vector< IKBone>& bones = getBonesFor( which );
 		
 		for ( int i=0; i<bones.size(); i++ )
@@ -711,64 +708,6 @@ void IKHumanoid::updateCal3DModel()
 			ofxQuaternion rot = bones[i].getAngle();
 			cal_bone->setRotation( CalQuaternion( QINV*rot.x(), QINV*rot.y(), QINV*rot.z(), rot.w() ) );
 		}
-		/*
-		for ( int i=0; i<bones.size(); i++ )
-		{
-			// calculate rotation to go from rest angle to angle
-			ofxQuaternion rot = bones[i].getRestAngle().inverse()*bones[i].getAngle();
-			CalQuaternion delta_rot_cal( QINV*rot.x(), QINV*rot.y(), QINV*rot.z(), rot.w() );
-			int cal3d_bone_id = mapping.getBoneId( which, i );
-			CalBone* cal_bone = skeleton->getBone( cal3d_bone_id );
-			cal_bone->setRotation( cal_bone->getCoreBone()->getRotation()*delta_rot_cal );
-		}*/
-		
-	/*
-		ofxQuaternion prev_rot = getStartAngleFor( which );
-		for ( int i=0; i<bones.size(); i++ )
-		{
-			
-			int cal3d_bone_id = mapping.getBoneId( which, i );
-			CalBone* cal_bone = skeleton->getBone( cal3d_bone_id );
-			ofxQuaternion delta = bones[i].getAngle();
-			prev_rot *= delta;
-			
-			cal_bone->setRotation( cal_bone->getCoreBone()->getRotation()*CalQuaternion( -delta.x(), -delta.y(), -delta.z(), delta.w() ) );
-			//CalQuaternion rot_core = cal_bone->getCoreBone()->getRotation();
-			//printf("rot is %6.3f %6.3f %6.3f %6.3f, rot_core is %6.3f %6.3f %6.3f %6.3f  %s\n", rot.x(), rot.y(), rot.z(), rot.w(),
-			//	   rot_core.x, rot_core.y, rot_core.z, rot_core.w, cal_bone->getCoreBone()->getName().c_str() );
-			//			cal_bone->setCoreState();
-			//cal_bone->setRotation( CalQuaternion( rot.x(), rot.y(), rot.z(), rot.w() ) );
-			//			cal_bone->calculateState();
-		
-		 }
-	*/	
-		/*
-		for ( int i=0; i<bones.size(); i++ )
-		{
-			
-			int cal3d_bone_id = mapping.getBoneId( which, i );
-			CalBone* cal_bone = skeleton->getBone( cal3d_bone_id );
-			ofxQuaternion rot = bones[i].getAngle();
-			ofxQuaternion prev_rot;
-			if ( i==0 )
-				prev_rot = getStartAngleFor( which );
-			else
-				prev_rot = bones[i-1].getAngle();
-			// calculate quaternion to go from prev_rot to rot
-			ofxQuaternion delta = prev_rot.inverse() * rot;
-			
-			//cal_bone->setRotation( cal_bone->getCoreBone()->getRotation()*CalQuaternion( delta.x(), delta.y(), delta.z(), delta.w() ) );
-			//CalQuaternion rot_core = cal_bone->getCoreBone()->getRotation();
-			//printf("rot is %6.3f %6.3f %6.3f %6.3f, rot_core is %6.3f %6.3f %6.3f %6.3f  %s\n", rot.x(), rot.y(), rot.z(), rot.w(),
-			//	   rot_core.x, rot_core.y, rot_core.z, rot_core.w, cal_bone->getCoreBone()->getName().c_str() );
-			//			cal_bone->setCoreState();
-			//cal_bone->setRotation( CalQuaternion( rot.x(), rot.y(), rot.z(), rot.w() ) );
-			//			cal_bone->calculateState();
-			
-		}*/
-		
-		
-
 		
 	}
 	
@@ -786,9 +725,10 @@ void IKHumanoid::setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& _m
 	CalCoreBone* root_root_bone = skeleton->getCoreSkeleton()->getCoreBone( mapping.getRootBoneId() );
 	CalVector root_pos_cal = root_root_bone->getTranslationAbsolute();
 	CalQuaternion root_angle_cal = root_root_bone->getRotationAbsolute();
-	root_pos.set( VINV*root_pos_cal.x, root_pos_cal.y, root_pos_cal.z );
+	//root_pos.set( VINV*root_pos_cal.x, root_pos_cal.y, root_pos_cal.z );
 	root_angle.set( QINV*root_angle_cal.x, QINV*root_angle_cal.y, QINV*root_angle_cal.z, root_angle_cal.w );
 	
+	 
 
 	// loop through all components
 	for ( int c=0; c<5; c++ )
@@ -803,6 +743,7 @@ void IKHumanoid::setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& _m
 		vector<ofxVec3f> positions;
 		positions.resize( mapping.getNumBones( which )+1 );
 		
+		
 		for ( int i=0; i<mapping.getNumBones( which ); i++ )
 		{
 			// get bone
@@ -812,7 +753,7 @@ void IKHumanoid::setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& _m
 			// convert to oF
 			ofxQuaternion angle_of( QINV*angle.x, QINV*angle.y, QINV*angle.z, angle.w );
 			// store
-			bones[i].setAngle( angle_of );
+			bones[i].setRestAngle( angle_of );
 		}
 
 		// set root offset
@@ -829,8 +770,8 @@ void IKHumanoid::setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& _m
 		CalVector root_pos_cal = root_bone->getTranslationAbsolute();
 		ofxVec3f base_pos( VINV*base_pos_cal.x, base_pos_cal.y, base_pos_cal.z );
 		ofxVec3f root_pos( VINV*root_pos_cal.x,root_pos_cal.y,root_pos_cal.z);
-		setBaseOffsetFor( which, (base_pos-root_pos)*getStartAngleFor(which) );
-
+		setBaseOffsetFor( which, base_pos-root_pos );
+		
 		positions[0] = base_pos;
 		// go through bones
 		for ( int i=1; i<mapping.getNumBones( which ); i++ )
