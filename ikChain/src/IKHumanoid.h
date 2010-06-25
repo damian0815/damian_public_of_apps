@@ -78,12 +78,6 @@ public:
 		int root_id;
 	};
 	
-	// push current pose to the given Cal3DModel
-	void toCal3DModel( Cal3DModel& c );
-	// load scale, structure, rest pose from Cal3DModel
-	void fromCal3DModel( Cal3DModel& c, float scale );
-	
-
 	/// load scale, structure, rest pose from Cal3DModel
 	/// we retain the pointer to m
 	void setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& mapping );
