@@ -1,6 +1,8 @@
 #include "testApp.h"
 #include "ofxVectorMath.h"
 
+IKHumanoid::Cal3DModelMapping mapping;
+
 //--------------------------------------------------------------
 void testApp::setup(){
 
@@ -15,30 +17,48 @@ void testApp::setup(){
 	do_target_set = false;
 	which_target = IKHumanoid::C_SPINE;
 
-	bool loaded_model = model.setup( "test", "man_good/man_goodtmp.xsf", "man_good/man_goodMan.xmf" );
-	if ( !loaded_model )
-	{
-		printf("couldn't load model");
-		assert(false);
-	}
-	model.dumpSkeleton();
-	human2.setup( 50.0f );
-	human.fromCal3DModel( model, 50.0f );
 	
+ 
+	 bool loaded_model = model.setup( "test", "man_good/man_goodtmp.xsf", "man_good/man_goodMan.xmf" );
 	// map of model bone names for each component
 	map< IKHumanoid::Component, pair<string,string> > bone_names;
 	bone_names[IKHumanoid::C_SPINE] = make_pair( "spine_lo", "head" );
 	bone_names[IKHumanoid::C_LEG_L] = make_pair( "hip l", "foot l" );
 	bone_names[IKHumanoid::C_LEG_R] = make_pair( "hip r", "foot r" );
-	bone_names[IKHumanoid::C_ARM_L] = make_pair( "shoulder l", "hand l" );
-	bone_names[IKHumanoid::C_ARM_R] = make_pair( "shoulder r", "hand r" );
+	bone_names[IKHumanoid::C_ARM_L] = make_pair( "shoulder l", "Hand.l" );
+	bone_names[IKHumanoid::C_ARM_R] = make_pair( "shoulder r", "Hand.r" );
 	string spine_arm_attach_name = "neck";
-	// construct the mapping
-	IKHumanoid::Cal3DModelMapping mapping;
-	mapping.setup(model.getSkeleton()->getCoreSkeleton(), bone_names, spine_arm_attach_name );
-										  
+	string root_name = "root";
+	
+	
+/*
+ bool loaded_model = model.setup( "army", "armyman/armymantmp.xsf", "armyman/armymanCube.xmf" );
+	map< IKHumanoid::Component, pair<string,string> > bone_names;
+	bone_names[IKHumanoid::C_SPINE] = make_pair( "bodybottom", "head" );
+	bone_names[IKHumanoid::C_LEG_L] = make_pair( "lhip", "lfoot2" );
+	bone_names[IKHumanoid::C_LEG_R] = make_pair( "rhip", "rfoot2" );
+	bone_names[IKHumanoid::C_ARM_L] = make_pair( "lshoulder", "lhand3" );
+	bone_names[IKHumanoid::C_ARM_R] = make_pair( "rshoulder", "rhand3" );
+	string spine_arm_attach_name = "neck";
+	string root_name = "bodybottom";
+
+*/
+ 
+ if ( !loaded_model )
+	{
+		printf("couldn't load model");
+		assert(false);
+	}
+	model.dumpSkeleton();
+	human.setup( );
+	human2.setup( );
+	//human.fromCal3DModel( model, 50.0f );
+	
 	// go from cal3d model to IKHumanoid
-	human2.fromCal3DModel( model, mapping, 50.0f );
+	// construct the mapping
+	mapping.setup(model.getSkeleton()->getCoreSkeleton(), bone_names, root_name, spine_arm_attach_name );
+	human.setupFromCal3DModel( &model, mapping );
+	
 	
 }
 
@@ -51,19 +71,41 @@ void testApp::update()
 	
 	//human2.resetToRest();
 	
-	model.updateMesh( );
+	//human.updateCal3DModel();
+	
+	//human2.setupFromCal3DModel( &model, mapping );
+	
+	model.updateMesh();
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	human.draw( ofGetWidth()/2, ofGetHeight()/2 );
-	human2.draw( ofGetWidth()/4, ofGetHeight()/2 );
+	glPushMatrix();
+	glTranslatef( ofGetWidth()/2, ofGetHeight()/4, 0 );
+	glRotatef( 10*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
+	glRotatef( 10*sinf( ofGetElapsedTimef()/2.5), 1, 0, 0 );
+	glScalef( 50, 50, 50 );
+	human.draw( 0,0  );
+	glPopMatrix();
+	
+	glPushMatrix();
+	glTranslatef( ofGetWidth()/3, ofGetHeight()/4, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
+	glScalef( 50, 50, 50 );
+	human2.draw( 0,0 );
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef( 20*sinf( ofGetElapsedTimef()/3), 0, 1, 0 );
+	glRotatef( 20*sinf( ofGetElapsedTimef()/2.5), 1, 0, 0 );
 	model.draw( 50.0f );
+	glPopMatrix();
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 	ofxVec3f pos;
+	static int b_id = 0;
 	switch( key )
 	{
 		case '1':
@@ -106,6 +148,20 @@ void testApp::keyPressed(int key){
 		default:
 			break;
 			
+		case 'b':
+			b_id++;
+			break;
+		case 'B':
+			b_id--;
+			break;
+		case 'x':
+			model.rotateBoneX(b_id, 0.05);
+			break;
+		case 'X':
+			model.rotateBoneX(b_id, -0.05);
+			break;
+			
+			
 	}
 
 }
@@ -127,8 +183,8 @@ void testApp::mouseDragged(int x, int y, int button){
 	if ( last_mx > 0 )
 	{
 		ofxVec3f pos = human.getTargetPos( which_target );
-		pos.x += (x-last_mx);
-		pos.y -= (y-last_my);
+		pos.x += (x-last_mx)*0.02f;
+		pos.y += (y-last_my)*0.02f;
 		human.setTargetPos( which_target, pos );
 	}
 	last_mx = x;

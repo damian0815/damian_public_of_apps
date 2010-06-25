@@ -32,6 +32,8 @@ public:
 	/// to the mesh.
 	CalSkeleton* getSkeleton() { return instance->getSkeleton(); }
 	
+	void rotateBoneX( int bone_id, float amount );
+	
 private:
 	
 	int num_bones;

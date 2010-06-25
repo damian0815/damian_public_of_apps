@@ -974,7 +974,7 @@ void CalPhysique::update()
     // get the submesh vector of the mesh
     std::vector<CalSubmesh *>& vectorSubmesh = (*iteratorMesh)->getVectorSubmesh();
 
-    // loop through all the submeshes of the mesh
+    // loop through all the submeshes of the meshbase_bone->getParentId()
     std::vector<CalSubmesh *>::iterator iteratorSubmesh;
     for(iteratorSubmesh = vectorSubmesh.begin(); iteratorSubmesh != vectorSubmesh.end(); ++iteratorSubmesh)
     {

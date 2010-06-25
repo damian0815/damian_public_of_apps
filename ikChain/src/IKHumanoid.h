@@ -17,7 +17,7 @@
 class IKHumanoid
 {
 public:
-	IKHumanoid() : root_pos( 0, 0 ) {
+	IKHumanoid() : root_pos( 0, 0 ), model(0) {
 		arm_target_pos[0].set( -1, 1, 0 ); arm_target_pos[1].set( 1, 1, 0 );
 		leg_target_pos[0].set( -1, -1, 0 ); leg_target_pos[0].set( 1, -1, 0 );
 	};
@@ -55,7 +55,7 @@ public:
 		/// construct. bone_names maps from Components to pairs of strings giving the names of 
 		/// the base (.first) and tip (.second) bones in this Component in the Cal3D model.
 		bool setup( CalCoreSkeleton* skeleton, map< Component, pair<string,string> > bone_names,
-						  string spine_arm_attach_name );
+						  string root_name, string spine_arm_attach_name );
 		
 		/// return the cal3d bone id for the bone at the base of this component
 		int getBoneIdBase( Component which )		const { return (*bones.find(which)).second.front(); }
@@ -68,11 +68,14 @@ public:
 		
 		/// return the cal3d bone id for the spinal bone at which the arms are attached
 		int getSpineArmAttachBoneId() { return spine_arm_attach_id; }
+		/// return the cal3d bone id for the root bone
+		int getRootBoneId() { return root_id; }
 		
 	private:
 		map< Component, vector<int> > bones;
 		
 		int spine_arm_attach_id;
+		int root_id;
 	};
 	
 	// push current pose to the given Cal3DModel
@@ -81,8 +84,11 @@ public:
 	void fromCal3DModel( Cal3DModel& c, float scale );
 	
 
-	// load scale, structure, rest pose from Cal3DModel
-	void fromCal3DModel( Cal3DModel& c, const Cal3DModelMapping& mapping, float scale );
+	/// load scale, structure, rest pose from Cal3DModel
+	/// we retain the pointer to m
+	void setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& mapping );
+	/// push our state on to the Cal3DModel we were created from
+	void updateCal3DModel();
 	
 	
 private:
@@ -93,6 +99,11 @@ private:
 	ofxVec3f& getRootPosFor( Component which );
 	ofxQuaternion getStartAngleFor( Component which );
 	vector<IKBone>& getBonesFor( Component which );
+	
+	// set the base offset from the root position for the given component
+	void setBaseOffsetFor( Component which, ofxVec3f offset ) { base_offset[which] = offset; }
+	ofxVec3f getBaseOffsetFor ( Component which ) const { return (*base_offset.find(which)).second; }
+	map<Component, ofxVec3f> base_offset;
 	
 	vector<IKBone> arms[2];
 	vector<IKBone> legs[2];
@@ -123,11 +134,14 @@ private:
 	//ofxVec3f target_pos,
 	// root_pos == hip_pos
 	ofxVec3f root_pos;
+	ofxQuaternion root_angle;
 
 	ofxVec3f arm_target_pos[2];
 	ofxVec3f leg_target_pos[2];
 	ofxVec3f head_target_pos;
-	
+
+	Cal3DModel* model;
+	Cal3DModelMapping mapping;
 };
 
 

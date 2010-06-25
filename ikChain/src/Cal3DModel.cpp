@@ -42,6 +42,7 @@ bool Cal3DModel::setup( string name, string skeleton_file, string mesh_file )
 	
 	num_bones = model->getCoreSkeleton()->getNumBones();
 	
+	instance->update( 0.01f );
 	updateMesh();
 
 	return true;
@@ -50,7 +51,7 @@ bool Cal3DModel::setup( string name, string skeleton_file, string mesh_file )
 void Cal3DModel::updateMesh( )
 {
 	// lock in the state
-	instance->getSkeleton()->lockState();
+	//instance->getSkeleton()->lockState();
 	// calculate the final state
 	instance->getSkeleton()->calculateState();
 	// update vertices of mesh
@@ -133,7 +134,6 @@ void Cal3DModel::draw( float scale )
 				static float meshVertices[30000][3];
 				assert( pCalRenderer->getVertexCount() <= 30000 );
 				int vertexCount = pCalRenderer->getVertices(&meshVertices[0][0]);
-				printf("model has %i vertices\n", vertexCount );
 				
 				// get the transformed normals of the submesh
 				static float meshNormals[30000][3];
@@ -196,6 +196,14 @@ void Cal3DModel::draw( float scale )
 	pCalRenderer->endRendering();
 }
 
+void Cal3DModel::rotateBoneX( int id, float amount )
+{
+	CalBone* bone = instance->getSkeleton()->getBone( id );
+	ofxQuaternion rot( amount, ofxVec3f( 0, 0, 1 ) );
+	//bone->setTranslation( CalVector(0,0,0 ) );
+	bone->setRotation( bone->getRotation()*CalQuaternion(rot.x(),rot.y(),rot.z(),rot.w()) );
+	bone->calculateState();
+}
 
 
 Cal3DModel::~Cal3DModel() { 
