@@ -62,6 +62,13 @@ void IKCharacter::setup( CalSkeleton* cal_skel )
 		current.pop_front();
 	}
 
+	// set all weights to default
+	vector<CalCoreBone*> all_bones = skeleton->getCoreSkeleton()->getVectorCoreBone();
+	for( int i=0; i<all_bones.size() ;i++ )
+	{
+		weight_centres[all_bones[i]->getId()] = 0.5f;
+	}	
+	
 	// release all leaves
 	for ( int i=0; i<leaf_bones.size() ;i++ )
 	{
@@ -74,8 +81,7 @@ void IKCharacter::setup( CalSkeleton* cal_skel )
 	}
 	
 	// pin everything whose parent has >1 children
-	vector<CalCoreBone*> all_bones = skeleton->getCoreSkeleton()->getVectorCoreBone();
-	for( int i=0; i<all_bones.size() ;i++ )
+	/*for( int i=0; i<all_bones.size() ;i++ )
 	{
 		CalCoreBone* bone = all_bones[i];
 		if ( bone->getParentId() == -1 )
@@ -83,7 +89,7 @@ void IKCharacter::setup( CalSkeleton* cal_skel )
 		CalCoreBone* parent = skeleton->getCoreSkeleton()->getCoreBone( bone->getParentId() );
 		if ( parent->getListChildId().size() >1 )
 			weight_centres[bone->getId()] = 1;
-	}
+	}*/
 	
 	// fetch world positions from Cal3D model
 	pullWorldPositions();
@@ -309,29 +315,29 @@ void IKCharacter::resetToRest()
 
 void IKCharacter::solve( int iterations )
 {
-	pullWorldPositions();
-
-	// start at leaf nodes
-	deque<int> queue;
-	
-	// push leaf bones to target positions
-	for ( int i=0; i<leaf_bones.size(); i++ )
-	{
-		// if we have a target for this one
-		if ( leaf_targets.find(leaf_bones[i]) != leaf_targets.end() )
-		{
-			// set it
-			world_positions[leaf_bones[i]] = leaf_targets[leaf_bones[i]];
-		}
-		int parent_id = skeleton->getCoreSkeleton()->getCoreBone( leaf_bones[i] )->getParentId();
-		if ( parent_id != -1 )
-			queue.push_back( parent_id );
-	}
-
 	while ( iterations>0 )
 	{
+		pullWorldPositions();
+		
+		// start at leaf nodes
+		deque<int> queue;
+		
+		// push leaf bones to target positions
+		for ( int i=0; i<leaf_bones.size(); i++ )
+		{
+			// if we have a target for this one
+			if ( leaf_targets.find(leaf_bones[i]) != leaf_targets.end() )
+			{
+				// set it
+				world_positions[leaf_bones[i]] = leaf_targets[leaf_bones[i]];
+			}
+			int parent_id = skeleton->getCoreSkeleton()->getCoreBone( leaf_bones[i] )->getParentId();
+			if ( parent_id != -1 )
+				queue.push_back( parent_id );
+		}
+
 		// queue to handle branching
-		deque<int> branch_queue;
+		deque< int > branch_queue;
 		while ( !queue.empty() || !branch_queue.empty() )
 		{
 			// if main queue is empty then we are ready to deal with branches
@@ -339,23 +345,80 @@ void IKCharacter::solve( int iterations )
 			{
 				queue.push_back( branch_queue.front() );
 				branch_queue.pop_front();
+				continue;
 			}
 			
 			int next_id = queue.front();
 			queue.pop_front();
+			
 			CalBone* bone = skeleton->getBone( next_id );
 			list<int>& children = bone->getCoreBone()->getListChildId();
 			// is this a branch?
 			if ( children.size()>1 )
 			{
-				// still things to process -- push to branch queue
+				// still other children to process -- push to branch queue
 				if ( !queue.empty() )
 				{
 					branch_queue.push_back( next_id );
 					continue;
 				}
-				// otherwise, process branch here
 				
+				// otherwise, process branch here
+				// if we're here, then all the children of this branch have been processed already
+				int parent_id = bone->getCoreBone()->getParentId();
+				if ( parent_id != -1 )
+				{
+					printf("averaging %lu positions for %s wc %f: ", children.size(), bone->getCoreBone()->getName().c_str(), getWeightCentre( next_id ) );
+					// fetch all child positions
+					vector<CalVector> results;
+					results.insert( results.begin(), children.size(), world_positions[next_id] );
+					int count=0;
+					for ( list<int>::iterator it = children.begin(); it != children.end(); ++it,++count ) 
+					{
+						
+						// child_pos
+						CalVector& b_c = world_positions[*it];
+						// current pos
+						CalVector& b_p = results[count];
+
+						// now, the bone is the wrong length. correct its length to fulfil size constraint.
+						CalVector delta = b_c - b_p;
+						float length = delta.length();
+						length = max( 0.00001f, length );
+						// pointing from parent to child
+						CalVector direction = delta/length;
+						
+						CalCoreBone* child_bone = skeleton->getCoreSkeleton()->getCoreBone( *it );
+						CalVector rest_delta = bone->getCoreBone()->getTranslationAbsolute() - child_bone->getTranslationAbsolute();
+						float desired_length = rest_delta.length();
+						float delta_length = desired_length - length;
+						
+						// balance according to weight_centre
+						float weight_centre = getWeightCentre(next_id);
+						
+						// move
+						b_c += weight_centre * delta_length * direction;
+						b_p -= (1.0f-weight_centre) * delta_length * direction;
+						
+						printf("%s %f (%f %f %f), ", child_bone->getName().c_str(), delta_length, b_p.x, b_p.y, b_p.z );
+						
+					}
+					printf("\n");
+					
+					// now average
+					CalVector average;
+					for ( int i=0; i<results.size(); i++ )
+					{
+						average += results[i];
+					}
+					average /= results.size();
+
+					// store
+					world_positions[next_id] = average;
+					
+					// add parent
+					queue.push_back( parent_id );
+				}				
 				
 			}
 			else
@@ -370,13 +433,14 @@ void IKCharacter::solve( int iterations )
 				CalVector& b_p = world_positions[next_id];
 				
 				// now, the bone is the wrong length. correct its length to fulfil size constraint.
+				float desired_length = getBoneLength(next_id);
 				CalVector delta = b_c - b_p;
 				float length = delta.length();
 				length = max( 0.00001f, length );
+				length = min( desired_length*1.5f, length );
 				// pointing from parent to child
 				CalVector direction = delta/length;
 				
-				float desired_length = getBoneLength(next_id);
 				float delta_length = desired_length - length;
 				
 				// balance according to weight_centre
@@ -388,13 +452,17 @@ void IKCharacter::solve( int iterations )
 				
 				
 				// add parent
-				queue.push_back( bone->getCoreBone()->getParentId() );
+				int parent_id = bone->getCoreBone()->getParentId();
+				if ( parent_id != -1 )
+					queue.push_back( parent_id );
 			}
 		}	
+
+		pushWorldPositions();
+		
 		iterations--;
 	}
 	
-	pushWorldPositions();
 	
 }
 
