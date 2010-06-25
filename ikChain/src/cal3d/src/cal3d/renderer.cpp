@@ -540,6 +540,7 @@ bool CalRenderer::isTangentsEnabled(int mapId)
 
 int CalRenderer::getVertices(float *pVertexBuffer, int stride)
 {
+	
   // check if the submesh handles vertex data internally
   if(m_pSelectedSubmesh->hasInternalData())
   {

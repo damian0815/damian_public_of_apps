@@ -12,6 +12,10 @@
 #include <assert.h>
 #include "Cal3d.h"
 
+// 1 = don't invert, -1 = invert
+#define QINV 1
+
+
 static IKHumanoid::Component COMPONENT_LIST[5] = { 
 	IKHumanoid::C_SPINE, 
 	IKHumanoid::C_ARM_L, 
@@ -361,13 +365,13 @@ vector<ofxVec3f> IKHumanoid::toCartesianSpace( Component which )
 	vector<ofxVec3f> bone_positions;
 
 	// start at the root
-//	ofxVec3f base_offset = getStartAngleFor(which)*getBaseOffsetFor( which );
-//	bone_positions.push_back( getRootPosFor( which )+ base_offset );
-//	ofxVec3f dir = base_offset.normalized();
+	ofxVec3f base_offset = getBaseOffsetFor( which )*getStartAngleFor(which);
+	bone_positions.push_back( getRootPosFor( which )+base_offset );
+	ofxVec3f dir = base_offset.normalized();
 	
-	ofxVec3f dir( 0, 1, 0 );
-	ofxVec3f base_offset = getBaseOffsetFor( which );
+/*	ofxVec3f base_offset = getBaseOffsetFor( which );
 	bone_positions.push_back( getRootPosFor( which )+ base_offset );
+	ofxVec3f dir = base_offset.normalized();*/
 	
 	vector<IKBone>& bones = getBonesFor( which );
 	for ( int i=0; i<bones.size(); i++ )
@@ -420,10 +424,10 @@ void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec3f>& bone_pos
 	vector<IKBone>& bones = getBonesFor( which );
 	//assert( bone_positions.size() == bones.size()+1 );
 	
-	// starting direction is root->base_offset
-//	ofxVec3f base_offset = getStartAngleFor(which)*getBaseOffsetFor( which );
-//	ofxVec3f dir = base_offset.normalized();
-	ofxVec3f dir( 0, 1, 0 );
+	// starting direction is root->base
+	// which is expressed as a direction in root bone space
+	ofxVec3f dir = getBaseOffsetFor(which)*getStartAngleFor(which);
+	dir.normalize();
 	
 	for ( int i=0; i<bones.size(); i++ )
 	{
@@ -437,7 +441,7 @@ void IKHumanoid::fromCartesianSpace( Component which, vector<ofxVec3f>& bone_pos
 		//float angle = bone_delta.angleRad( dir );
 		bones[i].setAngle( angle );
 		// rotate our direction by the bone's angle (angles are all relative)
-		dir = bone_delta;
+		dir = dir*angle;
 		//dir.rotateRad( -angle );
 	}
 	
@@ -496,7 +500,7 @@ void IKHumanoid::draw( int x, int y )
 					int bone_id = mapping.getBoneId( which, i );
 					ofxVec3f dir( 0, 1, 0 );
 					CalQuaternion r = model->getSkeleton()->getBone( bone_id )->getRotation();
-					dir = dir*ofxQuaternion( r.x, r.y, r.z, r.w );
+					dir = dir*ofxQuaternion( QINV*r.x, QINV*r.y, QINV*r.z, r.w );
 					dir *= 0.2f;
 					
 					glPushMatrix();
@@ -687,6 +691,10 @@ bool IKHumanoid::Cal3DModelMapping::setup( CalCoreSkeleton* skeleton, map< IKHum
 void IKHumanoid::updateCal3DModel()
 {
 	CalSkeleton* skeleton = model->getSkeleton();
+	
+	skeleton->getBone( mapping.getRootBoneId() )->setRotation( CalQuaternion( QINV*root_angle.x(), QINV*root_angle.y(), QINV*root_angle.z(), root_angle.w() ) );
+	skeleton->getBone( mapping.getRootBoneId() )->setTranslation( CalVector( root_pos.x, root_pos.y, root_pos.z ) );
+	
 	// run through all our bones + push angles to the cal3d model
 	for ( int c=0; c<5; c++ )
 	{
@@ -696,7 +704,7 @@ void IKHumanoid::updateCal3DModel()
 		vector< IKBone>& bones = getBonesFor( which );
 		
 		
-		for ( int i=0; i<bones.size(); i++ )
+		for ( int i=1; i<bones.size(); i++ )
 		{
 			int cal3d_bone_id = mapping.getBoneId( which, i );
 			CalBone* cal_bone = skeleton->getBone( cal3d_bone_id );
@@ -705,26 +713,25 @@ void IKHumanoid::updateCal3DModel()
 			//printf("rot is %6.3f %6.3f %6.3f %6.3f, rot_core is %6.3f %6.3f %6.3f %6.3f  %s\n", rot.x(), rot.y(), rot.z(), rot.w(),
 			//	   rot_core.x, rot_core.y, rot_core.z, rot_core.w, cal_bone->getCoreBone()->getName().c_str() );
 //			cal_bone->setCoreState();
-			cal_bone->setRotation( CalQuaternion( rot.x(), rot.y(), rot.z(), rot.w() ) );
+
+			// we have to mirror the quaternion since cal3d is left-handed
+			cal_bone->setRotation( CalQuaternion( QINV*rot.x(), QINV*rot.y(), QINV*rot.z(), rot.w() ) );
+			
+			
 //			cal_bone->calculateState();
 		}
 		
-	/*	
+	/*
+		ofxQuaternion prev_rot = getStartAngleFor( which );
 		for ( int i=0; i<bones.size(); i++ )
 		{
 			
 			int cal3d_bone_id = mapping.getBoneId( which, i );
 			CalBone* cal_bone = skeleton->getBone( cal3d_bone_id );
-			ofxQuaternion rot = bones[i].getAngle();
-			ofxQuaternion prev_rot;
-			if ( i==0 )
-				prev_rot = getStartAngleFor( which );
-			else
-				prev_rot = bones[i-1].getAngle();
-			// calculate quaternion to go from prev_rot to rot
-			ofxQuaternion delta = prev_rot.inverse() * rot;
+			ofxQuaternion delta = bones[i].getAngle();
+			prev_rot *= delta;
 			
-			//cal_bone->setRotation( cal_bone->getCoreBone()->getRotation()*CalQuaternion( delta.x(), delta.y(), delta.z(), delta.w() ) );
+			cal_bone->setRotation( cal_bone->getCoreBone()->getRotation()*CalQuaternion( -delta.x(), -delta.y(), -delta.z(), delta.w() ) );
 			//CalQuaternion rot_core = cal_bone->getCoreBone()->getRotation();
 			//printf("rot is %6.3f %6.3f %6.3f %6.3f, rot_core is %6.3f %6.3f %6.3f %6.3f  %s\n", rot.x(), rot.y(), rot.z(), rot.w(),
 			//	   rot_core.x, rot_core.y, rot_core.z, rot_core.w, cal_bone->getCoreBone()->getName().c_str() );
@@ -732,8 +739,8 @@ void IKHumanoid::updateCal3DModel()
 			//cal_bone->setRotation( CalQuaternion( rot.x(), rot.y(), rot.z(), rot.w() ) );
 			//			cal_bone->calculateState();
 		
-		 }*/
-		
+		 }
+	*/	
 		/*
 		for ( int i=0; i<bones.size(); i++ )
 		{
@@ -778,8 +785,8 @@ void IKHumanoid::setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& _m
 	CalCoreBone* root_root_bone = skeleton->getCoreSkeleton()->getCoreBone( mapping.getRootBoneId() );
 	CalVector root_pos_cal = root_root_bone->getTranslationAbsolute();
 	CalQuaternion root_angle_cal = root_root_bone->getRotationAbsolute();
-	root_pos.set( root_pos_cal.x, root_pos_cal.y, root_pos_cal.z );
-	root_angle.set( root_angle_cal.x, root_angle_cal.y, root_angle_cal.z, root_angle_cal.w );
+	root_pos.set( -root_pos_cal.x, root_pos_cal.y, root_pos_cal.z );
+	root_angle.set( -root_angle_cal.x, -root_angle_cal.y, -root_angle_cal.z, root_angle_cal.w );
 	
 
 	// loop through all components
@@ -807,9 +814,9 @@ void IKHumanoid::setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& _m
 			root_bone = skeleton->getCoreSkeleton()->getCoreBone( parent_id );
 		CalVector base_pos_cal = base_bone->getTranslationAbsolute();
 		CalVector root_pos_cal = root_bone->getTranslationAbsolute();
-		ofxVec3f base_pos( base_pos_cal.x, base_pos_cal.y, base_pos_cal.z );
-		ofxVec3f root_pos(root_pos_cal.x,root_pos_cal.y,root_pos_cal.z);
-		setBaseOffsetFor( which, base_pos-root_pos );
+		ofxVec3f base_pos( -base_pos_cal.x, base_pos_cal.y, base_pos_cal.z );
+		ofxVec3f root_pos( -root_pos_cal.x,root_pos_cal.y,root_pos_cal.z);
+		setBaseOffsetFor( which, (base_pos-root_pos)*getStartAngleFor(which) );
 
 		positions[0] = base_pos;
 		// go through bones
@@ -819,8 +826,8 @@ void IKHumanoid::setupFromCal3DModel( Cal3DModel* m, const Cal3DModelMapping& _m
 			CalBone* bone = skeleton->getBone( mapping.getBoneId( which, i ) );
 			// read off translation
 			CalVector p = bone->getTranslationAbsolute();
-			positions[i].set( p.x, p.y, p.z );
-			printf(" ( %7.3f %7.3f %7.3f ) %s\n", p.x, p.y, p.z, bone->getCoreBone()->getName().c_str() );
+			positions[i].set( -p.x, p.y, p.z );
+			printf(" ( %7.3f %7.3f %7.3f ) %s\n", -p.x, p.y, p.z, bone->getCoreBone()->getName().c_str() );
 			// read off length
 			bones[i-1].setLength( (positions[i]-positions[i-1]).length() );
 		}
@@ -924,7 +931,7 @@ void IKHumanoid::fromCal3DModel( Cal3DModel& m , float scale )
 		CalVector pos = skeleton->getCoreBone( spine_ids[i] )->getTranslationAbsolute();
 		printf(" %6.3f %6.3f %6.3f '%s'\n", pos.x, pos.y, pos.z, 
 			   skeleton->getCoreBone( spine_ids[i] )->getName().c_str() );
-		spine_pos[i].set( pos.x, pos.y, pos.z );
+		spine_pos[i].set( -pos.x, pos.y, pos.z );
 		spine_pos[i] *= scale;
 /*		if ( i== 0 )
 			setRootPos( spine_pos[i] );*/
@@ -969,7 +976,7 @@ void IKHumanoid::fromCal3DModel( Cal3DModel& m , float scale )
 			CalVector pos = skeleton->getCoreBone( ids[i] )->getTranslationAbsolute();
 			printf(" %6.3f %6.3f %6.3f '%s'\n", pos.x, pos.y, pos.z, 
 				   skeleton->getCoreBone( ids[i] )->getName().c_str() );
-			positions[i].set( pos.x, pos.y, pos.z );
+			positions[i].set( -pos.x, pos.y, pos.z );
 			positions[i]*=scale;
 			if ( i>0 )
 			{
@@ -1007,7 +1014,7 @@ void IKHumanoid::fromCal3DModel( Cal3DModel& m , float scale )
 			CalVector pos = skeleton->getCoreBone( ids[i] )->getTranslationAbsolute();
 			printf(" %6.3f %6.3f %6.3f '%s'\n", pos.x, pos.y, pos.z, 
 				   skeleton->getCoreBone( ids[i] )->getName().c_str() );
-			positions[i].set( pos.x, pos.y, pos.z );
+			positions[i].set( -pos.x, pos.y, pos.z );
 			positions[i]*=scale;
 			if ( i == 0 )
 			{

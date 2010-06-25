@@ -145,11 +145,28 @@ int CalPhysique::calculateVertices(CalSubmesh *pSubmesh, float *pVertexBuffer, i
 			CalBone *pBone;
 			pBone = vectorBone[influence.boneId];
 			
+
+			/*
 			// transform vertex with current state of the bone
 			CalVector v(position);
+			// this is: -transabsolutecore -rotabsolutecore  rotabsolute transabsolute
 			v *= pBone->getTransformMatrix();
 			v += pBone->getTranslationBoneSpace();
+			*/
 			
+			
+			CalVector v(position);
+			// bring v into bone space
+			// untransform from core bone
+			v -= pBone->getCoreBone()->getTranslationAbsolute();
+			CalQuaternion rot_abs = pBone->getCoreBone()->getRotationAbsolute();
+			rot_abs.invert();
+			v *= rot_abs;
+			// now in world space
+			// transform to instance bone
+			v *= pBone->getRotationAbsolute();
+			v += pBone->getTranslationAbsolute();
+
 			x += influence.weight * v.x;
 			y += influence.weight * v.y;
 			z += influence.weight * v.z;

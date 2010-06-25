@@ -19,7 +19,7 @@ void testApp::setup(){
 
 	
  
-	 bool loaded_model = model.setup( "test", "man_good/man_goodtmp.xsf", "man_good/man_goodMan.xmf" );
+	 bool loaded_model = model.setup( "test", "man_good/man_goodtmp.csf", "man_good/man_goodMan.cmf" );
 	// map of model bone names for each component
 	map< IKHumanoid::Component, pair<string,string> > bone_names;
 	bone_names[IKHumanoid::C_SPINE] = make_pair( "spine_lo", "head" );
@@ -71,7 +71,7 @@ void testApp::update()
 	
 	//human2.resetToRest();
 	
-	//human.updateCal3DModel();
+	human.updateCal3DModel();
 	
 	//human2.setupFromCal3DModel( &model, mapping );
 	

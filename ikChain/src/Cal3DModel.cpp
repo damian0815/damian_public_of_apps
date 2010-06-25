@@ -99,6 +99,10 @@ void Cal3DModel::draw( float scale )
 /*	glPushMatrix();
 	glTranslatef( 0, 0, 10.0f );
 	glScalef( scale, scale, scale );*/
+
+	
+	
+	
 	
 	
 	// get the number of meshes
