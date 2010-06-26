@@ -22,7 +22,8 @@ public:
 	// add a knee helper affecting the given bone with the given weight 0..1, parented to the given parent
 	void addKneeHelper( string bone, string parent, float weight );
 
-	void draw( float scale );
+	/// if additional_drawing is true, draw lots of extra markers
+	void draw( float scale, bool additional_drawing=false );
 	
 	/// get/set ik target handles
 	void setTarget( int which_leaf, ofxVec3f target );
@@ -31,9 +32,6 @@ public:
 	/// get the leaf id
 	int getLeafId( int index ) { return leaf_bones.at(index); }
 
-	/// reset skeleton to rest position and pull world positions
-#warning this should be on cal3dmodel
-	void resetToRest();
 	/// start_id is the root id to try to solve down to; if -1, solve everything
 	/// leaf_id is the leaf bone_id to solve from; if -1, use all leaves
 	void solve( int iterations, int start_id = -1, int leaf_bone_id = -1 );
@@ -67,7 +65,7 @@ private:
 	ofxQuaternion getRotationForParentBone( int bone_id, CalVector new_parent_to_bone_direction );
 	
 	/// draw from the given bone id down
-	void draw( int bone_id, float scale );
+	void draw( int bone_id, float scale, bool additional_drawing );
 	
 	vector<int> leaf_bones;
 	map<int,CalVector> leaf_targets; // map from leaf bone ids to targets

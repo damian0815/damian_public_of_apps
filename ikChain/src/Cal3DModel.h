@@ -25,6 +25,8 @@ public:
 	
 	/// update the mesh based on the current skeleton state
 	void updateMesh( );
+	/// reset skeleton to rest position
+	void resetToRest();
 	
 	void dumpSkeleton();
 	

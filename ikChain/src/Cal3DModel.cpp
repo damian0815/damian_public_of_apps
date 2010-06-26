@@ -296,3 +296,16 @@ Cal3DModel::~Cal3DModel() {
 	if ( instance )
 		delete instance;
 }
+
+void Cal3DModel::resetToRest()
+{
+	CalSkeleton* skeleton = instance->getSkeleton();
+	skeleton->clearState();
+	vector<int> roots = skeleton->getCoreSkeleton()->getVectorRootCoreBoneId();
+	for ( int i=0; i<roots.size(); i++ )
+	{
+		skeleton->getBone( roots[i] )->setCoreStateRecursive();
+	}
+	skeleton->calculateState();
+}
+

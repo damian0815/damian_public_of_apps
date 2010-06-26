@@ -9,13 +9,13 @@ void testApp::setup(){
 	z = 0;
 	
 	
-	heading = 0.0f;
+	heading = 180.0f;
 	pitch = 0.0f;
-	eye_pos.set( 0, 3.5, -1 );
+	eye_pos.set( 0, 3.5, 5 );
 	fov = 60.0f;
-	move_speed = 0.05f;
+	move_speed = 0.15f;
 	rotate_speed = 1.5f;
-	do_solve = false;
+	do_solve = true;
 	
 	rotate_eye = false;
 	
@@ -39,11 +39,10 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update()
 {
-	character.resetToRest();
+	model.resetToRest();
 	character.pullWorldPositions();
 	character.solve( 10 );
 	character.pushWorldPositions( do_solve );
-
 	model.updateMesh();
 }
 
