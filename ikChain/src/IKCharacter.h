@@ -34,16 +34,17 @@ public:
 	void resetToRest();
 	void solve( int iterations );
 	
+
+	/// get world positions from Cal3D skeleton
+	void pullWorldPositions();
+	/// push world positions to Cal3D skeleton
+	void pushWorldPositions();
 	
 	
 	void rotateBone( int id, ofxVec3f axis, float angle );
 	
 
 private:
-	/// get world positions from Cal3D skeleton
-	void pullWorldPositions();
-	/// push world positions to Cal3D skeleton
-	void pushWorldPositions();
 	
 	float getWeightCentre( int id ) { return (*weight_centres.find(id)).second; }
 	float getBoneLength( int id ) { return (*bone_lengths.find(id)).second; }
@@ -51,7 +52,7 @@ private:
 	/// return a rotation that will rotate the parent of bone_id in such a way as 
 	/// to bring it to the same orientation as described by the direction vector from new_parent_pos_world
 	/// to new_bone_pos_world
-	ofxQuaternion getRotationForParentBone( int bone_id, CalVector new_bone_pos_world, CalVector new_parent_pos_world );
+	ofxQuaternion getRotationForParentBone( int bone_id, CalVector new_parent_to_bone_direction );
 	
 	/// draw from the given bone id down
 	void draw( int bone_id, float scale );

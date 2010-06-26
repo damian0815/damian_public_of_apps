@@ -15,6 +15,7 @@ void testApp::setup(){
 	fov = 60.0f;
 	move_speed = 0.05f;
 	rotate_speed = 1.5f;
+	do_solve = false;
 	
 	rotate_eye = false;
 	
@@ -39,7 +40,10 @@ void testApp::setup(){
 void testApp::update()
 {
 	character.resetToRest();
+	character.pullWorldPositions();
 	character.solve( 10 );
+	character.pushWorldPositions();
+
 	model.updateMesh();
 }
 
@@ -152,17 +156,8 @@ void testApp::keyPressed(int key){
 			pos = character.getTarget( character.getLeafId( (int)which_target) );
 			pos.z -= 0.1f;
 			character.setTarget( character.getLeafId( (int)which_target), pos );
-			
 			break;
-		case '6':
-			ofSetFrameRate( 60.0f );
-			break;
-		case '7':
-			ofSetFrameRate( 24.0f );
-			break;
-		default:
-			break;
-			
+
 		case 'b':
 			b_id++;
 			break;
@@ -179,6 +174,14 @@ void testApp::keyPressed(int key){
 		case ';':
 			rotate_eye = !rotate_eye;
 			break;
+		
+		case 's':
+			do_solve = !do_solve;
+			break;
+			
+		default:
+			break;
+			
 			
 	}
 	

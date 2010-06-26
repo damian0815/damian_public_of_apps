@@ -38,6 +38,8 @@ private:
 	float move_speed, rotate_speed;
 	bool rotate_eye;
 	
+	bool do_solve;
+	
 	Cal3DModel model;
 	IKCharacter character;
 };
