@@ -48,6 +48,8 @@ public:
 	
 	void rotateBone( int id, ofxVec3f axis, float angle );
 	
+	
+	static int debug_bone;
 
 private:
 
@@ -76,7 +78,11 @@ private:
 	
 	void swapWorldPositionHandedness();
 	map<int,CalVector> world_positions;
+	
+	map<int,CalQuaternion> debug_cached_rotations;
 
+	void setupMagicIgnoringRotationOffsets();
+	map<int,CalQuaternion> magic_ignoring_rotation_offset;
 	
 };
 

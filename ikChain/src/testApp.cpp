@@ -179,6 +179,19 @@ void testApp::keyPressed(int key){
 			do_solve = !do_solve;
 			break;
 			
+		case 'd':
+			IKCharacter::debug_bone++;
+			while ( IKCharacter::debug_bone >= model.getSkeleton()->getCoreSkeleton()->getNumBones() )
+				IKCharacter::debug_bone--;
+			break;
+		case 'D':
+			IKCharacter::debug_bone--;
+			while( IKCharacter::debug_bone < 0 )
+				IKCharacter::debug_bone++;
+			break;
+		
+			
+			
 		default:
 			break;
 			

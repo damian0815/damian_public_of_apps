@@ -226,11 +226,42 @@ void Cal3DModel::drawBones( int bone_id, float scale )
 		glBegin( GL_LINES );
 		CalVector v = parent->getTranslationAbsolute();
 		v*=scale;
+		CalVector c = v;
 		glVertex3f( v.x, v.y, v.z );
 		v = bone->getTranslationAbsolute();
 		v*=scale;
+		c += v;
+		c /= 2.0f;
 		glVertex3f( v.x, v.y, v.z );
 		glEnd();
+
+		CalVector u( 0, scale, 0);
+		u *= bone->getRotationAbsolute();
+		CalVector r( scale, 0, 0 );
+		r *= bone->getRotationAbsolute();
+		CalVector f( 0, 0, scale );
+		f *= bone->getRotationAbsolute();
+
+		
+		// right blue
+		glPushMatrix();
+		glTranslatef( c.x, c.y, c.z );
+		glBegin( GL_LINES );
+		glColor3f( 0, 0, 1 );
+		glVertex3f( 0,0,0 );
+		glVertex3f( r.x, r.y, r.z );
+		// up red
+		glColor3f( 1, 0, 0 );
+		glVertex3f( 0,0,0 );
+		glVertex3f( u.x, u.y, u.z );
+		// forward green
+		glColor3f( 0, 1, 0 );
+		glVertex3f( 0,0,0 );
+		glVertex3f( f.x, f.y, f.z );
+		glEnd();
+		glPopMatrix();
+		
+		
 	}
 	
 	list<int> children = bone->getCoreBone()->getListChildId();
