@@ -50,14 +50,14 @@ void IKCharacter::setup( CalSkeleton* cal_skel )
 		}
 		
 		// store length
+		// default non-zero
+		bone_lengths[current.front()] = 0.0001f;
 		if ( check->getParentId()!= -1 )
 		{
 			CalCoreBone* parent = skeleton->getCoreSkeleton()->getCoreBone( check->getParentId() );
 			CalVector delta = check->getTranslationAbsolute() - parent->getTranslationAbsolute();
 			bone_lengths[check->getParentId()] = delta.length();
 		}
-		else
-			bone_lengths[current.front()] = 0.0001f;
 		
 		current.pop_front();
 	}
@@ -368,7 +368,7 @@ void IKCharacter::solve( int iterations )
 				int parent_id = bone->getCoreBone()->getParentId();
 				if ( parent_id != -1 )
 				{
-					printf("averaging %lu positions for %s wc %f: ", children.size(), bone->getCoreBone()->getName().c_str(), getWeightCentre( next_id ) );
+					//printf("averaging %lu positions for %s wc %f: ", children.size(), bone->getCoreBone()->getName().c_str(), getWeightCentre( next_id ) );
 					// fetch all child positions
 					vector<CalVector> results;
 					results.insert( results.begin(), children.size(), world_positions[next_id] );
@@ -400,10 +400,10 @@ void IKCharacter::solve( int iterations )
 						b_c += weight_centre * delta_length * direction;
 						b_p -= (1.0f-weight_centre) * delta_length * direction;
 						
-						printf("%s %f (%f %f %f), ", child_bone->getName().c_str(), delta_length, b_p.x, b_p.y, b_p.z );
+						//printf("%s %f (%f %f %f), ", child_bone->getName().c_str(), delta_length, b_p.x, b_p.y, b_p.z );
 						
 					}
-					printf("\n");
+					//printf("\n");
 					
 					// now average
 					CalVector average;
@@ -537,4 +537,9 @@ void IKCharacter::draw( float scale )
 	glPopAttrib();
 	glPopMatrix();
 	
+}
+
+
+void IKCharacter::addKneeHelper( string bone, string parent, float weight )
+{
 }

@@ -19,6 +19,9 @@ class IKCharacter
 public:
 	void setup( CalSkeleton* cal_skel );
 
+	// add a knee helper affecting the given bone with the given weight 0..1, parented to the given parent
+	void addKneeHelper( string bone, string parent, float weight );
+
 	void draw( float scale );
 	
 	/// get/set ik target handles
@@ -30,6 +33,7 @@ public:
 	
 	void resetToRest();
 	void solve( int iterations );
+	
 	
 	
 	void rotateBone( int id, ofxVec3f axis, float angle );
