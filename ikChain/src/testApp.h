@@ -25,20 +25,20 @@ class testApp : public ofBaseApp{
 	
 private:
 	
-	IKHumanoid human;
-	IKHumanoid human2;
 	IKHumanoid::Component which_target;
 	bool do_target_set;
 	
 	float z;
 	float last_mx, last_my;
-	
-	
+	float last_moved_mx, last_moved_my;
+
+	void moveEye( float x, float y, float z);
+	float heading, pitch, fov;
+	ofxVec3f eye_pos;
+	float move_speed, rotate_speed;
+	bool rotate_eye;
 	
 	Cal3DModel model;
-	Cal3DModel model2;
-
-	
 	IKCharacter character;
 };
 

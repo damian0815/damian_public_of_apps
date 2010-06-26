@@ -164,7 +164,6 @@ void Cal3DModel::draw( float scale )
 /*				glColor3f( 0,0,0 );
 				glBegin( GL_POINTS );*/
 				ofPushMatrix();
-				ofTranslate( ofGetWidth()/2, ofGetHeight()/2 );
 				ofSetColor( 0,0,0 );
 /*				for ( int i=0; i<faceCount; i++ )
 				{
@@ -176,7 +175,22 @@ void Cal3DModel::draw( float scale )
 					}
 					printf("%7.3f %7.3f %7.3f\n", meshVertices[i][0], meshVertices[i][1], meshVertices[i][2] );
 				}*/
+				ofEnableAlphaBlending();
+				glColor4f( 0,0,0,0.1f );
+				//glDisable( GL_DEPTH_TEST );
+				glBegin( GL_TRIANGLES );
+				for ( int i=0; i<faceCount; i++ )
+				{
+					//					glVertex3fv( meshVertices[i] );
+					for ( int j=0; j<3; j++ )
+					{
+						glVertex3f(meshVertices[meshFaces[i][j]][0]*scale,		meshVertices[meshFaces[i][j]][2]*scale,			meshVertices[meshFaces[i][j]][1]*scale);
+					}
+				}
+				glEnd();
+				//glEnable( GL_DEPTH_TEST );
 				glBegin( GL_LINES );
+				glColor4f( 1,1,1,0.2f );
 				for ( int i=0; i<faceCount; i++ )
 				{
 					//					glVertex3fv( meshVertices[i] );
@@ -187,6 +201,7 @@ void Cal3DModel::draw( float scale )
 					}
 				}
 				glEnd();
+				ofDisableAlphaBlending();
 				ofPopMatrix();
 //				glEnd();
 				// [ render the faces with the graphic-API here ]
