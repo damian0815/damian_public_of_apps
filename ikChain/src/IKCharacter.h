@@ -30,21 +30,31 @@ public:
 
 	/// get the leaf id
 	int getLeafId( int index ) { return leaf_bones.at(index); }
-	
+
+	/// reset skeleton to rest position and pull world positions
+#warning this should be on cal3dmodel
 	void resetToRest();
-	void solve( int iterations );
+	/// start_id is the root id to try to solve down to; if -1, solve everything
+	/// leaf_id is the leaf bone_id to solve from; if -1, use all leaves
+	void solve( int iterations, int start_id = -1, int leaf_bone_id = -1 );
 	
 
 	/// get world positions from Cal3D skeleton
-	void pullWorldPositions();
+	void pullWorldPositions() { pullWorldPositions( -1, -1 ); }
 	/// push world positions to Cal3D skeleton
-	void pushWorldPositions();
+	/// if re_solve is true, try to re-solve the ik where possible
+	void pushWorldPositions( bool re_solve=false );
 	
 	
 	void rotateBone( int id, ofxVec3f axis, float angle );
 	
 
 private:
+
+	// pull world positions starting at leaf_bone_id and working up to root_id
+	// if leaf_bone_id == -1, use all leaves
+	// if root_id == -1, go to the actual root
+	void pullWorldPositions( int root_id, int leaf_bone_id );
 	
 	float getWeightCentre( int id ) { return (*weight_centres.find(id)).second; }
 	float getBoneLength( int id ) { return (*bone_lengths.find(id)).second; }

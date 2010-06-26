@@ -42,7 +42,7 @@ void testApp::update()
 	character.resetToRest();
 	character.pullWorldPositions();
 	character.solve( 10 );
-	character.pushWorldPositions();
+	character.pushWorldPositions( do_solve );
 
 	model.updateMesh();
 }

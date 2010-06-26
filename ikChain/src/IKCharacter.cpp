@@ -13,12 +13,12 @@ using namespace std;
 
 static const int DEBUG_BONE = -1;
 
-//#define SWAP_MATRIX_HANDEDNESS
+#define SWAP_MATRIX_HANDEDNESS
 //#define INVERT_QUAT_W
 
-#define MATRIX_SWAP_YZ
+//#define MATRIX_SWAP_YZ
 //#define MATRIX_SWAP_XZ
-//#define MATRIX_SWAP_XY
+#define MATRIX_SWAP_XY
 
 //#define VECTOR_OD_ND_SWAP_XZ
 //#define VECTOR_OD_ND_SWAP_XY
@@ -120,16 +120,33 @@ void IKCharacter::setTarget( int which_leaf, ofxVec3f pos )
 	leaf_targets[which_leaf] = p;
 }
 
-void IKCharacter::pullWorldPositions()
+void IKCharacter::pullWorldPositions( int root_id, int leaf_id )
 {
-	// get all the bones
+	deque<int> queue;
+	if ( leaf_id == -1 )
+		queue.insert( queue.begin(), leaf_bones.begin(), leaf_bones.end() );
+	else
+		queue.push_back( leaf_id );
+
+	// work backwards up the tree
+	while ( !queue.empty() )
+	{
+		int id = queue.front();
+		queue.pop_front();
+		CalBone* bone = skeleton->getBone(id);
+		world_positions[id] = bone->getTranslationAbsolute();
+		int parent_id = bone->getCoreBone()->getParentId();
+		if ( parent_id != -1 && id != root_id )
+			queue.push_back( parent_id );
+	}
+	/*
 	vector<CalBone*>& bones = skeleton->getVectorBone();
 	// for each
 	for ( int i=0; i<bones.size(); i++) 
 	{
 		int id= bones[i]->getCoreBone()->getId();
 		world_positions[id] = bones[i]->getTranslationAbsolute();
-	}
+	}*/
 	
 	
 }
@@ -266,7 +283,7 @@ void swapHandedness( ofxMatrix4x4 & m )
 }
 
 
-void IKCharacter::pushWorldPositions()
+void IKCharacter::pushWorldPositions( bool re_solve )
 {
 	
 	// start at the roots
@@ -334,8 +351,45 @@ void IKCharacter::pushWorldPositions()
 		// apply the rotation
 		CalBone* bone_to_set = parent_bone;
 		bone_to_set->setRotation( bone_to_set->getCoreBone()->getRotation()*CalQuaternion(rot.x(), rot.y(), rot.z(), rot.w() ));
+		//printf("setting a rotation for %s\n", bone_to_set->getCoreBone()->getName().c_str() );
 		// calculates children also
 		bone_to_set->calculateState();
+		
+		// re-solve?
+		if ( re_solve )
+		{
+			if ( children.size() > 0 )
+			{
+				// get a tree going from this node down to leaf, and re-solve for just that tree
+				int root_id = children.front();
+				
+				int leaf_id = root_id;
+				while( true )
+				{
+					list<int>& next_children = skeleton->getCoreSkeleton()->getCoreBone( leaf_id )->getListChildId();
+					if ( next_children.size() > 1 )
+					{
+						leaf_id = -1;
+						break;
+					}
+					else if ( next_children.size() == 0 )
+						// found leaf
+						break;
+					else
+						// exactly one child
+						leaf_id = next_children.front();
+				}
+				// re-solve if we should
+				if ( leaf_id != -1 )
+				{
+					/*printf("re-solving from %s up to %s\n", 
+						   skeleton->getCoreSkeleton()->getCoreBone( leaf_id )->getName().c_str(),
+						   skeleton->getCoreSkeleton()->getCoreBone( root_id )->getName().c_str() );*/
+					pullWorldPositions( root_id, leaf_id );
+					solve( 2, root_id, leaf_id );
+				}
+			}
+		}
 			
 		// add all children
 		for ( list<int>::iterator it =children.begin() ;it != children.end(); ++it )
@@ -361,7 +415,7 @@ void IKCharacter::resetToRest()
 
 
 
-void IKCharacter::solve( int iterations )
+void IKCharacter::solve( int iterations, int root_id, int leaf_id )
 {
 	while ( iterations>0 )
 	{
@@ -371,6 +425,10 @@ void IKCharacter::solve( int iterations )
 		// push leaf bones to target positions
 		for ( int i=0; i<leaf_bones.size(); i++ )
 		{
+			// if we have a leaf id to use, skip all other leaves
+			if ( leaf_id != -1 && leaf_id != leaf_bones[i] )
+				continue;
+			
 			// if we have a target for this one
 			if ( leaf_targets.find(leaf_bones[i]) != leaf_targets.end() )
 			{
@@ -381,7 +439,7 @@ void IKCharacter::solve( int iterations )
 			if ( parent_id != -1 )
 				queue.push_back( parent_id );
 		}
-
+		
 		// queue to handle branching
 		deque< int > branch_queue;
 		while ( !queue.empty() || !branch_queue.empty() )
@@ -396,6 +454,9 @@ void IKCharacter::solve( int iterations )
 			
 			int next_id = queue.front();
 			queue.pop_front();
+			// bail out if we should
+			if ( root_id != -1 && next_id == root_id )
+				continue;
 			
 			CalBone* bone = skeleton->getBone( next_id );
 			list<int>& children = bone->getCoreBone()->getListChildId();
