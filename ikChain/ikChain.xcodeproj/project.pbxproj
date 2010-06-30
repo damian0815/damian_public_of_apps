@@ -8,9 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2D26F08511D51F62000E963A /* IKCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D26F08411D51F62000E963A /* IKCharacter.cpp */; };
-		2D61A28C11CBC5C000BAB5DE /* IKbone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D61A28B11CBC5C000BAB5DE /* IKbone.cpp */; };
 		2DBE5F3B11D13786003053CE /* Cal3DModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE5F3A11D13786003053CE /* Cal3DModel.cpp */; };
-		2DBE5F3E11D13C45003053CE /* AnimadeadModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE5F3D11D13C45003053CE /* AnimadeadModel.cpp */; };
 		2DBE628811D229AE003053CE /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE623411D229AE003053CE /* animation.cpp */; };
 		2DBE628911D229AE003053CE /* animation_action.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE623611D229AE003053CE /* animation_action.cpp */; };
 		2DBE628A11D229AE003053CE /* animation_cycle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE623811D229AE003053CE /* animation_cycle.cpp */; };
@@ -52,7 +50,6 @@
 		2DC2FFCD11CE36440068E5C4 /* ofxMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2FFC011CE36440068E5C4 /* ofxMatrix3x3.cpp */; };
 		2DC2FFCE11CE36440068E5C4 /* ofxMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2FFC211CE36440068E5C4 /* ofxMatrix4x4.cpp */; };
 		2DC2FFCF11CE36440068E5C4 /* ofxQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2FFC711CE36440068E5C4 /* ofxQuaternion.cpp */; };
-		2DCEE8C511CE848600047601 /* IKHumanoid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DCEE8C411CE848600047601 /* IKHumanoid.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -126,14 +123,8 @@
 /* Begin PBXFileReference section */
 		2D26F08311D51F62000E963A /* IKCharacter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IKCharacter.h; sourceTree = "<group>"; };
 		2D26F08411D51F62000E963A /* IKCharacter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IKCharacter.cpp; sourceTree = "<group>"; };
-		2D61A28511CBC4F600BAB5DE /* IKchain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IKchain.h; sourceTree = "<group>"; };
-		2D61A28611CBC4F600BAB5DE /* IKchain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IKchain.cpp; sourceTree = "<group>"; };
-		2D61A28A11CBC5C000BAB5DE /* IKbone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IKbone.h; sourceTree = "<group>"; };
-		2D61A28B11CBC5C000BAB5DE /* IKbone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IKbone.cpp; sourceTree = "<group>"; };
 		2DBE5F3911D13786003053CE /* Cal3DModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cal3DModel.h; sourceTree = "<group>"; };
 		2DBE5F3A11D13786003053CE /* Cal3DModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cal3DModel.cpp; sourceTree = "<group>"; };
-		2DBE5F3C11D13C45003053CE /* AnimadeadModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimadeadModel.h; sourceTree = "<group>"; };
-		2DBE5F3D11D13C45003053CE /* AnimadeadModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimadeadModel.cpp; sourceTree = "<group>"; };
 		2DBE620711D229AE003053CE /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		2DBE623411D229AE003053CE /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = animation.cpp; sourceTree = "<group>"; };
 		2DBE623511D229AE003053CE /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animation.h; sourceTree = "<group>"; };
@@ -231,8 +222,6 @@
 		2DC2FFCA11CE36440068E5C4 /* ofxVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVec3f.h; sourceTree = "<group>"; };
 		2DC2FFCB11CE36440068E5C4 /* ofxVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVec4f.h; sourceTree = "<group>"; };
 		2DC2FFCC11CE36440068E5C4 /* ofxVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxVectorMath.h; sourceTree = "<group>"; };
-		2DCEE8C311CE848600047601 /* IKHumanoid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IKHumanoid.h; sourceTree = "<group>"; };
-		2DCEE8C411CE848600047601 /* IKHumanoid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IKHumanoid.cpp; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -657,14 +646,6 @@
 			children = (
 				2D26F08311D51F62000E963A /* IKCharacter.h */,
 				2D26F08411D51F62000E963A /* IKCharacter.cpp */,
-				2DBE5F3C11D13C45003053CE /* AnimadeadModel.h */,
-				2DBE5F3D11D13C45003053CE /* AnimadeadModel.cpp */,
-				2DCEE8C311CE848600047601 /* IKHumanoid.h */,
-				2DCEE8C411CE848600047601 /* IKHumanoid.cpp */,
-				2D61A28A11CBC5C000BAB5DE /* IKbone.h */,
-				2D61A28B11CBC5C000BAB5DE /* IKbone.cpp */,
-				2D61A28511CBC4F600BAB5DE /* IKchain.h */,
-				2D61A28611CBC4F600BAB5DE /* IKchain.cpp */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
@@ -837,13 +818,10 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				2D61A28C11CBC5C000BAB5DE /* IKbone.cpp in Sources */,
 				2DC2FFCD11CE36440068E5C4 /* ofxMatrix3x3.cpp in Sources */,
 				2DC2FFCE11CE36440068E5C4 /* ofxMatrix4x4.cpp in Sources */,
 				2DC2FFCF11CE36440068E5C4 /* ofxQuaternion.cpp in Sources */,
-				2DCEE8C511CE848600047601 /* IKHumanoid.cpp in Sources */,
 				2DBE5F3B11D13786003053CE /* Cal3DModel.cpp in Sources */,
-				2DBE5F3E11D13C45003053CE /* AnimadeadModel.cpp in Sources */,
 				2DBE628811D229AE003053CE /* animation.cpp in Sources */,
 				2DBE628911D229AE003053CE /* animation_action.cpp in Sources */,
 				2DBE628A11D229AE003053CE /* animation_cycle.cpp in Sources */,

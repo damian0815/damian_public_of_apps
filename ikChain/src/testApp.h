@@ -3,7 +3,6 @@
 
 
 #include "ofMain.h"
-#include "IKHumanoid.h"
 #include "Cal3DModel.h"
 #include "IKCharacter.h"
 
