@@ -25,20 +25,33 @@ void testApp::setup(){
 	do_target_set = false;
 	which_target = IKHumanoid::C_SPINE;
 
-	bool loaded_model = model.setup( "test", "man_good/man_goodtmp.csf", "man_good/man_goodMan.cmf" );
+	bool loaded_model = model.setup( "test", "man_good/man_goodtmp.xsf", "man_good/man_goodMan.xmf" );
 	if ( !loaded_model )
 	{
 		printf("couldn't load model\n");
 		assert(false);
 	}
-	string anim_name;
-	bool loaded_anim = model.loadAnimation( "man_good/man_goodAction.caf", anim_name );
+	bool loaded_anim = model.loadAnimation( "man_good/man_goodAction.xaf", "walk" );
 	if ( !loaded_anim )
 	{
 		printf("couldn't load anim\n");
 	}
+
+	/*bool loaded_model = model.setup( "test", "man_w_anim/Man0.7.original_at_origin.xsf", "man_w_anim/Man.xmf" );
+	if ( !loaded_model )
+	{
+		printf("couldn't load model\n");
+		assert(false);
+	}
+	bool loaded_anim = model.loadAnimation( "man_w_anim/Action.xaf", "walk" );
+	if ( !loaded_anim )
+	{
+		printf("couldn't load anim\n");
+	}*/
 	
 	model.createInstance();
+	
+	model.playFirstAnimation();
 	
 	// go from cal3d model to IKCharacter
 	character.setup( model.getSkeleton() );
@@ -47,12 +60,16 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update()
-{
+{/*
 	model.resetToRest();
 	character.pullWorldPositions();
 	character.solve( 10 );
 	character.pushWorldPositions( do_solve );
 	model.updateMesh();
+  */
+	model.update( ofGetLastFrameTime() );
+	character.pullWorldPositions();
+	model.dumpAnimationState();
 }
 
 //--------------------------------------------------------------

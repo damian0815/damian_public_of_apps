@@ -24,12 +24,14 @@ bool Cal3DModel::setup( string name, string skeleton_file, string mesh_file )
 	if ( !model->loadCoreSkeleton( ofToDataPath(skeleton_file) ) )
 	{
 		printf("couldn't load skeleton %s\n", skeleton_file.c_str() );
+		CalError::printLastError();
 		return false;
 	}
 	mesh_id = model->loadCoreMesh( ofToDataPath(mesh_file) );
 	if ( mesh_id == -1 )
 	{
 		printf("couldn't load mesh %s\n", mesh_file.c_str() );
+		CalError::printLastError();
 		return false;
 	}
 	
@@ -44,6 +46,7 @@ bool Cal3DModel::createInstance()
 	if ( !instance->attachMesh( mesh_id ) )
 	{
 		printf("couldn't attach mesh %i to new model instance\n", mesh_id );
+		CalError::printLastError();
 		return false;
 	}
 	instance->update( 0.01f );
@@ -53,12 +56,16 @@ bool Cal3DModel::createInstance()
 	
 }
 
+void Cal3DModel::updateAnimation( float elapsed )
+{
+	instance->getMixer()->updateAnimation( elapsed );
+	instance->getMixer()->updateSkeleton();
+}
+
 void Cal3DModel::updateMesh( )
 {
 	// lock in the state
-	//instance->getSkeleton()->lockState();
-	// calculate the final state
-	instance->getSkeleton()->calculateState();
+	instance->getSkeleton()->lockState();
 	// update vertices of mesh
 	instance->getPhysique()->update();
 	
@@ -98,6 +105,7 @@ void Cal3DModel::draw( float scale )
 	if(!pCalRenderer->beginRendering())
 	{
 		printf("couldn't render: error calling beginRendering()\n");
+		CalError::printLastError();
 		return;
 	}
 
@@ -315,9 +323,9 @@ void Cal3DModel::resetToRest()
 }
 
 
-bool Cal3DModel::loadAnimation( const string& anim_file, string& anim_name )
+bool Cal3DModel::loadAnimation( const string& anim_file, const string& anim_name )
 {
-	int anim_id = model->loadCoreAnimation( ofToDataPath(anim_file) );
+	int anim_id = model->loadCoreAnimation( ofToDataPath(anim_file), anim_name );
 	if ( anim_id == -1 )
 	{
 		printf("couldn't load anim from file '%s'\n", anim_file.c_str() );
@@ -325,7 +333,6 @@ bool Cal3DModel::loadAnimation( const string& anim_file, string& anim_name )
 		return false;
 	}
 	
-	anim_name = model->getCoreAnimation(anim_id)->getName();
 	printf("loaded anim '%s'\n", anim_name.c_str() );
 	
 	return true;
@@ -334,6 +341,46 @@ bool Cal3DModel::loadAnimation( const string& anim_file, string& anim_name )
 
 void Cal3DModel::playFirstAnimation()
 {
+	/*
+	vector<CalAnimation*> animations = instance->getMixer()->getAnimationVector();
+	printf("%i animations:\n", animations.size() );
+	for ( int i=0; i<animations.size(); i++ )
+	{
+		printf(" %x\n", animations[i] );
+		string name = animations[i]->getCoreAnimation()->getName();
+		printf(" - %2i: %s \n", /*model->getCoreAnimationId( name )*//*0, name.c_str() );
+	}*/
+	
+
+	bool auto_lock = true;
+	int id = instance->getCoreModel()->getCoreAnimationId( "walk" );
+	//instance->getMixer()->executeAction( id, 0.5, 0.5, 1.0, auto_lock);
+	instance->getMixer()->blendCycle(id, 1.0f, 0.0f);
+
+}
+
+void Cal3DModel::dumpAnimationState()
+{
+	list<CalAnimationAction *> actions = instance->getMixer()->getAnimationActionList();
+	printf("%2i actions:\n", actions.size() );
+	for  ( list<CalAnimationAction *> ::iterator it = actions.begin();
+		  it != actions.end();
+		  ++it )
+	{
+		printf(" - %s \n", (*it)->getCoreAnimation()->getName().c_str() );
+	}
+	list<CalAnimationCycle *> cycles = instance->getMixer()->getAnimationCycle();
+	printf("%2i cycles:\n", cycles.size() );
+	for  ( list<CalAnimationCycle *> ::iterator it = cycles.begin();
+		  it != cycles.end();
+		  ++it )
+	{
+		printf(" - %s state:%i time:%f time_factor:%f\n", (*it)->getCoreAnimation()->getName().c_str(), (*it)->getState(),
+			   (*it)->getTime(), (*it)->getTimeFactor() );
+	}
+	
+
+	
 }
 
 

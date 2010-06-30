@@ -20,27 +20,26 @@ public:
 	
 	/// setup a new CalCoreModel with the given name, skeleton file and mesh file
 	bool setup( string name, string skeleton_file, string mesh_file );
-	
-	/// load the given animation; return the name of the loaded anim in anim_name
-	/// return true on success, false on failure
-	bool loadAnimation( const string& anim_file, string& anim_name );
-	
+	/// load the given animation file and name it anim_name; return true on success
+	bool loadAnimation( const string& anim_file, const string& anim_name );
 	/// instantiate the loaded model
 	bool createInstance();
 
-	/// update the mesh based on the current skeleton state
-	void updateMesh( );
 	/// reset skeleton to rest position
 	void resetToRest();
-	
-	/// access to the skeleton
-	/// if updating bone position/orientation, call updateMesh to push changes
-	/// to the mesh.
-	CalSkeleton* getSkeleton() { return instance->getSkeleton(); }
 
+	/// call update on the underlying model
+	void update( float elapsed ) { instance->update( elapsed ); }
+	/// update the mesh based on the current skeleton state
+	void updateMesh( );
+	/// update the animation with the given timestep
+	void updateAnimation( float elapsed );
+	
 	
 	/// start playing the first animation
 	void playFirstAnimation();
+	/// dump animation state to console
+	void dumpAnimationState();
 	
 
 	/// draw the model
@@ -49,7 +48,10 @@ public:
 	void drawBones( float scale = 1.0f );
 	
 	
-	
+	/// access to the skeleton
+	/// if updating bone position/orientation, call updateMesh to push changes
+	/// to the mesh.
+	CalSkeleton* getSkeleton() { return instance->getSkeleton(); }
 	/// dump the loaded skeleton structure to the console
 	void dumpSkeleton();
 	
