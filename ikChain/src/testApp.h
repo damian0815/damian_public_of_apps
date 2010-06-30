@@ -25,7 +25,7 @@ class testApp : public ofBaseApp{
 	
 private:
 	
-	IKHumanoid::Component which_target;
+	int which_target;
 	bool do_target_set;
 	
 	float z;
@@ -42,6 +42,8 @@ private:
 	
 	Cal3DModel model;
 	IKCharacter character;
+	
+	vector<string> targets;
 };
 
 #endif

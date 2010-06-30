@@ -23,14 +23,18 @@ public:
 	void addKneeHelper( string bone, string parent, float weight );
 
 	/// if additional_drawing is true, draw lots of extra markers
-	void draw( float scale, bool additional_drawing=false );
+	void draw( float scale=1.0f, bool additional_drawing=false );
 	
 	/// get/set ik target handles
-	void setTarget( int which_leaf, ofxVec3f target );
-	ofxVec3f getTarget( int which_leaf ) const { CalVector t = (*leaf_targets.find(which_leaf)).second; return ofxVec3f( t.x, t.y, t.z ); }
+	bool enableTargetFor( string leaf_name );
+	void setTarget( int which_leaf_bone_id, ofxVec3f target );
+	ofxVec3f getTarget( int which_leaf_bone_id ) const { CalVector t = (*leaf_targets.find(which_leaf_bone_id)).second; return ofxVec3f( t.x, t.y, t.z ); }
 
-	/// get the leaf id
+	/// get the bone id for this leaf
 	int getLeafId( int index ) { return leaf_bones.at(index); }
+	int getTargetId( string name );	
+	
+	
 
 	/// start_id is the root id to try to solve down to; if -1, solve everything
 	/// leaf_id is the leaf bone_id to solve from; if -1, use all leaves
@@ -42,9 +46,6 @@ public:
 	/// push world positions to Cal3D skeleton
 	/// if re_solve is true, try to re-solve the ik where possible
 	void pushWorldPositions( bool re_solve=false );
-	
-	
-	void rotateBone( int id, ofxVec3f axis, float angle );
 	
 	
 	static int debug_bone;
@@ -83,35 +84,3 @@ private:
 	map<int,CalQuaternion> magic_ignoring_rotation_offset;
 	
 };
-
-/*
-
-
-class IKBone
-{
-public:
-	IKBone( IKBone* _parent ): parent(_parent) {};
-	
-	void addChild( IKBone* child ) { children.push_back( child ); }
-	
-	/// return a matrix to transform from world-space to 
-	ofxMatrix4x4 getWorldToBone();
-	ofxQuaternion getAbsolutePosition() { return offset*getWorldToParent(); }
-	
-private:
-	
-	// in parent-space
-	ofxQuaternion rotation;
-	// in parent-space
-	ofxVec3f offset;
-	
-	// in parent space
-	ofxQuaternion rest_rotation;
-	
-	IKBone* parent;
-	vector<IKBone*> children;
-	
-};
-
-
-*/

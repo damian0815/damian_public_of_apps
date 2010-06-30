@@ -23,9 +23,9 @@ void testApp::setup(){
 	ofSetFrameRate( 60.0f ) ;
 	
 	do_target_set = false;
-	which_target = IKHumanoid::C_SPINE;
 
 	bool loaded_model = model.setup( "test", "man_good/man_goodtmp.csf", "man_good/man_goodMan.cmf" );
+//	bool loaded_model = model.setup( "doc", "doc/doctmp.csf", "doc/docmale.cmf" );
 	if ( !loaded_model )
 	{
 		printf("couldn't load model");
@@ -34,6 +34,16 @@ void testApp::setup(){
 	// go from cal3d model to IKCharacter
 	character.setup( model.getSkeleton() );
 	
+	which_target = 0;
+	targets.push_back( "head" );
+	targets.push_back( "foot l" );
+	targets.push_back( "foot r" );
+	targets.push_back( "Hand.r" );
+	targets.push_back( "Hand.l" );
+	for ( int i=0; i<targets.size(); i++ )
+	{
+		character.enableTargetFor( targets[i] );
+	}
 }
 
 //--------------------------------------------------------------
@@ -105,7 +115,7 @@ void testApp::draw(){
 	
 	glPushMatrix();
 	glTranslatef( 3.0f, 2.0f, 0.0f );
-	character.draw( 1.0f );
+	character.draw(  );
 	glPopMatrix();
 
 	glPushMatrix();
@@ -114,7 +124,7 @@ void testApp::draw(){
 	glRotatef( -90, 1, 0, 0 );
 	glScalef( -1, 1, 1 );
 	// swap left handed to right handed
-	model.draw(  );
+	model.draw( true );
 	glPopMatrix();
 	
 }
@@ -123,38 +133,41 @@ void testApp::draw(){
 void testApp::keyPressed(int key){
 	ofxVec3f pos;
 	static int b_id = 0;
+	int target_id;
 	switch( key )
 	{
 		case '1':
-			which_target = IKHumanoid::C_SPINE;
+			which_target = 0;
 			last_mx = -1;
 			break;
 		case '2':
-			which_target = IKHumanoid::C_ARM_L;
+			which_target = 1;
 			last_mx = -1;
 			break;
 		case '3':
-			which_target = IKHumanoid::C_ARM_R;
+			which_target = 2;
 			last_mx = -1;
 			break;
 		case '4':
-			which_target = IKHumanoid::C_LEG_L;
+			which_target = 3;
 			last_mx = -1;
 			break;
 		case '5':
-			which_target = IKHumanoid::C_LEG_R;
+			which_target = 4;
 			last_mx = -1;
 			break;
 			
 		case 'z':
-			pos = character.getTarget( character.getLeafId( (int)which_target) );
+			target_id = character.getTargetId( targets[(int)which_target] );
+			pos = character.getTarget( target_id );
 			pos.z += 0.1f;
-			character.setTarget( character.getLeafId( (int)which_target), pos );
+			character.setTarget( target_id, pos );
 			break;
 		case 'Z':
-			pos = character.getTarget( character.getLeafId( (int)which_target) );
+			target_id = character.getTargetId( targets[(int)which_target] );
+			pos = character.getTarget( target_id );
 			pos.z -= 0.1f;
-			character.setTarget( character.getLeafId( (int)which_target), pos );
+			character.setTarget( target_id, pos );
 			break;
 
 		case 'b':
@@ -247,10 +260,11 @@ void testApp::mouseDragged(int x, int y, int button){
 	
 	if ( last_mx > 0 )
 	{
-		ofxVec3f pos = character.getTarget( character.getLeafId( (int)which_target) );
+		int target_id = character.getTargetId( targets[(int)which_target] );
+		ofxVec3f pos = character.getTarget( target_id );
 		pos.x += (x-last_mx)*0.02f;
 		pos.y -= (y-last_my)*0.02f;
-		character.setTarget( character.getLeafId( (int)which_target), pos );
+		character.setTarget( target_id, pos );
 	}
 	last_mx = x;
 	last_my = y;

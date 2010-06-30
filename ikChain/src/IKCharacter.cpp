@@ -78,11 +78,12 @@ void IKCharacter::setup( CalSkeleton* cal_skel )
 	pullWorldPositions();
 	
 	// set targets
+	/*
 	for ( int i=0; i<leaf_bones.size(); i++ )
 	{
 		CalVector p = world_positions[leaf_bones[i]];
 		setTarget( leaf_bones[i], ofxVec3f(p.x,p.y,p.z) );
-	}
+	}*/
 	
 	// 
 	setupMagicIgnoringRotationOffsets();
@@ -552,7 +553,7 @@ void IKCharacter::draw( int bone_id, float scale, bool additional_drawing )
 			ofEnableAlphaBlending();
 			glColor4f( 0.2f, 0.2f, 0.8f, 0.2f );
 			glBegin( GL_TRIANGLES );
-			glVertex3f( 0,0,0 );
+			//glVertex3f( 0,0,0 );
 			glVertex3f( rot.x, rot.y, rot.z );
 			rot *= debug_cached_rotations[bone_id];
 			glVertex3f( rot.x, rot.y, rot.z );
@@ -667,4 +668,29 @@ void IKCharacter::draw( float scale,  bool additional_drawing )
 
 void IKCharacter::addKneeHelper( string bone, string parent, float weight )
 {
+}
+
+
+
+bool IKCharacter::enableTargetFor( string bone )
+{
+	int bone_id = skeleton->getCoreSkeleton()->getCoreBoneId( bone );
+	if ( bone_id == -1 )
+	{
+		printf("couldn't find bone_id for bone name %s\n", bone.c_str() );
+		return false;
+	}
+
+	leaf_targets[bone_id]=skeleton->getCoreSkeleton()->getCoreBone( bone_id )->getTranslationAbsolute();
+	return true;
+}
+
+
+int IKCharacter::getTargetId( string name )
+{
+	int id = skeleton->getCoreSkeleton()->getCoreBoneId( name );
+	if ( leaf_targets.find( id ) != leaf_targets.end() )
+		return id;
+	else
+		return -1;
 }

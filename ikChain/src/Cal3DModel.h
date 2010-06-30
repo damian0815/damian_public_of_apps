@@ -20,7 +20,7 @@ public:
 	
 	bool setup( string name, string skeleton_file, string mesh_file );
 
-	void draw( float scale = 1.0f );
+	void draw( bool wireframe = false, float scale = 1.0f );
 	void drawBones( float scale );
 	
 	/// update the mesh based on the current skeleton state
