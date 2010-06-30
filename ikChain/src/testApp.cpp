@@ -57,9 +57,9 @@ void testApp::setup(){
 	character.setup( model.getSkeleton() );
 	
 	which_target = 0;
-	targets.push_back( "head" );
-	targets.push_back( "foot l" );
-	targets.push_back( "foot r" );
+	targets.push_back( "Bone.004" ); // head
+	//targets.push_back( "Bone.001_R.004" ); // foot r
+	//targets.push_back( "Bone.001_L.004" ); // foot l
 	targets.push_back( "Hand.r" );
 	targets.push_back( "Hand.l" );
 	for ( int i=0; i<targets.size(); i++ )
@@ -71,15 +71,15 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update()
 {/*
-	model.resetToRest();
 	character.pullWorldPositions();
-	character.solve( 10 );
 	character.pushWorldPositions( do_solve );
 	model.updateMesh();
   */
-	model.update( ofGetLastFrameTime() );
-	//character.pullWorldPositions();
-	//character.pushWorldPositions( do_solve );
+//	model.update( ofGetLastFrameTime() );
+	model.updateAnimation( ofGetLastFrameTime() );
+	character.pullWorldPositions();
+	character.solve( 10 );
+	character.pushWorldPositions( do_solve );
 	model.updateMesh();
 	//model.dumpAnimationState();
 }

@@ -224,6 +224,7 @@ void IKCharacter::setupMagicIgnoringRotationOffsets()
 
 void IKCharacter::pushWorldPositions( bool re_solve )
 {
+	skeleton->clearState();
 	
 	// start at the roots
 	vector<int> roots = skeleton->getCoreSkeleton()->getVectorRootCoreBoneId();
@@ -279,7 +280,8 @@ void IKCharacter::pushWorldPositions( bool re_solve )
 		// apply the rotation
 		CalBone* bone_to_set = parent_bone;
 		rot_cal *= magic_ignoring_rotation_offset[bone_to_set->getCoreBone()->getId()];
-		bone_to_set->setRotation( bone_to_set->getCoreBone()->getRotation()*rot_cal);
+		//bone_to_set->blendState( 0.5f, bone_to_set->getTranslation(),bone_to_set->getRotation()*rot_cal );
+		bone_to_set->setRotation( bone_to_set->getRotation()*rot_cal );
 		//printf("setting a rotation for %s\n", bone_to_set->getCoreBone()->getName().c_str() );
 		// calculates children also
 		bone_to_set->calculateState();
@@ -327,6 +329,8 @@ void IKCharacter::pushWorldPositions( bool re_solve )
 
 	// update skeleton - done during the push
 	//skeleton->calculateState();
+	
+	skeleton->lockState();
 
 }
 
