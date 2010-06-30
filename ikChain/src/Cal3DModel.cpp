@@ -58,8 +58,23 @@ bool Cal3DModel::createInstance()
 
 void Cal3DModel::updateAnimation( float elapsed )
 {
+	prev_cycle_times.clear();
+	// update previous animation times
+	list<CalAnimationCycle *> cycles = instance->getMixer()->getAnimationCycle();
+	for  ( list<CalAnimationCycle *> ::iterator it = cycles.begin();
+           it != cycles.end();
+           ++it )
+    {
+		string anim_name =  (*it)->getCoreAnimation()->getName();
+		float time = instance->getMixer()->getAnimationTimeFor(*it);
+		//printf("cycle %s: time %f\n", anim_name.c_str(), time );
+		prev_cycle_times[anim_name].first = time;
+		prev_cycle_times[anim_name].second = getRootBonePosition();
+	}
+	
 	instance->getMixer()->updateAnimation( elapsed );
 	instance->getMixer()->updateSkeleton();
+	
 }
 
 void Cal3DModel::updateMesh( )
@@ -354,6 +369,41 @@ void Cal3DModel::stopAnimation( string name, float delay )
 {
 	int id = instance->getCoreModel()->getCoreAnimationId( name );
 	instance->getMixer()->clearCycle( id, delay );
+}
+
+CalVector Cal3DModel::getRootBonePosition()
+{
+	int root_id = model->getCoreSkeleton()->getVectorRootCoreBoneId()[0];
+	return instance->getSkeleton()->getBone( root_id )->getTranslationAbsolute();
+}
+
+bool Cal3DModel::animationDidLoop( string name, CalVector* root_pos )
+{
+	// no prev time for this anim?
+	if ( prev_cycle_times.find( name ) == prev_cycle_times.end() )
+		return false;
+	
+	// find in cycles
+	list<CalAnimationCycle *> cycles = instance->getMixer()->getAnimationCycle();
+	for  ( list<CalAnimationCycle *> ::iterator it = cycles.begin();
+		  it != cycles.end();
+		  ++it )
+    {
+		string anim_name =  (*it)->getCoreAnimation()->getName();
+		if ( anim_name == name )
+		{
+			float time = instance->getMixer()->getAnimationTimeFor(*it);
+			// time has rolled over?
+			if ( ( time < prev_cycle_times[name].first && (*it)->getTimeFactor() > 0 ) ||
+				 ( time > prev_cycle_times[name].first && (*it)->getTimeFactor() <= 0 ) )
+			{
+				if ( root_pos )
+					*root_pos = prev_cycle_times[name].second;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 

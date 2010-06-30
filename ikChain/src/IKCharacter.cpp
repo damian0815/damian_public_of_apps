@@ -99,19 +99,22 @@ void IKCharacter::setTarget( int which_leaf, ofxVec3f pos )
 
 void IKCharacter::pullWorldPositions( int root_id, int leaf_id )
 {
+	// get root pos
+	int skel_root_id = skeleton->getCoreSkeleton()->getVectorRootCoreBoneId()[0];
+	CalVector root_pos = skeleton->getBone(skel_root_id)->getTranslationAbsolute();
+	
+	// work from the leaves down to the root
 	deque<int> queue;
 	if ( leaf_id == -1 )
 		queue.insert( queue.begin(), leaf_bones.begin(), leaf_bones.end() );
 	else
 		queue.push_back( leaf_id );
-
-	// work backwards up the tree
 	while ( !queue.empty() )
 	{
 		int id = queue.front();
 		queue.pop_front();
 		CalBone* bone = skeleton->getBone(id);
-		world_positions[id] = bone->getTranslationAbsolute();
+		world_positions[id] = bone->getTranslationAbsolute() - root_pos;
 		int parent_id = bone->getCoreBone()->getParentId();
 		if ( parent_id != -1 && id != root_id )
 			queue.push_back( parent_id );
@@ -240,10 +243,10 @@ void IKCharacter::pushWorldPositions( bool re_solve )
 		int root = target_pairs[i].root;
 		int curr = leaf;
 		// backtrack to root and store path
-		printf("leaf backtrack for leaf %2i-root %2i: ", leaf, root );
+		//printf("leaf backtrack for leaf %2i-root %2i: ", leaf, root );
 		while ( curr != -1 && curr != root )
 		{
-			printf(" %10s", core_skeleton->getCoreBone( curr )->getName().c_str() );
+		//	printf(" %10s", core_skeleton->getCoreBone( curr )->getName().c_str() );
 			leaf_backtracks[leaf].push_front(curr);
 			curr = core_skeleton->getCoreBone( curr )->getParentId();
 		}
@@ -253,9 +256,9 @@ void IKCharacter::pushWorldPositions( bool re_solve )
 				   core_skeleton->getCoreBone( root )->getName().c_str() );
 			return;
 		}
-		printf(" %10s", core_skeleton->getCoreBone( curr )->getName().c_str() );
+		//printf(" %10s", core_skeleton->getCoreBone( curr )->getName().c_str() );
 		leaf_backtracks[leaf].push_front(curr);
-		printf("\n");
+		//printf("\n");
 	}
 	// now we have trails backtracking from leaves back to roots
 	
@@ -280,9 +283,9 @@ void IKCharacter::pushWorldPositions( bool re_solve )
 			// check if the current parent_id is part of htis leaf_backtrack
 			if ( (*it).second.front()==parent_id )
 			{
-				printf("%10s is part of leaf backtrack for %2i -> should_store\n", 
+/*				printf("%10s is part of leaf backtrack for %2i -> should_store\n", 
 					   core_skeleton->getCoreBone( parent_id )->getName().c_str(),
-					   (*it).first );
+					   (*it).first );*/
 				// it is -- then we should store
 				should_store = true;
 				// move to next point on leaf_backtrack

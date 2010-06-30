@@ -8,10 +8,11 @@ void testApp::setup(){
 	last_moved_mx = -1;
 	z = 0;
 	
+	draw_extended = false;
 	
-	heading = 180.0f;
+	heading = 0.0f;
 	pitch = 0.0f;
-	eye_pos.set( 0, 3.5, 5 );
+	eye_pos.set( 0, 3.5, -10 );
 	fov = 60.0f;
 	move_speed = 0.15f;
 	rotate_speed = 1.5f;
@@ -58,9 +59,9 @@ void testApp::setup(){
 	character.setup( model.getSkeleton() );
 	
 	which_target = 0;
-	string root = "Bone.001";
-	string neck_joint = "Bone.003";
-	targets.push_back( make_pair("Bone.004",root) ); // head
+	string root = "Root";
+	string neck_joint = "Spine.1";
+	targets.push_back( make_pair("Head",root) ); // head
 	//targets.push_back( "Bone.001_R.004" ); // foot r
 	//targets.push_back( "Bone.001_L.004" ); // foot l
 	targets.push_back( make_pair("Hand.r", neck_joint) );
@@ -75,6 +76,15 @@ void testApp::setup(){
 void testApp::update()
 {
 	model.updateAnimation( ofGetLastFrameTime() );
+
+	// deal with looping motion
+	CalVector loop_root_pos;
+	if ( model.animationDidLoop( "walk", &loop_root_pos ) )
+	{
+		printf("-- loop\n");
+		root_pos += (loop_root_pos)-model.getRootBonePosition();
+	}
+	
 	character.pullFromModel();
 	character.solve( 5 );
 	character.pushToModel( do_solve );
@@ -84,7 +94,10 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
 
 	// load proper 3d world
 	
@@ -140,10 +153,11 @@ void testApp::draw(){
 	
 	glPushMatrix();
 	glTranslatef( 3.0f, 2.0f, 0.0f );
-	character.draw( 1.0f, true );
+	character.draw( 1.0f, draw_extended );
 	glPopMatrix();
 
 	glPushMatrix();
+	glTranslatef( root_pos.x, root_pos.y, root_pos.z );
 	glTranslatef( -3.0f, 2.0f, 0 );
 	glRotatef( 180, 0, 1, 0 );
 	glRotatef( -90, 1, 0, 0 );
@@ -151,6 +165,19 @@ void testApp::draw(){
 	glScalef( -1, 1, 1 );
 	model.draw( true );
 	glPopMatrix();
+	
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+	
+	// now draw some debugging stuff
+	ofSetColor( 0x000000 );
+	ofDrawBitmapString( "Keys:\n"
+					   "1-3 select targets    mouse drag target pos     z/Z move target z\n"
+					   "; toggle mouse move eye rotation    ae,o.j (dvorak==qwerty adwsec) move eye pos\n"
+					   "shift-W toggle walk cycle           p reset root pos to 0,0,0   \n"
+					   "shift-S toggle adaptive ik solve (default enabled)      shift-E draw extended skeleton", 10, 23 );
 	
 }
 
@@ -171,14 +198,6 @@ void testApp::keyPressed(int key){
 			break;
 		case '3':
 			which_target = 2;
-			last_mx = -1;
-			break;
-		case '4':
-			which_target = 3;
-			last_mx = -1;
-			break;
-		case '5':
-			which_target = 4;
 			last_mx = -1;
 			break;
 			
@@ -212,11 +231,11 @@ void testApp::keyPressed(int key){
 			rotate_eye = !rotate_eye;
 			break;
 		
-		case 's':
+		case 'S':
 			do_solve = !do_solve;
 			break;
 			
-		case 'd':
+/*		case 'd':
 			IKCharacter::debug_bone++;
 			while ( IKCharacter::debug_bone >= model.getSkeleton()->getCoreSkeleton()->getNumBones() )
 				IKCharacter::debug_bone--;
@@ -225,9 +244,9 @@ void testApp::keyPressed(int key){
 			IKCharacter::debug_bone--;
 			while( IKCharacter::debug_bone < 0 )
 				IKCharacter::debug_bone++;
-			break;
+			break;*/
 		
-		case 'w':
+		case 'W':
 			do_walk = !do_walk;
 			if ( do_walk )
 				model.startAnimation( "walk" );
@@ -236,6 +255,13 @@ void testApp::keyPressed(int key){
 			break;
 			
 			
+		case 'E':
+			draw_extended = !draw_extended;
+			break;
+			
+		case 'p':
+			root_pos.set( 0,0,0 );
+			break;
 			
 		default:
 			break;

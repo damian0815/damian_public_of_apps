@@ -171,6 +171,9 @@ public:
   std::vector<CalAnimation *> &getAnimationVector();
   std::list<CalAnimationAction *> &getAnimationActionList();
   std::list<CalAnimationCycle *> &getAnimationCycle();  
+	
+	/// return the animation time for the given animation
+	float getAnimationTimeFor( CalAnimation* anim );
   
 protected:
   CalModel *m_pModel;

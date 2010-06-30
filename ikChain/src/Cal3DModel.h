@@ -10,6 +10,7 @@
 #pragma once
 
 #include "cal3d.h"
+#include "ofxVectorMath.h"
 using namespace std;
 
 class Cal3DModel
@@ -40,13 +41,16 @@ public:
 	void startAnimation( string name, float fade_time=0, float weight=1.0f );
 	/// stop the given animation, fading out
 	void stopAnimation( string name, float fade_time=0 );
-	
+	/// true if the given animation has just looped; put previous root position in prev_root_pos if non-NULL
+	bool animationDidLoop( string name, CalVector* prev_root_pos=NULL );
 
 	/// draw the model
 	void draw( bool wireframe = false, float scale = 1.0f );	
 	/// draw just the bones of the model (for debugging)
 	void drawBones( float scale = 1.0f );
 	
+	/// return the location of the root bone in skeleton space
+	CalVector getRootBonePosition();
 	
 	/// access to the skeleton
 	/// if updating bone position/orientation, call updateMesh to push changes
@@ -69,5 +73,8 @@ private:
 
 	void dumpSkeletonImp( CalCoreBone* root, string prefix );
 	void drawBones(  int bone_id, float scale );
+	
+	// map of anim names to cycle times and root positions
+	map<string,pair<float,CalVector> > prev_cycle_times;
 	
 };

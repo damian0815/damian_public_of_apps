@@ -497,23 +497,8 @@ void CalMixer::updateSkeleton()
     CalCoreAnimation *pCoreAnimation;
     pCoreAnimation = (*iteratorAnimationCycle)->getCoreAnimation();
 
-    // calculate adjusted time
-    float animationTime;
-    if((*iteratorAnimationCycle)->getState() == CalAnimation::STATE_SYNC)
-    {
-      if(m_animationDuration == 0.0f)
-      {
-        animationTime = 0.0f;
-      }
-      else
-      {
-        animationTime = m_animationTime * pCoreAnimation->getDuration() / m_animationDuration;
-      }
-    }
-    else
-    {
-      animationTime = (*iteratorAnimationCycle)->getTime();
-    }
+	  
+	  float animationTime = getAnimationTimeFor( (*iteratorAnimationCycle) );
 
     // get the list of core tracks of above core animation
     std::list<CalCoreTrack *>& listCoreTrack = pCoreAnimation->getListCoreTrack();
@@ -555,6 +540,33 @@ float CalMixer::getAnimationTime()
 {
 	return m_animationTime;
 }
+
+/** Return the animation time for the given animation */
+
+float CalMixer::getAnimationTimeFor( CalAnimation* anim )
+{
+	// calculate adjusted time
+    float animationTime;
+    if(anim->getState() == CalAnimation::STATE_SYNC)
+    {
+		if(m_animationDuration == 0.0f)
+		{
+			animationTime = 0.0f;
+		}
+		else
+		{
+			animationTime = m_animationTime * anim->getCoreAnimation()->getDuration() / m_animationDuration;
+		}
+    }
+    else
+    {
+		animationTime = anim->getTime();
+    }
+	
+	return animationTime;
+	
+}	
+
 
 /*****************************************************************************/
 /** Returns the animation duration.

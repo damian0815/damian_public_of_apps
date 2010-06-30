@@ -39,6 +39,9 @@ private:
 	
 	bool do_solve;
 	bool do_walk;
+	bool draw_extended;
+	
+	CalVector root_pos;
 	
 	Cal3DModel model;
 	IKCharacter character;
