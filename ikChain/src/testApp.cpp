@@ -51,37 +51,34 @@ void testApp::setup(){
 	
 	model.createInstance();
 	
-	model.playFirstAnimation();
+	do_walk = true;
+	model.startAnimation( "walk" );
 	
 	// go from cal3d model to IKCharacter
 	character.setup( model.getSkeleton() );
 	
 	which_target = 0;
-	targets.push_back( "Bone.004" ); // head
+	string root = "Bone.001";
+	string neck_joint = "Bone.003";
+	targets.push_back( make_pair("Bone.004",root) ); // head
 	//targets.push_back( "Bone.001_R.004" ); // foot r
 	//targets.push_back( "Bone.001_L.004" ); // foot l
-	targets.push_back( "Hand.r" );
-	targets.push_back( "Hand.l" );
+	targets.push_back( make_pair("Hand.r", neck_joint) );
+	targets.push_back( make_pair("Hand.l", neck_joint) );
 	for ( int i=0; i<targets.size(); i++ )
 	{
-		character.enableTargetFor( targets[i] );
+		character.enableTargetFor( targets[i].first, targets[i].second );
 	}
 }
 
 //--------------------------------------------------------------
 void testApp::update()
-{/*
-	character.pullWorldPositions();
-	character.pushWorldPositions( do_solve );
-	model.updateMesh();
-  */
-//	model.update( ofGetLastFrameTime() );
+{
 	model.updateAnimation( ofGetLastFrameTime() );
-	character.pullWorldPositions();
-	character.solve( 10 );
-	character.pushWorldPositions( do_solve );
+	character.pullFromModel();
+	character.solve( 5 );
+	character.pushToModel( do_solve );
 	model.updateMesh();
-	//model.dumpAnimationState();
 }
 
 //--------------------------------------------------------------
@@ -143,15 +140,15 @@ void testApp::draw(){
 	
 	glPushMatrix();
 	glTranslatef( 3.0f, 2.0f, 0.0f );
-	character.draw(  );
+	character.draw( 1.0f, true );
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef( -3.0f, 2.0f, 0 );
 	glRotatef( 180, 0, 1, 0 );
 	glRotatef( -90, 1, 0, 0 );
-	glScalef( -1, 1, 1 );
 	// swap left handed to right handed
+	glScalef( -1, 1, 1 );
 	model.draw( true );
 	glPopMatrix();
 	
@@ -186,13 +183,13 @@ void testApp::keyPressed(int key){
 			break;
 			
 		case 'z':
-			target_id = character.getTargetId( targets[(int)which_target] );
+			target_id = character.getTargetId( targets[(int)which_target].first );
 			pos = character.getTarget( target_id );
 			pos.z += 0.1f;
 			character.setTarget( target_id, pos );
 			break;
 		case 'Z':
-			target_id = character.getTargetId( targets[(int)which_target] );
+			target_id = character.getTargetId( targets[(int)which_target].first );
 			pos = character.getTarget( target_id );
 			pos.z -= 0.1f;
 			character.setTarget( target_id, pos );
@@ -230,6 +227,14 @@ void testApp::keyPressed(int key){
 				IKCharacter::debug_bone++;
 			break;
 		
+		case 'w':
+			do_walk = !do_walk;
+			if ( do_walk )
+				model.startAnimation( "walk" );
+			else
+				model.stopAnimation( "walk" );
+			break;
+			
 			
 			
 		default:
@@ -288,7 +293,7 @@ void testApp::mouseDragged(int x, int y, int button){
 	
 	if ( last_mx > 0 )
 	{
-		int target_id = character.getTargetId( targets[(int)which_target] );
+		int target_id = character.getTargetId( targets[(int)which_target].first );
 		ofxVec3f pos = character.getTarget( target_id );
 		pos.x += (x-last_mx)*0.02f;
 		pos.y -= (y-last_my)*0.02f;

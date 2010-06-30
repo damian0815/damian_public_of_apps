@@ -39,11 +39,12 @@ private:
 	bool rotate_eye;
 	
 	bool do_solve;
+	bool do_walk;
 	
 	Cal3DModel model;
 	IKCharacter character;
 	
-	vector<string> targets;
+	vector<pair<string,string> > targets;
 };
 
 #endif

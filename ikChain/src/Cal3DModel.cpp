@@ -189,9 +189,10 @@ void Cal3DModel::draw( bool wireframe, float scale )
 					printf("%7.3f %7.3f %7.3f\n", meshVertices[i][0], meshVertices[i][1], meshVertices[i][2] );
 				}*/
 				ofEnableAlphaBlending();
-				//glColor4f( 0,0,0,0.1f );
-				glColor4f( 0,0,0,1 );
-				//glDisable( GL_DEPTH_TEST );
+				glColor4f( 0,0,0,0.2f );
+				//glColor4f( 0,0,0,1 );
+				//glEnable( GL_DEPTH_TEST );
+				//glDepthMask( GL_TRUE );
 				glBegin( GL_TRIANGLES );
 				for ( int i=0; i<faceCount; i++ )
 				{
@@ -204,10 +205,10 @@ void Cal3DModel::draw( bool wireframe, float scale )
 				}
 				glEnd();
 				//glEnable( GL_DEPTH_TEST );
-				glBegin( GL_LINES );
 				if ( wireframe )
 				{
-					glColor4f( 1,1,1,0.2f );
+					glBegin( GL_LINES );
+					glColor4f( 1,1,1,0.8f );
 					for ( int i=0; i<faceCount; i++ )
 					{
 						//					glVertex3fv( meshVertices[i] );
@@ -217,10 +218,9 @@ void Cal3DModel::draw( bool wireframe, float scale )
 							glVertex3f(meshVertices[meshFaces[i][(j+1)%3]][0]*scale,meshVertices[meshFaces[i][(j+1)%3]][2]*scale,	meshVertices[meshFaces[i][(j+1)%3]][1]*scale);
 						}
 					}
+					glEnd();
 				}
-				glEnd();
 				
-				ofDisableAlphaBlending();
 				ofPopMatrix();
 //				glEnd();
 				// [ render the faces with the graphic-API here ]
@@ -344,49 +344,16 @@ bool Cal3DModel::loadAnimation( const string& anim_file, const string& anim_name
 	return true;
 }
 
-
-void Cal3DModel::playFirstAnimation()
+void Cal3DModel::startAnimation( string name, float delay, float weight )
 {
-	/*
-	vector<CalAnimation*> animations = instance->getMixer()->getAnimationVector();
-	printf("%i animations:\n", animations.size() );
-	for ( int i=0; i<animations.size(); i++ )
-	{
-		printf(" %x\n", animations[i] );
-		string name = animations[i]->getCoreAnimation()->getName();
-		printf(" - %2i: %s \n", /*model->getCoreAnimationId( name )*//*0, name.c_str() );
-	}*/
-	
-
-	bool auto_lock = true;
-	int id = instance->getCoreModel()->getCoreAnimationId( "walk" );
-	//instance->getMixer()->executeAction( id, 0.5, 0.5, 1.0, auto_lock);
-	instance->getMixer()->blendCycle(id, 1.0f, 0.0f);
-
+	int id = instance->getCoreModel()->getCoreAnimationId( name );
+	instance->getMixer()->blendCycle( id, weight, delay );
 }
 
-void Cal3DModel::dumpAnimationState()
+void Cal3DModel::stopAnimation( string name, float delay )
 {
-	list<CalAnimationAction *> actions = instance->getMixer()->getAnimationActionList();
-	printf("%2i actions:\n", actions.size() );
-	for  ( list<CalAnimationAction *> ::iterator it = actions.begin();
-		  it != actions.end();
-		  ++it )
-	{
-		printf(" - %s \n", (*it)->getCoreAnimation()->getName().c_str() );
-	}
-	list<CalAnimationCycle *> cycles = instance->getMixer()->getAnimationCycle();
-	printf("%2i cycles:\n", cycles.size() );
-	for  ( list<CalAnimationCycle *> ::iterator it = cycles.begin();
-		  it != cycles.end();
-		  ++it )
-	{
-		printf(" - %s state:%i time:%f time_factor:%f\n", (*it)->getCoreAnimation()->getName().c_str(), (*it)->getState(),
-			   (*it)->getTime(), (*it)->getTimeFactor() );
-	}
-	
-
-	
+	int id = instance->getCoreModel()->getCoreAnimationId( name );
+	instance->getMixer()->clearCycle( id, delay );
 }
 
 

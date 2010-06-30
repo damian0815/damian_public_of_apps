@@ -94,7 +94,7 @@ void IKCharacter::setup( CalSkeleton* cal_skel )
 void IKCharacter::setTarget( int which_leaf, ofxVec3f pos )
 {
 	CalVector p(pos.x, pos.y, pos.z );
-	leaf_targets[which_leaf] = p;
+	leaf_targets[which_leaf].second = p;
 }
 
 void IKCharacter::pullWorldPositions( int root_id, int leaf_id )
@@ -224,19 +224,72 @@ void IKCharacter::setupMagicIgnoringRotationOffsets()
 
 void IKCharacter::pushWorldPositions( bool re_solve )
 {
-	skeleton->clearState();
+//	skeleton->clearState();
+	CalCoreSkeleton* core_skeleton = skeleton->getCoreSkeleton();
 	
-	// start at the roots
-	vector<int> roots = skeleton->getCoreSkeleton()->getVectorRootCoreBoneId();
-
 	// populate the parent queue
 	deque<int> parent_queue;
+
+	// get the (leaf, root) target pairs
+	vector<TargetPair > target_pairs = getEnabledTargetPairs();
+	// walk from leaves down to their roots, only marking where we want to have influence
+	map<int,deque<int> > leaf_backtracks;
+	for ( int i=0; i<target_pairs.size(); i++ )
+	{
+		int leaf = target_pairs[i].leaf;
+		int root = target_pairs[i].root;
+		int curr = leaf;
+		// backtrack to root and store path
+		printf("leaf backtrack for leaf %2i-root %2i: ", leaf, root );
+		while ( curr != -1 && curr != root )
+		{
+			printf(" %10s", core_skeleton->getCoreBone( curr )->getName().c_str() );
+			leaf_backtracks[leaf].push_front(curr);
+			curr = core_skeleton->getCoreBone( curr )->getParentId();
+		}
+		if ( curr == -1 )
+		{
+			printf("can't pushWorldPositions: invalid leaf/root target pair (leaf %s root %s)\n", core_skeleton->getCoreBone( leaf )->getName().c_str(),
+				   core_skeleton->getCoreBone( root )->getName().c_str() );
+			return;
+		}
+		printf(" %10s", core_skeleton->getCoreBone( curr )->getName().c_str() );
+		leaf_backtracks[leaf].push_front(curr);
+		printf("\n");
+	}
+	// now we have trails backtracking from leaves back to roots
+	
+	// start forwardtracking from the roots
+	vector<int> roots = skeleton->getCoreSkeleton()->getVectorRootCoreBoneId();
 	parent_queue.insert( parent_queue.begin(), roots.begin(), roots.end() );
 	while ( !parent_queue.empty() )
 	{
 		// get parent bone id
 		int parent_id = parent_queue.front();
 		parent_queue.pop_front();
+		
+		// determine if this bone is one we want to store
+		bool should_store = false;
+		for ( map<int,deque<int> >::iterator it = leaf_backtracks.begin();
+			 it != leaf_backtracks.end();
+			 ++it )
+		{
+			// nothing left in this leaf backtrack?
+			if ( (*it).second.empty() )
+				continue;
+			// check if the current parent_id is part of htis leaf_backtrack
+			if ( (*it).second.front()==parent_id )
+			{
+				printf("%10s is part of leaf backtrack for %2i -> should_store\n", 
+					   core_skeleton->getCoreBone( parent_id )->getName().c_str(),
+					   (*it).first );
+				// it is -- then we should store
+				should_store = true;
+				// move to next point on leaf_backtrack
+				(*it).second.pop_front();
+			}
+		}
+		
 		// get the bone
 		CalBone* parent_bone = skeleton->getBone( parent_id );
 		// get child list
@@ -244,78 +297,86 @@ void IKCharacter::pushWorldPositions( bool re_solve )
 		// no children?
 		if ( children.size() == 0 )
 			continue;
-				
-		// calculate a result for each child
-		vector<ofxQuaternion> results;
-		for ( list<int>::iterator it = children.begin();
-			 it != children.end();
-			 it++ )
+
+		if ( !should_store )
 		{
-			// get new world positions
-			CalVector b,p;
-			int child_id = *it;
-			b = world_positions[child_id];
-			p = world_positions[parent_id];
-			// get the rotation
-			ofxQuaternion rot = getRotationForParentBone( child_id, (b-p) );
-			
-			// store as average
-			results.push_back( rot );
+			//CalBone* bone_to_set = parent_bone;
+			//bone_to_set->clearState();
 		}
-		// slerp
-		vector<ofxQuaternion> other_results;
-		while ( results.size() > 1 )
+		else
 		{
-			other_results.clear();
-			for ( int i=0; i<results.size(); i+=2 )
+			// calculate a result for each child
+			vector<ofxQuaternion> results;
+			for ( list<int>::iterator it = children.begin();
+				 it != children.end();
+				 it++ )
 			{
-				other_results.push_back( ofxQuaternion() );
-				other_results.back().slerp( 0.5f, results[0], results[1] );
+				// get new world positions
+				CalVector b,p;
+				int child_id = *it;
+				b = world_positions[child_id];
+				p = world_positions[parent_id];
+				// get the rotation
+				ofxQuaternion rot = getRotationForParentBone( child_id, (b-p) );
+				
+				// store as average
+				results.push_back( rot );
 			}
-			results.swap( other_results );
-		}
-		ofxQuaternion rot( results[0] );
-		CalQuaternion rot_cal( rot.x(), rot.y(), rot.z(), rot.w() );
-			
-		// apply the rotation
-		CalBone* bone_to_set = parent_bone;
-		rot_cal *= magic_ignoring_rotation_offset[bone_to_set->getCoreBone()->getId()];
-		//bone_to_set->blendState( 0.5f, bone_to_set->getTranslation(),bone_to_set->getRotation()*rot_cal );
-		bone_to_set->setRotation( bone_to_set->getRotation()*rot_cal );
-		//printf("setting a rotation for %s\n", bone_to_set->getCoreBone()->getName().c_str() );
-		// calculates children also
-		bone_to_set->calculateState();
-		debug_cached_rotations[bone_to_set->getCoreBone()->getId()] = rot_cal;
-		
-		// re-solve?
-		if ( re_solve )
-		{
-			if ( children.size() > 0 )
+			// slerp
+			vector<ofxQuaternion> other_results;
+			while ( results.size() > 1 )
 			{
-				// get a tree going from this node down to leaf, and re-solve for just that tree
-				int root_id = children.front();
-				
-				int leaf_id = root_id;
-				while( true )
+				other_results.clear();
+				for ( int i=0; i<results.size(); i+=2 )
 				{
-					list<int>& next_children = skeleton->getCoreSkeleton()->getCoreBone( leaf_id )->getListChildId();
-					if ( next_children.size() > 1 )
-					{
-						leaf_id = -1;
-						break;
-					}
-					else if ( next_children.size() == 0 )
-						// found leaf
-						break;
-					else
-						// exactly one child
-						leaf_id = next_children.front();
+					other_results.push_back( ofxQuaternion() );
+					other_results.back().slerp( 0.5f, results[0], results[1] );
 				}
-				// re-solve if we should
-				if ( leaf_id != -1 )
+				results.swap( other_results );
+			}
+			ofxQuaternion rot( results[0] );
+			CalQuaternion rot_cal( rot.x(), rot.y(), rot.z(), rot.w() );
+				
+			// apply the rotation
+			CalBone* bone_to_set = parent_bone;
+			rot_cal *= magic_ignoring_rotation_offset[bone_to_set->getCoreBone()->getId()];
+			//bone_to_set->blendState( 0.5f, bone_to_set->getTranslation(),bone_to_set->getRotation()*rot_cal );
+			bone_to_set->setRotation( bone_to_set->getRotation()*rot_cal );
+			//printf("setting a rotation for %s\n", bone_to_set->getCoreBone()->getName().c_str() );
+			// calculates children also
+			bone_to_set->calculateState();
+			debug_cached_rotations[bone_to_set->getCoreBone()->getId()] = rot_cal;
+			
+			// re-solve?
+			if ( re_solve )
+			{
+				if ( children.size() > 0 )
 				{
-					pullWorldPositions( root_id, leaf_id );
-					solve( 2, root_id, leaf_id );
+					// get a tree going from this node down to leaf, and re-solve for just that tree
+					int root_id = children.front();
+					
+					int leaf_id = root_id;
+					while( true )
+					{
+						list<int>& next_children = skeleton->getCoreSkeleton()->getCoreBone( leaf_id )->getListChildId();
+						if ( next_children.size() > 1 )
+						{
+							leaf_id = -1;
+							break;
+						}
+						else if ( next_children.size() == 0 )
+							// found leaf
+							break;
+						else
+							// exactly one child
+							leaf_id = next_children.front();
+					}
+					// re-solve if we should
+					if ( leaf_id != -1 )
+					{
+						pullWorldPositions( root_id, leaf_id );
+						solve( 2, root_id, leaf_id );
+					}
 				}
 			}
 		}
@@ -355,7 +416,7 @@ void IKCharacter::solve( int iterations, int root_id, int leaf_id )
 			if ( leaf_targets.find(leaf_bones[i]) != leaf_targets.end() )
 			{
 				// set it
-				world_positions[leaf_bones[i]] = leaf_targets[leaf_bones[i]];
+				world_positions[leaf_bones[i]] = leaf_targets[leaf_bones[i]].second;
 			}
 			int parent_id = skeleton->getCoreSkeleton()->getCoreBone( leaf_bones[i] )->getParentId();
 			if ( parent_id != -1 )
@@ -654,11 +715,11 @@ void IKCharacter::draw( float scale,  bool additional_drawing )
 	glPushAttrib( GL_CURRENT_BIT );
 	glColor3f( 0.8f, 0.1f, 0.1f );
 	glBegin( GL_TRIANGLES );
-	for ( map<int,CalVector>::iterator it = leaf_targets.begin();
+	for ( map<int,pair<int,CalVector> >::iterator it = leaf_targets.begin();
 		 it != leaf_targets.end(); 
 		 ++it )
 	{
-		CalVector target_pos = (*it).second;
+		CalVector target_pos = (*it).second.second;
 		glVertex3f( target_pos.x-0.1, target_pos.y-0.05, target_pos.z );
 		glVertex3f( target_pos.x+0.1, target_pos.y-0.05, target_pos.z );
 		glVertex3f( target_pos.x, target_pos.y+0.05, target_pos.z );
@@ -676,7 +737,7 @@ void IKCharacter::addKneeHelper( string bone, string parent, float weight )
 
 
 
-bool IKCharacter::enableTargetFor( string bone )
+bool IKCharacter::enableTargetFor( string bone, string root )
 {
 	int bone_id = skeleton->getCoreSkeleton()->getCoreBoneId( bone );
 	if ( bone_id == -1 )
@@ -684,8 +745,14 @@ bool IKCharacter::enableTargetFor( string bone )
 		printf("couldn't find bone_id for bone name %s\n", bone.c_str() );
 		return false;
 	}
-
-	leaf_targets[bone_id]=skeleton->getCoreSkeleton()->getCoreBone( bone_id )->getTranslationAbsolute();
+	int root_id = skeleton->getCoreSkeleton()->getCoreBoneId( root );
+	if ( root_id == -1 )
+	{
+		printf("couldn't find bone_id for bone name %s\n", root.c_str() );
+		return false;
+	}
+	
+	leaf_targets[bone_id]=make_pair(root_id,skeleton->getCoreSkeleton()->getCoreBone( bone_id )->getTranslationAbsolute());
 	return true;
 }
 
@@ -697,4 +764,17 @@ int IKCharacter::getTargetId( string name )
 		return id;
 	else
 		return -1;
+}
+
+
+vector< IKCharacter::TargetPair > IKCharacter::getEnabledTargetPairs()
+{
+	vector<TargetPair > pairs;
+	for ( map<int,pair<int,CalVector> >::iterator it = leaf_targets.begin();
+		 it != leaf_targets.end();
+		 ++it )
+	{
+		pairs.push_back( TargetPair( (*it).first, (*it).second.first ) );
+	}
+	return pairs;
 }

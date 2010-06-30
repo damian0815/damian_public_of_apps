@@ -20,7 +20,7 @@ public:
 	
 	/// setup a new CalCoreModel with the given name, skeleton file and mesh file
 	bool setup( string name, string skeleton_file, string mesh_file );
-	/// load the given animation file and name it anim_name; return true on success
+	/// load animation from anim_file and bind it to the name anim_name; return true on success
 	bool loadAnimation( const string& anim_file, const string& anim_name );
 	/// instantiate the loaded model
 	bool createInstance();
@@ -36,10 +36,10 @@ public:
 	void updateAnimation( float elapsed );
 	
 	
-	/// start playing the first animation
-	void playFirstAnimation();
-	/// dump animation state to console
-	void dumpAnimationState();
+	/// start the given animation, fading in
+	void startAnimation( string name, float fade_time=0, float weight=1.0f );
+	/// stop the given animation, fading out
+	void stopAnimation( string name, float fade_time=0 );
 	
 
 	/// draw the model

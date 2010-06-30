@@ -26,9 +26,9 @@ public:
 	void draw( float scale=1.0f, bool additional_drawing=false );
 	
 	/// get/set ik target handles
-	bool enableTargetFor( string leaf_name );
+	bool enableTargetFor( string leaf_name, string root );
 	void setTarget( int which_leaf_bone_id, ofxVec3f target );
-	ofxVec3f getTarget( int which_leaf_bone_id ) const { CalVector t = (*leaf_targets.find(which_leaf_bone_id)).second; return ofxVec3f( t.x, t.y, t.z ); }
+	ofxVec3f getTarget( int which_leaf_bone_id ) const { CalVector t = (*leaf_targets.find(which_leaf_bone_id)).second.second; return ofxVec3f( t.x, t.y, t.z ); }
 
 	/// get the bone id for this leaf
 	int getLeafId( int index ) { return leaf_bones.at(index); }
@@ -40,18 +40,20 @@ public:
 	/// leaf_id is the leaf bone_id to solve from; if -1, use all leaves
 	void solve( int iterations, int start_id = -1, int leaf_bone_id = -1 );
 	
+	/// fetch the current model pose as a start point for IK
+	void pullFromModel() { setupMagicIgnoringRotationOffsets(); /* does a pullWorldPositions internally */ }
+	/// push the found IK solution pose to the model
+	void pushToModel( bool do_re_solve=false ) { pushWorldPositions( do_re_solve ); }
+	
+	static int debug_bone;
 
+private:
 	/// get world positions from Cal3D skeleton
 	void pullWorldPositions() { pullWorldPositions( -1, -1 ); }
 	/// push world positions to Cal3D skeleton
 	/// if re_solve is true, try to re-solve the ik where possible
 	void pushWorldPositions( bool re_solve=false );
 	
-	
-	static int debug_bone;
-
-private:
-
 	// pull world positions starting at leaf_bone_id and working up to root_id
 	// if leaf_bone_id == -1, use all leaves
 	// if root_id == -1, go to the actual root
@@ -68,10 +70,16 @@ private:
 	/// draw from the given bone id down
 	void draw( int bone_id, float scale, bool additional_drawing );
 	
+	// return enabled targets and their root termination points (or -1)
+	struct TargetPair{ int leaf; int root; TargetPair(int l,int r):leaf(l),root(r) {} };
+	vector< TargetPair > getEnabledTargetPairs();
+
 	vector<int> leaf_bones;
-	map<int,CalVector> leaf_targets; // map from leaf bone ids to targets
+	map<int,pair<int,CalVector> > leaf_targets; // map from leaf bone ids to root termination bones and target points
 	map<int,float> bone_lengths;    // map from bone ids to lengths
 	map<int,float> weight_centres;  // map from bone ids to weight centres; 0 means pin to parent
+
+	
 	
 	CalSkeleton* skeleton;
 	
