@@ -43,7 +43,7 @@ public:
 	
 
 	/// draw the model
-	void draw( float scale = 1.0f );
+	void draw( bool wireframe = false, float scale = 1.0f );	
 	/// draw just the bones of the model (for debugging)
 	void drawBones( float scale = 1.0f );
 	

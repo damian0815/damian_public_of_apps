@@ -95,7 +95,7 @@ void Cal3DModel::dumpSkeletonImp( CalCoreBone* b, string prefix )
 	}
 }
 
-void Cal3DModel::draw( float scale )
+void Cal3DModel::draw( bool wireframe, float scale )
 {
 	// get the renderer of the model
 	CalRenderer *pCalRenderer;
@@ -189,7 +189,8 @@ void Cal3DModel::draw( float scale )
 					printf("%7.3f %7.3f %7.3f\n", meshVertices[i][0], meshVertices[i][1], meshVertices[i][2] );
 				}*/
 				ofEnableAlphaBlending();
-				glColor4f( 0,0,0,0.1f );
+				//glColor4f( 0,0,0,0.1f );
+				glColor4f( 0,0,0,1 );
 				//glDisable( GL_DEPTH_TEST );
 				glBegin( GL_TRIANGLES );
 				for ( int i=0; i<faceCount; i++ )
@@ -197,23 +198,28 @@ void Cal3DModel::draw( float scale )
 					//					glVertex3fv( meshVertices[i] );
 					for ( int j=0; j<3; j++ )
 					{
+						glNormal3f(meshNormals[meshFaces[i][j]][0],		meshNormals[meshFaces[i][j]][2],			meshNormals[meshFaces[i][j]][1]);
 						glVertex3f(meshVertices[meshFaces[i][j]][0]*scale,		meshVertices[meshFaces[i][j]][2]*scale,			meshVertices[meshFaces[i][j]][1]*scale);
 					}
 				}
 				glEnd();
 				//glEnable( GL_DEPTH_TEST );
 				glBegin( GL_LINES );
-				glColor4f( 1,1,1,0.2f );
-				for ( int i=0; i<faceCount; i++ )
+				if ( wireframe )
 				{
-					//					glVertex3fv( meshVertices[i] );
-					for ( int j=0; j<3; j++ )
+					glColor4f( 1,1,1,0.2f );
+					for ( int i=0; i<faceCount; i++ )
 					{
-						glVertex3f(meshVertices[meshFaces[i][j]][0]*scale,		meshVertices[meshFaces[i][j]][2]*scale,			meshVertices[meshFaces[i][j]][1]*scale);
-						glVertex3f(meshVertices[meshFaces[i][(j+1)%3]][0]*scale,meshVertices[meshFaces[i][(j+1)%3]][2]*scale,	meshVertices[meshFaces[i][(j+1)%3]][1]*scale);
+						//					glVertex3fv( meshVertices[i] );
+						for ( int j=0; j<3; j++ )
+						{
+							glVertex3f(meshVertices[meshFaces[i][j]][0]*scale,		meshVertices[meshFaces[i][j]][2]*scale,			meshVertices[meshFaces[i][j]][1]*scale);
+							glVertex3f(meshVertices[meshFaces[i][(j+1)%3]][0]*scale,meshVertices[meshFaces[i][(j+1)%3]][2]*scale,	meshVertices[meshFaces[i][(j+1)%3]][1]*scale);
+						}
 					}
 				}
 				glEnd();
+				
 				ofDisableAlphaBlending();
 				ofPopMatrix();
 //				glEnd();
