@@ -25,13 +25,13 @@ void testApp::setup(){
 	do_target_set = false;
 	which_target = IKHumanoid::C_SPINE;
 
-	bool loaded_model = model.setup( "test", "man_good/man_goodtmp.xsf", "man_good/man_goodMan.xmf" );
+	bool loaded_model = model.setup( "test", "man_good/man_good.xsf", "man_good/man_goodMan.xmf" );
 	if ( !loaded_model )
 	{
 		printf("couldn't load model\n");
 		assert(false);
 	}
-	bool loaded_anim = model.loadAnimation( "man_good/man_goodAction.xaf", "walk" );
+	bool loaded_anim = model.loadAnimation( "man_good/man_goodSkeleton.001.xaf", "walk" );
 	if ( !loaded_anim )
 	{
 		printf("couldn't load anim\n");
@@ -68,8 +68,10 @@ void testApp::update()
 	model.updateMesh();
   */
 	model.update( ofGetLastFrameTime() );
-	character.pullWorldPositions();
-	model.dumpAnimationState();
+	//character.pullWorldPositions();
+	//character.pushWorldPositions( do_solve );
+	model.updateMesh();
+	//model.dumpAnimationState();
 }
 
 //--------------------------------------------------------------
