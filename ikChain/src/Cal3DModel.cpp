@@ -26,26 +26,31 @@ bool Cal3DModel::setup( string name, string skeleton_file, string mesh_file )
 		printf("couldn't load skeleton %s\n", skeleton_file.c_str() );
 		return false;
 	}
-	int mesh_id = model->loadCoreMesh( ofToDataPath(mesh_file) );
+	mesh_id = model->loadCoreMesh( ofToDataPath(mesh_file) );
 	if ( mesh_id == -1 )
 	{
 		printf("couldn't load mesh %s\n", mesh_file.c_str() );
 		return false;
 	}
 	
+	num_bones = model->getCoreSkeleton()->getNumBones();
+	
+	return true;
+}
+
+bool Cal3DModel::createInstance()
+{
 	instance = new CalModel( model );
 	if ( !instance->attachMesh( mesh_id ) )
 	{
 		printf("couldn't attach mesh %i to new model instance\n", mesh_id );
 		return false;
 	}
-	
-	num_bones = model->getCoreSkeleton()->getNumBones();
-	
 	instance->update( 0.01f );
 	updateMesh();
 
 	return true;
+	
 }
 
 void Cal3DModel::updateMesh( )
@@ -308,4 +313,27 @@ void Cal3DModel::resetToRest()
 	}
 	skeleton->calculateState();
 }
+
+
+bool Cal3DModel::loadAnimation( const string& anim_file, string& anim_name )
+{
+	int anim_id = model->loadCoreAnimation( ofToDataPath(anim_file) );
+	if ( anim_id == -1 )
+	{
+		printf("couldn't load anim from file '%s'\n", anim_file.c_str() );
+		CalError::printLastError();
+		return false;
+	}
+	
+	anim_name = model->getCoreAnimation(anim_id)->getName();
+	printf("loaded anim '%s'\n", anim_name.c_str() );
+	
+	return true;
+}
+
+
+void Cal3DModel::playFirstAnimation()
+{
+}
+
 

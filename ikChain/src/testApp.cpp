@@ -28,9 +28,18 @@ void testApp::setup(){
 	bool loaded_model = model.setup( "test", "man_good/man_goodtmp.csf", "man_good/man_goodMan.cmf" );
 	if ( !loaded_model )
 	{
-		printf("couldn't load model");
+		printf("couldn't load model\n");
 		assert(false);
 	}
+	string anim_name;
+	bool loaded_anim = model.loadAnimation( "man_good/man_goodAction.caf", anim_name );
+	if ( !loaded_anim )
+	{
+		printf("couldn't load anim\n");
+	}
+	
+	model.createInstance();
+	
 	// go from cal3d model to IKCharacter
 	character.setup( model.getSkeleton() );
 	
