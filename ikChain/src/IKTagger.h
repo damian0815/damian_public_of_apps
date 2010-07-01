@@ -40,6 +40,7 @@ private:
 	CalVector root_pos;
 	CalVector root_target_pos;
 	
+	float move_speed;
 
 	
 	

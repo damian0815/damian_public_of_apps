@@ -4,6 +4,7 @@
 
 #include "ofMain.h"
 #include "IKTagger.h"
+#include "Util3d.h"
 
 class testApp : public ofBaseApp{
 
@@ -22,18 +23,13 @@ class testApp : public ofBaseApp{
 
 	
 private:
-	
-	float z;
+
+	Util3d util_3d;
+
 	float last_mx, last_my;
 	float last_moved_mx, last_moved_my;
 
-	void moveEye( float x, float y, float z);
-	float heading, pitch, fov;
-	ofxVec3f eye_pos;
-	float move_speed, rotate_speed;
-	bool rotate_eye;
-	
-
+	float z;	
 	CalVector root_pos;
 	IKTagger tagger;
 };
