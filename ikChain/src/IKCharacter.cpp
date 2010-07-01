@@ -15,9 +15,10 @@ int IKCharacter::debug_bone = -1;
 
 #include "ofMain.h"
 
-void IKCharacter::setup( CalSkeleton* cal_skel )
+void IKCharacter::setup( CalSkeleton* cal_skel, bool _auto_root_follow )
 {
 	skeleton = cal_skel;
+	auto_root_follow = _auto_root_follow;
 	
 	
 	// find leaf bones
@@ -99,9 +100,13 @@ void IKCharacter::setTarget( int which_leaf, ofxVec3f pos )
 
 void IKCharacter::pullWorldPositions( int root_id, int leaf_id )
 {
-	// get root pos
-	int skel_root_id = skeleton->getCoreSkeleton()->getVectorRootCoreBoneId()[0];
-	CalVector root_pos = skeleton->getBone(skel_root_id)->getTranslationAbsolute();
+	CalVector root_pos;
+	if ( auto_root_follow )
+	{
+		// get root pos
+		int skel_root_id = skeleton->getCoreSkeleton()->getVectorRootCoreBoneId()[0];
+		root_pos = skeleton->getBone(skel_root_id)->getTranslationAbsolute();
+	}
 	
 	// work from the leaves down to the root
 	deque<int> queue;
@@ -734,10 +739,6 @@ void IKCharacter::draw( float scale,  bool additional_drawing )
 }
 
 
-void IKCharacter::addKneeHelper( string bone, string parent, float weight )
-{
-}
-
 
 
 bool IKCharacter::enableTargetFor( string bone, string root )
@@ -760,7 +761,15 @@ bool IKCharacter::enableTargetFor( string bone, string root )
 }
 
 
-int IKCharacter::getTargetId( string name )
+void IKCharacter::disableTargetFor( string bone )
+{
+	int bone_id = skeleton->getCoreSkeleton()->getCoreBoneId( bone );
+	LeafTargets::iterator it = leaf_targets.find( bone_id );
+	if ( it != leaf_targets.end() )
+		leaf_targets.erase( it );
+}
+
+int IKCharacter::getTargetId( string name ) const
 {
 	int id = skeleton->getCoreSkeleton()->getCoreBoneId( name );
 	if ( leaf_targets.find( id ) != leaf_targets.end() )

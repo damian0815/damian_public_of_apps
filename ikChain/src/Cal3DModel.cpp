@@ -205,6 +205,8 @@ void Cal3DModel::draw( bool wireframe, float scale )
 				}*/
 				ofEnableAlphaBlending();
 				glColor4f( 0,0,0,0.2f );
+				glPushAttrib( GL_DEPTH_BUFFER_BIT );
+				glDepthMask( GL_TRUE );
 				//glColor4f( 0,0,0,1 );
 				//glEnable( GL_DEPTH_TEST );
 				//glDepthMask( GL_TRUE );
@@ -222,6 +224,7 @@ void Cal3DModel::draw( bool wireframe, float scale )
 				//glEnable( GL_DEPTH_TEST );
 				if ( wireframe )
 				{
+					glEnable( GL_DEPTH_TEST );
 					glBegin( GL_LINES );
 					glColor4f( 1,1,1,0.8f );
 					for ( int i=0; i<faceCount; i++ )
@@ -235,6 +238,7 @@ void Cal3DModel::draw( bool wireframe, float scale )
 					}
 					glEnd();
 				}
+				glPopAttrib();
 				
 				ofPopMatrix();
 //				glEnd();

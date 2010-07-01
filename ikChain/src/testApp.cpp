@@ -3,12 +3,10 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	ofSetFrameRate( 60.0f ) ;
 
 	last_mx = -1;
 	last_moved_mx = -1;
-	z = 0;
-	
-	draw_extended = false;
 	
 	heading = 0.0f;
 	pitch = 0.0f;
@@ -16,79 +14,20 @@ void testApp::setup(){
 	fov = 60.0f;
 	move_speed = 0.15f;
 	rotate_speed = 1.5f;
-	do_solve = true;
 	
 	rotate_eye = false;
 	
 	
-	ofSetFrameRate( 60.0f ) ;
+	z = 0;
 	
-	do_target_set = false;
-
-	bool loaded_model = model.setup( "test", "man_good/man_good.xsf", "man_good/man_goodMan.xmf" );
-//	bool loaded_model = model.setup( "doc", "doc/doctmp.csf", "doc/docmale.cmf" );
-	if ( !loaded_model )
-	{
-		printf("couldn't load model\n");
-		assert(false);
-	}
-	bool loaded_anim = model.loadAnimation( "man_good/man_goodSkeleton.001.xaf", "walk" );
-	if ( !loaded_anim )
-	{
-		printf("couldn't load anim\n");
-	}
-
-	/*bool loaded_model = model.setup( "test", "man_w_anim/Man0.7.original_at_origin.xsf", "man_w_anim/Man.xmf" );
-	if ( !loaded_model )
-	{
-		printf("couldn't load model\n");
-		assert(false);
-	}
-	bool loaded_anim = model.loadAnimation( "man_w_anim/Action.xaf", "walk" );
-	if ( !loaded_anim )
-	{
-		printf("couldn't load anim\n");
-	}*/
+	tagger.setup();
 	
-	model.createInstance();
-	
-	do_walk = true;
-	model.startAnimation( "walk" );
-	
-	// go from cal3d model to IKCharacter
-	character.setup( model.getSkeleton() );
-	
-	which_target = 0;
-	string root = "Root";
-	string neck_joint = "Spine.1";
-	targets.push_back( make_pair("Head",root) ); // head
-	//targets.push_back( "Bone.001_R.004" ); // foot r
-	//targets.push_back( "Bone.001_L.004" ); // foot l
-	targets.push_back( make_pair("Hand.r", neck_joint) );
-	targets.push_back( make_pair("Hand.l", neck_joint) );
-	for ( int i=0; i<targets.size(); i++ )
-	{
-		character.enableTargetFor( targets[i].first, targets[i].second );
-	}
 }
 
 //--------------------------------------------------------------
 void testApp::update()
 {
-	model.updateAnimation( ofGetLastFrameTime() );
-
-	// deal with looping motion
-	CalVector loop_root_pos;
-	if ( model.animationDidLoop( "walk", &loop_root_pos ) )
-	{
-		printf("-- loop\n");
-		root_pos += (loop_root_pos)-model.getRootBonePosition();
-	}
-	
-	character.pullFromModel();
-	character.solve( 5 );
-	character.pushToModel( do_solve );
-	model.updateMesh();
+	tagger.update( ofGetLastFrameTime() );
 }
 
 //--------------------------------------------------------------
@@ -150,21 +89,7 @@ void testApp::draw(){
 	
 	glColor3f( 0, 0, 0 );
 	
-	
-	glPushMatrix();
-	glTranslatef( 3.0f, 2.0f, 0.0f );
-	character.draw( 1.0f, draw_extended );
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef( root_pos.x, root_pos.y, root_pos.z );
-	glTranslatef( -3.0f, 2.0f, 0 );
-	glRotatef( 180, 0, 1, 0 );
-	glRotatef( -90, 1, 0, 0 );
-	// swap left handed to right handed
-	glScalef( -1, 1, 1 );
-	model.draw( true );
-	glPopMatrix();
+	tagger.draw();
 	
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -178,6 +103,10 @@ void testApp::draw(){
 					   "; toggle mouse move eye rotation    ae,o.j (dvorak==qwerty adwsec) move eye pos\n"
 					   "shift-W toggle walk cycle           p reset root pos to 0,0,0   \n"
 					   "shift-S toggle adaptive ik solve (default enabled)      shift-E draw extended skeleton", 10, 23 );
+	ofxVec3f tt = tagger.getTagArmTarget();
+	char buf[256];
+	sprintf(buf, "tag arm target now: %f %f %f\n", tt.x, tt.y, tt.z );
+	ofDrawBitmapString( buf, 10, 101 );
 	
 }
 
@@ -188,84 +117,26 @@ void testApp::keyPressed(int key){
 	int target_id;
 	switch( key )
 	{
-		case '1':
-			which_target = 0;
-			last_mx = -1;
-			break;
-		case '2':
-			which_target = 1;
-			last_mx = -1;
-			break;
-		case '3':
-			which_target = 2;
-			last_mx = -1;
-			break;
-			
-		case 'z':
-			target_id = character.getTargetId( targets[(int)which_target].first );
-			pos = character.getTarget( target_id );
-			pos.z += 0.1f;
-			character.setTarget( target_id, pos );
-			break;
-		case 'Z':
-			target_id = character.getTargetId( targets[(int)which_target].first );
-			pos = character.getTarget( target_id );
-			pos.z -= 0.1f;
-			character.setTarget( target_id, pos );
-			break;
-
-		case 'b':
-			b_id++;
-			break;
-		case 'B':
-			b_id--;
-			break;
-		case 'x':
-			model.rotateBoneX(b_id, 0.05);
-			break;
-		case 'X':
-			model.rotateBoneX(b_id, -0.05);
-			break;
-			
 		case ';':
 			rotate_eye = !rotate_eye;
 			break;
-		
-		case 'S':
-			do_solve = !do_solve;
+		case ':':
+			printf("eye at %f %f %f heading %f pitch %f\n", eye_pos.x, eye_pos.y, eye_pos.z, heading, pitch );
 			break;
 			
-/*		case 'd':
-			IKCharacter::debug_bone++;
-			while ( IKCharacter::debug_bone >= model.getSkeleton()->getCoreSkeleton()->getNumBones() )
-				IKCharacter::debug_bone--;
-			break;
-		case 'D':
-			IKCharacter::debug_bone--;
-			while( IKCharacter::debug_bone < 0 )
-				IKCharacter::debug_bone++;
-			break;*/
-		
-		case 'W':
-			do_walk = !do_walk;
-			if ( do_walk )
-				model.startAnimation( "walk" );
-			else
-				model.stopAnimation( "walk" );
+		case 'P':
+			tagger.setRootPosition( ofxVec3f(0,0,0) );
 			break;
 			
-			
-		case 'E':
-			draw_extended = !draw_extended;
+		case 'z':
+			z += 0.1f;
 			break;
-			
-		case 'p':
-			root_pos.set( 0,0,0 );
+		case 'Z':
+			z -= 0.1f;
 			break;
 			
 		default:
 			break;
-			
 			
 	}
 	
@@ -292,8 +163,6 @@ void testApp::moveEye( float x, float y, float z)
 	relative.rotate( heading, ofxVec3f(0, 1, 0) );
 	relative.rotate( pitch, ofxVec3f( 1, 0, 0 ) );
 	eye_pos += relative;
-	
-	//camera_a.move( relative );
 }
 
 
@@ -317,14 +186,10 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
 	
-	if ( last_mx > 0 )
-	{
-		int target_id = character.getTargetId( targets[(int)which_target].first );
-		ofxVec3f pos = character.getTarget( target_id );
-		pos.x += (x-last_mx)*0.02f;
-		pos.y -= (y-last_my)*0.02f;
-		character.setTarget( target_id, pos );
-	}
+	ofxVec3f tt = tagger.getTagArmTarget();
+	tt += ofxVec3f( 4*(float(x-last_mx)/ofGetWidth()), 4*(float(y-last_my)/ofGetHeight()), 0 );
+	tt.z = z;
+	tagger.setTagArmTarget( tt );
 	last_mx = x;
 	last_my = y;
 	last_moved_mx = -1;
@@ -338,7 +203,6 @@ void testApp::mousePressed(int x, int y, int button){
 	last_my = y;
 	last_moved_mx = -1;
 	
-
 }
 
 //--------------------------------------------------------------
@@ -347,7 +211,6 @@ void testApp::mouseReleased(int x, int y, int button){
 	last_mx = -1;
 	last_moved_mx = x;
 	last_moved_my = y;
-
 }
 
 //--------------------------------------------------------------

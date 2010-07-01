@@ -3,8 +3,7 @@
 
 
 #include "ofMain.h"
-#include "Cal3DModel.h"
-#include "IKCharacter.h"
+#include "IKTagger.h"
 
 class testApp : public ofBaseApp{
 
@@ -24,9 +23,6 @@ class testApp : public ofBaseApp{
 	
 private:
 	
-	int which_target;
-	bool do_target_set;
-	
 	float z;
 	float last_mx, last_my;
 	float last_moved_mx, last_moved_my;
@@ -37,16 +33,9 @@ private:
 	float move_speed, rotate_speed;
 	bool rotate_eye;
 	
-	bool do_solve;
-	bool do_walk;
-	bool draw_extended;
-	
+
 	CalVector root_pos;
-	
-	Cal3DModel model;
-	IKCharacter character;
-	
-	vector<pair<string,string> > targets;
+	IKTagger tagger;
 };
 
 #endif

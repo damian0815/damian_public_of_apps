@@ -17,22 +17,24 @@ using namespace std;
 class IKCharacter
 {
 public:
-	void setup( CalSkeleton* cal_skel );
-
-	// add a knee helper affecting the given bone with the given weight 0..1, parented to the given parent
-	void addKneeHelper( string bone, string parent, float weight );
+	void setup( CalSkeleton* cal_skel, bool auto_root_follow = true );
 
 	/// if additional_drawing is true, draw lots of extra markers
 	void draw( float scale=1.0f, bool additional_drawing=false );
-	
-	/// get/set ik target handles
+
+	/// enable ik target from the given leaf to the given root
 	bool enableTargetFor( string leaf_name, string root );
+	/// disable ik target from the given leaf
+	void disableTargetFor( string leaf_name );
+	/// get/set ik target handles
+	void setTarget( string leaf_name, ofxVec3f target ) { setTarget( getTargetId( leaf_name ), target ); }
 	void setTarget( int which_leaf_bone_id, ofxVec3f target );
+	ofxVec3f getTarget( string leaf_name ) const { return getTarget( getTargetId( leaf_name ) ); }
 	ofxVec3f getTarget( int which_leaf_bone_id ) const { CalVector t = (*leaf_targets.find(which_leaf_bone_id)).second.second; return ofxVec3f( t.x, t.y, t.z ); }
 
 	/// get the bone id for this leaf
 	int getLeafId( int index ) { return leaf_bones.at(index); }
-	int getTargetId( string name );	
+	int getTargetId( string name ) const;	
 	
 	
 
@@ -75,11 +77,12 @@ private:
 	vector< TargetPair > getEnabledTargetPairs();
 
 	vector<int> leaf_bones;
-	map<int,pair<int,CalVector> > leaf_targets; // map from leaf bone ids to root termination bones and target points
+	typedef map<int,pair<int,CalVector> > LeafTargets;
+	LeafTargets leaf_targets; // map from leaf bone ids to root termination bones and target points
 	map<int,float> bone_lengths;    // map from bone ids to lengths
 	map<int,float> weight_centres;  // map from bone ids to weight centres; 0 means pin to parent
 
-	
+	bool auto_root_follow;
 	
 	CalSkeleton* skeleton;
 	
