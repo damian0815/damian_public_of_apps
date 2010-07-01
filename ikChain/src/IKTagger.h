@@ -25,7 +25,8 @@ public:
 	ofxVec3f getTagArmTarget();
 	
 	/// set the root position to the given position
-	void setRootPosition( ofxVec3f p ) { root_pos.set(p.x,p.y,p.z); }
+	void setRootPosition( ofxVec3f p ) { setRootPosition( CalVector(p.x,p.y,p.z) ); }
+	void setRootPosition( CalVector p );
 	
 private:
 	
@@ -39,10 +40,12 @@ private:
 	
 	CalVector root_pos;
 	CalVector root_target_pos;
+	CalVector sidestep_start_root_pos;
 	
 	float move_speed;
 
-	
+	bool store_sidestep_start_root_pos;
+	bool sidestep_running;
 	
 };
 

@@ -37,6 +37,10 @@ static const float COMFORT_R = 1.965;
 static const CalVector COMFORT_CENTRE( COMFORT_CX, COMFORT_CY, 0 );
 static const float COMFORT_DISTANCE_THRESH = 1.0f;
 
+const static string WALK_ANIM = "walk";
+const static string IDLE_ANIM = "idle";
+const static string SIDESTEP_ANIM = "sidestep";
+
 void IKTagger::setup()
 {
 	bool loaded_model = model.setup( "test", "man_good/man_good.xsf", "man_good/man_goodMan.xmf" );
@@ -46,11 +50,11 @@ void IKTagger::setup()
 		printf("couldn't load model\n");
 		assert(false);
 	}
-	bool loaded_anim = model.loadAnimation( "man_good/man_goodSkeleton.001.xaf", "walk" );
-	if ( !loaded_anim )
-	{
-		printf("couldn't load anim\n");
-	}
+	
+	model.loadAnimation( "man_good/man_goodWalk.xaf", WALK_ANIM );
+	model.loadAnimation( "man_good/man_goodIdle_baked.xaf", IDLE_ANIM );
+	model.loadAnimation( "man_good/man_goodSidestep_baked.xaf", SIDESTEP_ANIM );
+
 	model.createInstance();
 	
 	head = "Head";
@@ -60,12 +64,14 @@ void IKTagger::setup()
 	string neck = "Spine.1";
 	
 	character.setup( model.getSkeleton(), /* auto follow root */ false );
-	character.enableTargetFor( head, root );
+	//character.enableTargetFor( head, root );
 	character.enableTargetFor( tag_arm, neck );
 	//character.disableTargetFor( other_arm );
-	
+		
 	root_pos.set(0,0,0);
 	move_speed = 0.0f;
+	store_sidestep_start_root_pos = false;
+	sidestep_running = false;
 }
 
 
@@ -105,6 +111,12 @@ ofxVec3f IKTagger::getTagArmTarget()
 }
 
 
+void IKTagger::setRootPosition( CalVector new_root_pos )
+{
+	ofxVec3f tag_arm_target = getTagArmTarget();
+	root_pos = new_root_pos;
+	setTagArmTarget( tag_arm_target );
+}	
 
 void IKTagger::update( float elapsed )
 {
@@ -114,13 +126,27 @@ void IKTagger::update( float elapsed )
 	if ( target_delta_length > 0.1f )
 	{
 		// need to move root
-		ofxVec3f tag_arm_target = getTagArmTarget();
 		CalVector direction = target_delta / target_delta_length;
-		root_pos += direction*SLIDE_SPEED*move_speed*elapsed;
-		setTagArmTarget( tag_arm_target );
+		setRootPosition( root_pos+direction*SLIDE_SPEED*move_speed*elapsed );
 	}
 	
 	model.updateAnimation( elapsed );
+	CalVector finish_root_pos;
+	if ( sidestep_running && model.actionDidFinish( SIDESTEP_ANIM, &finish_root_pos ) )
+	{
+		sidestep_running = false;
+		CalVector& ss = sidestep_start_root_pos;
+		CalVector& f = finish_root_pos;
+		printf("sidestep_start_root_pos %f %f %f, finish_root_pos %f %f %f\n", ss.x, ss.y, ss.z, 
+			   f.x, f.y, f.z );
+		setRootPosition( root_pos+(finish_root_pos-sidestep_start_root_pos) );
+	}
+	if ( store_sidestep_start_root_pos )
+	{
+		sidestep_start_root_pos = model.getRootBonePosition();
+		store_sidestep_start_root_pos = false;
+	}
+	
 		/*
 	CalVector loop_root_pos;
 	if ( model.animationDidLoop( "walk", &loop_root_pos ) )
@@ -133,17 +159,21 @@ void IKTagger::update( float elapsed )
 	character.pushToModel( true );
 	model.updateMesh();
 
+	
 
 	CalVector arm_actual_position = model.getBonePosition( tag_arm );
 	ofxVec3f arm_target = character.getTarget(tag_arm);
 	CalVector bone_target_delta = CalVector(arm_target.x,arm_target.y,arm_target.z)-arm_actual_position;
 	float distance = bone_target_delta.length();
 	float discomfort = distance/COMFORT_DISTANCE_THRESH;
-	if ( discomfort > 1.0f )
+	if ( discomfort > 1.0f && !sidestep_running )
 	{
 		// need to move feet
-		moveRootRelativeX( arm_target.x );
-		move_speed = (discomfort*discomfort)-1.0f;
+		//moveRootRelativeX( arm_target.x );
+		//move_speed = (discomfort*discomfort)-1.0f;
+		store_sidestep_start_root_pos = true;
+		model.doAction( SIDESTEP_ANIM, 1.0f );
+		sidestep_running = true;
 	}
 	
 }
