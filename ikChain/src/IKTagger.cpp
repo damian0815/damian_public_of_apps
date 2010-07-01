@@ -35,6 +35,7 @@ static const float COMFORT_CX = -1.519;
 static const float COMFORT_CY = 1.259;
 static const float COMFORT_R = 1.965;
 static const CalVector COMFORT_CENTRE( COMFORT_CX, COMFORT_CY, 0 );
+static const float COMFORT_DISTANCE_THRESH = 1.0f;
 
 void IKTagger::setup()
 {
@@ -77,22 +78,12 @@ void IKTagger::setTagArmTarget( ofxVec3f target )
 	if ( delta_x > */
 	
 	// comfortable?
-/*	CalVector relative = CalVector(target_relative.x,target_relative.y,target_relative.z);
-	relative.z = 0;
-	relative.y *= relative.y;
-	CalVector comfort_centre_delta = COMFORT_CENTRE - relative;
-	float discomfort = comfort_centre_delta.length() / COMFORT_R;*/
-	float relative_x = target_relative.x - COMFORT_CENTRE.x;
+/*	float relative_x = target_relative.x - COMFORT_CENTRE.x;
 	float relative_y = target_relative.y - COMFORT_CENTRE.y;
 	float x_discomfort = relative_x / COMFORT_R;
 	float y_discomfort = min(1.0f,relative_y / COMFORT_R);
-	float discomfort = fabsf(x_discomfort) + y_discomfort*y_discomfort;
-	if ( discomfort > 1.0f )
-	{
-		// need to move feet
-		moveRootRelativeX( relative_x );
-		move_speed = (discomfort*discomfort)-1.0f;
-	}
+	float discomfort = fabsf(x_discomfort) + y_discomfort*y_discomfort;*/
+	
 	
 }
 
@@ -141,6 +132,20 @@ void IKTagger::update( float elapsed )
 	character.solve( 5 );
 	character.pushToModel( true );
 	model.updateMesh();
+
+
+	CalVector arm_actual_position = model.getBonePosition( tag_arm );
+	ofxVec3f arm_target = character.getTarget(tag_arm);
+	CalVector bone_target_delta = CalVector(arm_target.x,arm_target.y,arm_target.z)-arm_actual_position;
+	float distance = bone_target_delta.length();
+	float discomfort = distance/COMFORT_DISTANCE_THRESH;
+	if ( discomfort > 1.0f )
+	{
+		// need to move feet
+		moveRootRelativeX( arm_target.x );
+		move_speed = (discomfort*discomfort)-1.0f;
+	}
+	
 }
 
 

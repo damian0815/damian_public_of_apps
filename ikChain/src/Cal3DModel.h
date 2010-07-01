@@ -41,7 +41,8 @@ public:
 	void startAnimation( string name, float fade_time=0, float weight=1.0f );
 	/// stop the given animation, fading out
 	void stopAnimation( string name, float fade_time=0 );
-	/// true if the given animation has just looped; put previous root position in prev_root_pos if non-NULL
+	/// true if the given animation has just looped; 
+	/// if a loop has just happed put the previous root position in prev_root_pos if non-NULL
 	bool animationDidLoop( string name, CalVector* prev_root_pos=NULL );
 
 	/// draw the model
@@ -51,6 +52,8 @@ public:
 	
 	/// return the location of the root bone in skeleton space
 	CalVector getRootBonePosition();
+	/// return the location of the requested bone in skeleton space
+	CalVector getBonePosition( string bone_name );
 	
 	/// access to the skeleton
 	/// if updating bone position/orientation, call updateMesh to push changes

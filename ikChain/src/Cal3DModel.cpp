@@ -411,3 +411,15 @@ bool Cal3DModel::animationDidLoop( string name, CalVector* root_pos )
 }
 
 
+CalVector Cal3DModel::getBonePosition( string bone )
+{
+	int id = model->getCoreSkeleton()->getCoreBoneId( bone );
+	if ( id == -1 )
+	{
+		printf("getBonePosition() couldn't get bone id for '%s'\n", bone.c_str() );
+		return CalVector();
+	}
+	return instance->getSkeleton()->getBone( id )->getTranslationAbsolute();
+	
+}
+
