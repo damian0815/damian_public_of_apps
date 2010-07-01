@@ -456,7 +456,7 @@ CalVector Cal3DModel::getBonePosition( string bone )
 
 void Cal3DModel::AnimCallback::AnimationComplete(CalModel *cal_model, void * userData)
 {
-	printf("AnimationComplete callback fired: %s\n", name.c_str() );
+//	printf("AnimationComplete callback fired: %s\n", name.c_str() );
 	model->actionComplete( name );
 }
 	
@@ -464,7 +464,7 @@ void Cal3DModel::AnimCallback::AnimationComplete(CalModel *cal_model, void * use
 
 void Cal3DModel::actionComplete( string name )
 {
-	printf("actionComplete: %s\n", name.c_str() );
+//	printf("actionComplete: %s\n", name.c_str() );
 	action_just_finished.insert( name );
 	for ( int i=0; i<callbacks.size() ;i++ )
 	{
