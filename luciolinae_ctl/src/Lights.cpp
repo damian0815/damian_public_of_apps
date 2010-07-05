@@ -191,7 +191,7 @@ void Lights::flush()
 		}
 		else
 		{
-			printf("sending levels for board %i individually\n", i );
+			//printf("sending levels for board %i individually\n", i );
 			// send lights for this board individually
 			for ( int j=0; j<lights.size(); j++ )
 			{
