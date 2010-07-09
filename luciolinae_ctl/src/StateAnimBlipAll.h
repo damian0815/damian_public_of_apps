@@ -35,6 +35,10 @@ public:
 			timer = squaredRandom( 0.1f, 0.6f ); 
 			SharedData::setFloat( "blipall_timer", timer );
 		}
+		else
+		{
+			timer *= squaredRandom( 0.5f, 2.0f );
+		}
 	}
 	bool isFinished() { return blipped && timer < 0; }
 	
@@ -42,6 +46,7 @@ private:
 
 	bool blipped;
 	float timer;
+	int which;
 	
 
 };

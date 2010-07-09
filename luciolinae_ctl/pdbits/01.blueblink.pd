@@ -1,0 +1,13 @@
+#N canvas 357 124 951 649 10;
+#X obj 485 457 _serial;
+#X obj 422 350 _bink;
+#X obj 299 463 d-out~;
+#X obj 422 300 metro 5000;
+#X msg 422 325 trigger;
+#X msg 422 276 bang;
+#X connect 1 0 2 0;
+#X connect 1 0 2 1;
+#X connect 1 1 0 1;
+#X connect 3 0 4 0;
+#X connect 4 0 1 0;
+#X connect 5 0 3 0;

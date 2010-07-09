@@ -1,0 +1,3 @@
+ofxOsc
+ofxVectorMath
+ofxXmlSettings
