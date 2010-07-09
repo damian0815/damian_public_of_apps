@@ -10,10 +10,14 @@
 //--------------------------------------------------------------
 void testApp::setup(){	 
 
+	printf("testApp::setup()\n");
+
+#ifndef NO_WINDOW
 	ofSetVerticalSync(true);
 	ofBackground(20,20,20);	
 	ofEnableAlphaBlending();
 	ofSetFrameRate( 30 );
+#endif
 	
 #ifdef NO_WINDOW
 	ofSetDataPathRoot( "data/" );
@@ -59,6 +63,7 @@ void testApp::setup(){
 
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
 	
+	printf("testApp::setup() finished\n");
 	
 }
 
@@ -117,9 +122,10 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+#ifndef NO_WINDOW
 	lights.draw();
-	
 	current_anim->draw();
+#endif
 }
 
 void testApp::exit()

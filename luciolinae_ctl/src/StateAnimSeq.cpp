@@ -9,6 +9,7 @@
 
 #include "StateAnimSeq.h"
 #include "Util.h"
+#include "Osc.h"
 
 const char* StateAnimSeq::NAME = "state_seq";
 
@@ -18,11 +19,14 @@ void StateAnimSeq::enter()
 	current_active = -1;
 	speed = 1.0f;
 	count_left = squaredRandom( 10, 50 );
+	ofxOscMessage m;
+	m.setAddress("/seq/start");
+	Osc::sendMessage( m );
 }	
 
 void StateAnimSeq::update( float elapsed )
 {
-	float real_speed = 16*1.0f/lights->getNumLights();
+	float real_speed = speed*16*1.0f/lights->getNumLights();
 	
 	// update pct
 	anim_pct += elapsed * real_speed;
@@ -56,8 +60,15 @@ void StateAnimSeq::update( float elapsed )
 		{
 			int which = first + dir*i;
 			//printf("pulsing %i\n", which%lights->getNumLights() );
-			lights->pulse( which%lights->getNumLights(), 1.0f );			
+			which %= lights->getNumLights();
+			ofxOscMessage m;
+			m.setAddress("/seq/trigger");
+			m.addIntArg( which );
+			Osc::sendMessage( m );
+			lights->pulse( which, 1.0f );
+			speed = squaredRandom( 1.0f, 0.05f );
 			count_left--;
+			
 		}
 		// next
 		current_active = new_active%lights->getNumLights();
@@ -66,5 +77,13 @@ void StateAnimSeq::update( float elapsed )
 		anim_pct -= 1;
 	while ( anim_pct < 0 )
 		anim_pct += 1;
+	
+	if ( count_left < 0 )
+	{
+		// finished
+		ofxOscMessage m;
+		m.setAddress("/seq/end");
+		Osc::sendMessage( m );
+	}		
 	
 }

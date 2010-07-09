@@ -19,7 +19,7 @@ void StateAnimIdle::enter()
 	ofSeedRandom( 12345 );
 #endif
 	// set a random timer
-	timer = squaredRandom( 2.0f, 10.0f );
+	timer = squaredRandom( 5.0f, 20.0f );
 	SharedData::setFloat( "blipall_timer", -1.0f );
 }
 

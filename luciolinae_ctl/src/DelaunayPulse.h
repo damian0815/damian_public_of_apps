@@ -7,6 +7,8 @@
  *
  */
 
+#include <assert.h>
+
 #pragma once
 class Lights;
 

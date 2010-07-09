@@ -59,6 +59,8 @@ public:
 			} 
 			return currentAnim(); 
 		}
+		assert( false );
+		return NULL;
 	};
 	
 	Animation* currentAnim() { return AnimationFactory::makeAnimation( anims[current] ); }

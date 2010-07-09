@@ -1,0 +1,64 @@
+#N canvas 430 66 809 497 10;
+#X obj 263 282 _bink;
+#X obj 345 361 _serial;
+#X obj 197 367 d-out~;
+#X obj 236 39 bng 30 250 50 0 empty empty empty 17 7 0 10 -4034 -1
+-1;
+#X obj 286 39 bng 30 250 50 0 empty empty empty 17 7 0 10 -258113 -1
+-1;
+#X msg 286 74 stop;
+#X msg 236 74 start;
+#X obj 510 270 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 0 1;
+#X msg 159 226 pitchmul \$1;
+#X obj 53 46 vsl 15 128 0 2 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 6400 1;
+#X floatatom 51 207 5 0 0 0 - - -;
+#X obj 81 47 vsl 15 128 0 2 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 5400 1;
+#X msg 161 191 releasemul \$1;
+#X floatatom 91 207 5 0 0 0 - - -;
+#X obj 553 115 hsl 128 15 10 1000 0 0 empty empty empty -2 -6 0 8 -262144
+-1 -1 900 1;
+#X text 584 89 speed;
+#X floatatom 551 145 5 0 0 0 - - -;
+#X obj 605 184 * 3;
+#X obj 550 24 loadbang;
+#X obj 513 236 s dotlength;
+#X obj 605 236 s dashlength;
+#X msg 550 53 57.78;
+#X msg 354 102 msg old media;
+#X obj 263 131 _morse_bink;
+#X obj 384 323 pipe 0;
+#X obj 356 62 loadbang;
+#X obj 443 301 vsl 15 128 0 1024 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 0 1;
+#X floatatom 456 453 5 0 0 0 - - -;
+#X msg 341 136 msg ssssssssssssss;
+#X connect 0 0 2 0;
+#X connect 0 0 2 1;
+#X connect 0 1 7 0;
+#X connect 0 1 24 0;
+#X connect 3 0 6 0;
+#X connect 4 0 5 0;
+#X connect 5 0 23 0;
+#X connect 6 0 23 0;
+#X connect 8 0 0 0;
+#X connect 9 0 10 0;
+#X connect 9 0 8 0;
+#X connect 11 0 12 0;
+#X connect 11 0 13 0;
+#X connect 12 0 0 0;
+#X connect 14 0 16 0;
+#X connect 16 0 17 0;
+#X connect 16 0 19 0;
+#X connect 17 0 20 0;
+#X connect 18 0 21 0;
+#X connect 21 0 14 0;
+#X connect 22 0 23 0;
+#X connect 23 0 0 0;
+#X connect 24 0 1 1;
+#X connect 25 0 22 0;
+#X connect 26 0 24 1;
+#X connect 26 0 27 0;
+#X connect 28 0 23 0;
