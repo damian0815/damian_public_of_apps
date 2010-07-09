@@ -1,4 +1,4 @@
-#N canvas 178 125 484 383 10;
+#N canvas 623 167 484 383 10;
 #X obj 22 35 osc;
 #X obj 27 103 blip;
 #X obj 24 173 sound;
