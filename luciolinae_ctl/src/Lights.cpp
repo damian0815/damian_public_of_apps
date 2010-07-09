@@ -152,7 +152,7 @@ void Lights::flush()
 		// if more than 8, best to send all at once
 		if ( counts[i] > 8 )
 		{
-			printf("compiling every light level data for board %i\n", i);
+		//	printf("compiling every light level data for board %i\n", i);
 			unsigned char total_board_data[24];
 			for ( int j=0; j<lights.size(); j++ )
 			{

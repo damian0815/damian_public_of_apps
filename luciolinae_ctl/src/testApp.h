@@ -11,7 +11,7 @@
 #include "Osc.h"
 #include "Breathing.h"
 
-#define NO_WINDOW
+//#define NO_WINDOW
 
 class testApp : public ofBaseApp{
 	
