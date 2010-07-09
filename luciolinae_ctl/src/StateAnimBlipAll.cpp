@@ -31,7 +31,8 @@ void StateAnimBlipAll::update( float elapsed )
 			lights->pulse( *it, 1, true );
 		}
 		ofxOscMessage m;
-		m.setAddress("/blip_all/trigger");
+		m.setAddress("/blip_all/trigger");	
+		m.addIntArg( ofRandom(0,7) );
 		Osc::sendMessage( m );
 		timer = 0.3f;
 		blipped = true;

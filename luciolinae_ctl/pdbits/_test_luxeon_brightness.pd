@@ -1,0 +1,13 @@
+#N canvas 0 22 450 300 10;
+#X obj 116 230 _serial_new;
+#X obj 117 78 hsl 255 15 0 1 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
+#X msg 124 43 0;
+#X msg 181 164 1 \$1 \, 2 \$1 \, 6 \$1 \, 10 \$1;
+#X msg 189 45 0.5;
+#X msg 163 44 1;
+#X connect 1 0 3 0;
+#X connect 2 0 1 0;
+#X connect 3 0 0 1;
+#X connect 4 0 1 0;
+#X connect 5 0 1 0;

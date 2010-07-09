@@ -1,0 +1,68 @@
+#N canvas 0 22 1038 559 10;
+#X obj 104 208 rpole~ 0.995728;
+#X obj 106 262 rpole~ 0.947906;
+#X obj 104 315 rpole~ 0.535675;
+#X obj 121 179 rzero~ 0.984436;
+#X obj 121 237 rzero~ 0.833923;
+#X obj 120 287 rzero~ 0.0756836;
+#X obj 103 373 outlet~;
+#X text 614 45 (This is rbj = (Red) Robert Bristow-Johnson's three
+pole and three zero filter.) Music-DSP list on 30 June 1998:;
+#X obj 121 152 noise~;
+#X obj 224 315 * 0.01;
+#X obj 244 287 * 0.01;
+#X obj 223 263 * 0.01;
+#X obj 236 238 * 0.01;
+#X obj 220 209 * 0.01;
+#X obj 237 178 * 0.01;
+#X obj 411 139 unpack 0 0 0;
+#X obj 315 140 unpack 0 0 0;
+#X msg 315 83 99.5728 94.7906 53.5675;
+#X msg 411 106 98.4436 83.3923 7.56836;
+#X obj 411 40 loadbang;
+#X text 171 346 normalization factor was found empirically;
+#X text 615 411 Source: http://www.firstpr.com.au/dsp/pink-noise/#Filtering
+;
+#X text 615 89 "another method that Orfanidis mentions came from a
+comp.dsp post of mine. it's just a simple "pinking" filter to be applied
+to white noise. since the rolloff is -3 dB/octave \, -6 dB/octave (1st
+order pole) is too steep and 0 dB/octave is too shallow.;
+#X text 618 191 an equiripple approximation to the ideal pinking filter
+can be realized by alternating real poles with real zeros. a simple
+3rd order solution that i obtained is:";
+#X text 619 319 "the response follows the ideal -3 dB/octave curve
+to within + or - 0.3 dB over a 10 octave range from 0.0009*nyquist
+to 0.9*nyquist. probably if i were to do it over again \, i'd make
+it 5 poles and 4 zeros.";
+#X text 576 258 See left for the coefficients. They were scaled by
+10 to avoid truncating them by saving to a .pd file with its limited
+resolution --fbar.;
+#X text 255 79 Poles:;
+#X text 345 108 Zeroes:;
+#X floatatom 177 383 5 0 0 0 - - -;
+#X obj 103 347 *~ 0.17;
+#X connect 0 0 4 0;
+#X connect 1 0 5 0;
+#X connect 2 0 29 0;
+#X connect 3 0 0 0;
+#X connect 4 0 1 0;
+#X connect 5 0 2 0;
+#X connect 8 0 3 0;
+#X connect 9 0 2 1;
+#X connect 10 0 5 1;
+#X connect 11 0 1 1;
+#X connect 12 0 4 1;
+#X connect 13 0 0 1;
+#X connect 14 0 3 1;
+#X connect 15 0 14 0;
+#X connect 15 1 12 0;
+#X connect 15 2 10 0;
+#X connect 16 0 13 0;
+#X connect 16 1 11 0;
+#X connect 16 2 9 0;
+#X connect 17 0 16 0;
+#X connect 18 0 15 0;
+#X connect 19 0 17 0;
+#X connect 19 0 18 0;
+#X connect 28 0 29 1;
+#X connect 29 0 6 0;
