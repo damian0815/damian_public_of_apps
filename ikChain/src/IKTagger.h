@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "Cal3DModel.h";
+#include "Cal3DModel.h"
 #include "IKCharacter.h"
 
 class IKTagger
@@ -17,7 +17,7 @@ class IKTagger
 public:
 	void setup( );
 	void update( float elapsed );
-	void draw();
+	void draw( bool debug_draw=false );
 	
 	
 	/// set the tag arm target to the given position
