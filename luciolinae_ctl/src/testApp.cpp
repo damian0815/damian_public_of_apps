@@ -26,8 +26,11 @@ void testApp::setup(){
 	ofSetLogLevel( OF_LOG_WARNING );
 	
 	serial.enumerateDevices();
-	static const char* SERIAL_PORT = "/dev/ttyUSB0";
+	//static const char* SERIAL_PORT = "/dev/ttyUSB0";
 	//static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
+	//static const char* SERIAL_PORT = "/dev/tty.usbserial-0000103D";
+	//static const char* SERIAL_PORT = "/dev/tty.usbserial-A4000R0L";
+	static const char* SERIAL_PORT	 = "/dev/tty.usbserial-FTTEIQQY";
 	static const int BAUDRATE = 19200;
 	if ( serial.setup(SERIAL_PORT, BAUDRATE ) )
 		buffered_serial = new BufferedSerial();
