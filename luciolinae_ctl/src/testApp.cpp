@@ -67,6 +67,9 @@ void testApp::setup(){
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
 	
 	printf("testApp::setup() finished\n");
+#ifdef NO_WINDOW
+	printf("\n\n***** Press Esc to quit *****\n\n");
+#endif
 	
 }
 
