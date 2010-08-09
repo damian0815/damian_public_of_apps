@@ -1,6 +1,5 @@
 #N canvas 696 162 459 356 10;
 #X obj 26 68 unpackOSC;
-#X floatatom 122 51 5 0 0 0 - - -;
 #X obj 26 192 s osc_blip;
 #X obj 26 20 udpreceive 10001;
 #X obj 85 225 s osc_delaunay;
@@ -10,12 +9,12 @@
 #X obj 26 153 routeOSC /blip /delaunay /breath /chunks /blip_all /seq
 ;
 #X obj 371 183 s osc_seq;
-#X connect 0 0 8 0;
-#X connect 3 0 0 0;
-#X connect 3 1 1 0;
-#X connect 8 0 2 0;
-#X connect 8 1 4 0;
-#X connect 8 2 5 0;
-#X connect 8 3 6 0;
-#X connect 8 4 7 0;
-#X connect 8 5 9 0;
+#X obj 118 63 print;
+#X connect 0 0 7 0;
+#X connect 2 0 0 0;
+#X connect 7 0 1 0;
+#X connect 7 1 3 0;
+#X connect 7 2 4 0;
+#X connect 7 3 5 0;
+#X connect 7 4 6 0;
+#X connect 7 5 8 0;

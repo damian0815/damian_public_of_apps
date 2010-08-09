@@ -21,6 +21,7 @@ void testApp::setup(){
 	
 #ifdef NO_WINDOW
 	ofSetDataPathRoot( "data/" );
+	ofSetFrameRate( 60 ); 
 #endif
 	
 	ofSetLogLevel( OF_LOG_WARNING );
