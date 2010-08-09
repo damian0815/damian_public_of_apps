@@ -29,7 +29,12 @@ void set_conio_terminal_mode()
 	
     /* register cleanup handler, and set the new terminal mode */
     atexit(reset_terminal_mode);
+	// setup new_termios for raw keyboard input
     cfmakeraw(&new_termios);
+	// handle "\n" properly
+	new_termios.c_oflag |= OPOST;
+	//new_termios.c_oflag |= ONLCR;
+	// set the new_termios
     tcsetattr(0, TCSANOW, &new_termios);
 }
 
@@ -91,7 +96,10 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 		ofNotifyEvent( ofEvents.update, voidEventArgs );
 	#endif
 
-    printf("starting main loop\n");
+    printf(	"***\n***\n*** ofAppNoWindow running a headerless openFrameworks app\n"
+			"***\n*** keyboard input works here\n"
+			"***\n*** press Esc or Ctrl-C to quit\n"
+			"***\n");
 	while (true)
 	{
 	    if (nFrameCount != 0 && bFrameRateSet == true){
@@ -122,6 +130,11 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 			int key = getch();
 			if ( key == 27 )
 			{
+				OF_EXIT_APP(0);
+			}
+			else if ( key == /* ctrl-c */ 3 )
+			{
+				printf("Ctrl-C pressed\n");
 				OF_EXIT_APP(0);
 			}
 			else

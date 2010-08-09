@@ -25,12 +25,12 @@
 # edit the following  vars to customize the makefile
 
 
-COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -O3
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 USER_CFLAGS = 
 USER_LD_FLAGS = 
 USER_LIBS = 
 
+SKIP_SHARED_LIBS = 
 
 
 
@@ -43,13 +43,14 @@ CXX =  g++
 ARCH = $(shell uname -m)
 ifeq ($(ARCH),x86_64)
 	LIBSPATH=linux64
-	#@echo "linux64"
+	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
 else ifeq ($(ARCH),armv7l)
-	LIBSPATH=linuxarmv7
-	#@echo "linuxarmv7"
+	LIBSPATH=linuxarmv7l
+	SKIP_SHARED_LIBS += fmodex
+	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -O3
 else
 	LIBSPATH=linux
-	#@echo "linux"
+	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
 endif
 
 
@@ -63,11 +64,8 @@ CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
 INCLUDES = $(shell find ../../../libs/*/include -type d)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-ALSO_SKIP = fmodex
-LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | egrep -v $(ALSO_SKIP) | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/" )
-LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled | egrep -v $(ALSO_SKIP) | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/" )
-#LIB_STATIC = -lfreeimage -lPocoFoundation -lPocoNet -lPocoUtil -lPocoXML -lRtAudio -ldcam 
-#LIB_STATIC = 
+LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | egrep -v $(SKIP_SHARED_LIBS) | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/" )
+LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled | egrep -v $(SKIP_SHARED_LIBS) | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/" )
 
 #LIB_PATHS_FLAGS = -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH)
 LIB_PATHS_FLAGS = $(shell ls -d ../../../libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
@@ -166,8 +164,6 @@ $(OBJ_OUTPUT)%.o: ../../../%.cpp
 	
 $(TARGET): $(OBJS) $(ADDONS_OBJS)
 	@echo "linking" $(TARGET)
-	@echo "libs shared: "$(LIB_SHARED) 
-	@echo "libs static: "$(LIB_STATIC)
 	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
 
 -include $(DEPFILES)
