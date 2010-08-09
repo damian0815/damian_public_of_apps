@@ -27,11 +27,14 @@ void testApp::setup(){
 	ofSetLogLevel( OF_LOG_WARNING );
 	
 	serial.enumerateDevices();
-	//static const char* SERIAL_PORT = "/dev/ttyUSB0";
+#ifdef TARGET_LINUX
+	static const char* SERIAL_PORT = "/dev/ttyUSB0";
+#elif defined TARGET_OSX
 	//static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
 	//static const char* SERIAL_PORT = "/dev/tty.usbserial-0000103D";
 	//static const char* SERIAL_PORT = "/dev/tty.usbserial-A4000R0L";
 	static const char* SERIAL_PORT	 = "/dev/tty.usbserial-FTTEIQQY";
+#endif
 	static const int BAUDRATE = 19200;
 	if ( serial.setup(SERIAL_PORT, BAUDRATE ) )
 		buffered_serial = new BufferedSerial();
@@ -68,6 +71,9 @@ void testApp::setup(){
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
 	
 	printf("testApp::setup() finished\n");
+#ifdef NO_WINDOW
+	printf("\n\n***** Press Esc to quit *****\n\n");
+#endif
 	
 }
 
