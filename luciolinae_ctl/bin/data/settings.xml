@@ -1,5 +1,5 @@
 <lights>
-    <num_boards>3</num_boards>
+    <num_boards>4</num_boards>
     <light>
         <x>0.371875</x>
         <y>0.121875</y>
@@ -336,4 +336,118 @@
         <light_id>15</light_id>
         <big>0</big>
     </light>
+    
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>0</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>1</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>2</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>3</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>4</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>5</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>6</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>7</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>8</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>9</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>10</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>11</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>12</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>13</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>14</light_id>
+        <big>0</big>
+    </light>
+    <light>
+        <x>0</x>
+        <y>0.121875</y>
+        <board_id>64</board_id>
+        <light_id>15</light_id>
+        <big>0</big>
+    </light>
+
 </lights>
