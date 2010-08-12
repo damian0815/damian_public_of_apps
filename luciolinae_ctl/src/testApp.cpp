@@ -74,7 +74,8 @@ void testApp::setup(){
 	
 	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
 	pd.setup( "" );
-	pd.addOpenFile( "pd-test.pd" );
+	//pd.addOpenFile( "pd-test.pd" );
+	pd.addOpenFile( "pdstuff/_main.pd" );
 	pd.start();
 	
 	printf("testApp::setup() finished\n");

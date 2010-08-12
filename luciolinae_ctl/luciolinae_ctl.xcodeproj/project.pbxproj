@@ -621,7 +621,8 @@
 				2D303E8C12142D27008C7851 /* ofxPd.h */,
 				2D303E8D12142D27008C7851 /* ofxPd.cpp */,
 			);
-			path = ofxPd;
+			name = ofxPd;
+			path = src/ofxPd;
 			sourceTree = "<group>";
 		};
 		2D303CA312134CA5008C7851 /* pd_src */ = {
@@ -1128,7 +1129,6 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2D303CA212134CA4008C7851 /* ofxPd */,
 				2D2D323E119CA0C1001D76C9 /* System */,
 				2D2D323D119CA0B2001D76C9 /* Dynamics */,
 				2D2D323C119CA0A5001D76C9 /* Animation */,
@@ -1152,6 +1152,7 @@
 		E4C2422310CC54B6004149E2 /* openFrameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D303CA212134CA4008C7851 /* ofxPd */,
 				2D303F7412142E3D008C7851 /* ofxThread */,
 				2DA5492211A5A56A00C21422 /* ofxOsc */,
 				2DC02AF511A2EBD5006AFBA9 /* ofxXmlSettings */,
