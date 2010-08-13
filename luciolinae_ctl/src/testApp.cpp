@@ -21,12 +21,20 @@ void testApp::setup(){
 	
 #ifdef NO_WINDOW
 	ofSetDataPathRoot( "data/" );
+	ofSetFrameRate( 60 ); 
 #endif
 	
 	ofSetLogLevel( OF_LOG_WARNING );
 	
 	serial.enumerateDevices();
-	static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
+#ifdef TARGET_LINUX
+	static const char* SERIAL_PORT = "/dev/ttyUSB0";
+#elif defined TARGET_OSX
+	//static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
+	//static const char* SERIAL_PORT = "/dev/tty.usbserial-0000103D";
+	//static const char* SERIAL_PORT = "/dev/tty.usbserial-A4000R0L";
+	static const char* SERIAL_PORT	 = "/dev/tty.usbserial-FTTEIQQY";
+#endif
 	static const int BAUDRATE = 19200;
 	if ( serial.setup(SERIAL_PORT, BAUDRATE ) )
 		buffered_serial = new BufferedSerial();
@@ -61,6 +69,14 @@ void testApp::setup(){
 	anim_switcher.addAnim( AnimSeq::NAME );
 
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
+	
+	printf("starting pd...\n");
+	
+	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
+	pd.setup( "" );
+	//pd.addOpenFile( "pd-test.pd" );
+	pd.addOpenFile( "pdstuff/_main.pd" );
+	pd.start();
 	
 	printf("testApp::setup() finished\n");
 	
@@ -213,3 +229,16 @@ void testApp::windowResized(int w, int h){
 
 }
 
+
+void testApp::audioRequested( float* input, int bufferSize, int nChannels )
+{
+	if ( pd.isThreadRunning() )
+	{
+		pd.audioRequested( input, bufferSize, nChannels );
+	}
+	else
+	{
+		memset( input, 0, sizeof( input ) );
+	}
+		
+}

@@ -84,15 +84,16 @@ void AnimStateMachine::loadTransitions()
 	addTransition( StateAnimChunk::NAME,		StateAnimStartBlip::NAME, 0.3f );
 	addTransition( StateAnimChunk::NAME,		StateAnimIdle::NAME, 0.6f );
 #else // light
-	addTransition( StateAnimIdle::NAME,			StateAnimSweepOnce::NAME, 1.0f );
-	addTransition( StateAnimSweepOnce::NAME,	StateAnimIdle::NAME, 0.3f );
+	addTransition( StateAnimIdle::NAME,		StateAnimBlipAll::NAME, 0.5f );
+	addTransition( StateAnimIdle::NAME,		StateAnimSeq::NAME, 0.8f );
+	addTransition( StateAnimSweepOnce::NAME,	StateAnimIdle::NAME, 0.1f );
 	addTransition( StateAnimSweepOnce::NAME,	StateAnimSweepOnce::NAME, 0.8f );
 	addTransition( StateAnimSweepOnce::NAME,	StateAnimBlipAll::NAME, 0.5f );
-	addTransition( StateAnimBlipAll::NAME,		StateAnimIdle::NAME, 1 );
+	addTransition( StateAnimBlipAll::NAME,		StateAnimIdle::NAME, 0.5 );
 	addTransition( StateAnimBlipAll::NAME,		StateAnimBlipAll::NAME, 1 );
-	addTransition( StateAnimBlipAll::NAME,		StateAnimSeq::NAME, 0.7f );
-	addTransition( StateAnimSeq::NAME, StateAnimIdle::NAME, 1 );
-	addTransition( StateAnimSeq::NAME, StateAnimBlipAll::NAME, 1 );
+	//addTransition( StateAnimBlipAll::NAME,		StateAnimSeq::NAME, 0.7f );
+	addTransition( StateAnimSeq::NAME, 		StateAnimIdle::NAME, 1 );
+
 #endif
 
 	

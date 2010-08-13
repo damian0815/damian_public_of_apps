@@ -11,6 +11,8 @@
 #include "Osc.h"
 #include "Breathing.h"
 
+#include "ofxPd.h"
+
 //#define NO_WINDOW
 
 class testApp : public ofBaseApp{
@@ -45,6 +47,12 @@ public:
 	Breathing breath;
 	
 	Osc osc;
+	
+	
+	// sound
+	ofxPd pd;
+	void audioRequested 	(float * input, int bufferSize, int nChannels);
+	
 };
 
 

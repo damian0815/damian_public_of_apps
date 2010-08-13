@@ -25,12 +25,12 @@
 # edit the following  vars to customize the makefile
 
 
-COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
 USER_CFLAGS = 
 USER_LD_FLAGS = 
 USER_LIBS = 
 
+SKIP_SHARED_LIBS = 
 
 
 
@@ -43,9 +43,16 @@ CXX =  g++
 ARCH = $(shell uname -m)
 ifeq ($(ARCH),x86_64)
 	LIBSPATH=linux64
+	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
+else ifeq ($(ARCH),armv7l)
+	LIBSPATH=linuxarmv7l
+	SKIP_SHARED_LIBS += fmodex
+	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -O3
 else
 	LIBSPATH=linux
+	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
 endif
+
 
 NODEPS = clean
 SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed s/\,/\\\\\|/g)
@@ -57,8 +64,8 @@ CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
 INCLUDES = $(shell find ../../../libs/*/include -type d)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
-LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
+LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | egrep -v $(SKIP_SHARED_LIBS) | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/" )
+LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled | egrep -v $(SKIP_SHARED_LIBS) | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/" )
 
 #LIB_PATHS_FLAGS = -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH)
 LIB_PATHS_FLAGS = $(shell ls -d ../../../libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")

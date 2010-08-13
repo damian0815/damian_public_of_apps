@@ -9,11 +9,13 @@
 
 #include "BufferedSerial.h"
 
+#include <assert.h>
+
 static const int CHUNKSIZE=4;
 static const int BLOCKSIZE=128; // at 9600 baud this is 8 blocks/second; one ack sent per block
 static unsigned char ACK=0x7f;
 
-//#define WAIT_FOR_ACK
+// #define WAIT_FOR_ACK
 
 void BufferedSerial::setup( ofSerial* _serial , int baud )
 {
@@ -192,11 +194,11 @@ void BufferedSerial::endWrite()
 	
 	//serial->flush( /*in*/false, /*out*/true );
 	// wait until the block has been sent
-	/*if ( bytes_written > 32 )
+	if ( bytes_written > 32 )
 	{
 		serial->drain();
 		bytes_written = 0;
-	}*/
+	}
 }
 
 
