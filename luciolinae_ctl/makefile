@@ -43,6 +43,7 @@ CXX =  g++
 ARCH = $(shell uname -m)
 ifeq ($(ARCH),x86_64)
 	LIBSPATH=linux64
+	SKIP_SHARED_LIBS += none
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
 else ifeq ($(ARCH),armv7l)
 	LIBSPATH=linuxarmv7l
@@ -50,6 +51,7 @@ else ifeq ($(ARCH),armv7l)
 	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -O3
 else
 	LIBSPATH=linux
+	SKIP_SHARED_LIBS += none
 	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
 endif
 
@@ -59,6 +61,8 @@ SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed s/\,/\\\\\|/g)
 SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXCLUDE_FROM_SRC) | sed s/.\\///)
 SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp")
 OBJFILES = $(patsubst %.cpp,%.o,$(SOURCES))
+SOURCES_C = $(shell find $(SOURCE_DIRS) -iname "*.c")
+OBJFILES_C = $(patsubst %.c,%.o,$(SOURCES_C))
 APPNAME = $(shell basename `pwd`)
 CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
@@ -134,6 +138,7 @@ endif
 OBJ_OUTPUT = obj/$(TARGET_NAME)/
 CLEANTARGET = Clean$(TARGET_NAME)
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
+OBJS_C = $(addprefix $(OBJ_OUTPUT), $(OBJFILES_C))
 DEPFILES = $(patsubst %.o,%.d,$(OBJS))
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
@@ -156,15 +161,22 @@ $(OBJ_OUTPUT)%.o: %.cpp
 	mkdir -p $(@D)
 	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<  
 
+$(OBJ_OUTPUT)%.o: %.c
+	@echo "compiling object for: " $<
+	mkdir -p $(@D)
+	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<  
 
 $(OBJ_OUTPUT)%.o: ../../../%.cpp
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 	
-$(TARGET): $(OBJS) $(ADDONS_OBJS)
+$(TARGET): $(OBJS) $(OBJS_C) $(ADDONS_OBJS)
 	@echo "linking" $(TARGET)
-	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
+	@echo "libs path flags is" $(LIBS_PATHS_FLAGS)
+	@echo "libs shared" $(LIB_SHARED)
+	@echo "libs static" $(LIB_STATIC)
+	$(CXX) -o $@ $(OBJS) $(OBJS_C) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
 
 -include $(DEPFILES)
 
