@@ -26,7 +26,7 @@
 
 
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
-USER_CFLAGS = 
+USER_CFLAGS = -Isrc/ofxPd -Isrc/ofxPd/mrpeach -Isrc/ofxPd/pd_src
 USER_LD_FLAGS = 
 USER_LIBS = 
 

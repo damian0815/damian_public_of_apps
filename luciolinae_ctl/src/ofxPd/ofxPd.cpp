@@ -8,6 +8,7 @@
  */
 
 #include "ofxPd.h"
+#include <assert.h>
 
 extern "C"
 {
@@ -20,6 +21,7 @@ extern void sched_audio_callbackfn(void);
 };
 
 
+typedef uint32_t UInt32;
 
 void ofxPd::setup( string _lib_dir )
 {
