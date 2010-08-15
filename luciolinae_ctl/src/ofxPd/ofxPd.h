@@ -46,10 +46,27 @@ class AudioRingBuffer
 
 };
 
+class ofxPd;
+class ofxPdUpdateThread: public ofxThread
+{
+public:
+	ofxPdUpdateThread( ofxPd* _target ) { target = _target; should_stop = false; stopped = false; }
+	
+	// stop the thread, now
+	void stopNow() { should_stop = true; while ( !stopped ) usleep( 1000 ); }
+	
+private:
+	void threadedFunction();
+	
+	ofxPd* target;
+	bool should_stop;
+	bool stopped;
+};
+
 class ofxPd : public ofxThread
 {
 public:	
-	ofxPd() { ready = false; }
+	ofxPd(): update_thread( this ) { ready = false; }
 	
 	/// lib_dir is the directory in which to look for pd files
 	void setup( string lib_dir );
@@ -89,5 +106,7 @@ private:
 	
 	AudioRingBuffer ring_buffer;
 	bool ready;
+	
+	ofxPdUpdateThread update_thread;
 };
 

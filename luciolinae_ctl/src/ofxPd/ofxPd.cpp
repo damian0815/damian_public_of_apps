@@ -47,7 +47,10 @@ void ofxPd::addSearchPath( string path )
 
 void ofxPd::start()
 {
+	// start the main thread
 	this->startThread();
+	// start the updating thread
+	update_thread.startThread();
 }
 
 
@@ -112,6 +115,8 @@ bool ofxPd::isReady()
 {
 	return isThreadRunning() && sys_hasstarted;
 }
+
+
 
 void ofxPd::update()
 {
@@ -236,4 +241,15 @@ void AudioRingBuffer::writeToNextBuffer( float* data )
 	if ( current_write >= num_bufs )
 		current_write = 0;
 	unlock();
+}
+
+
+void ofxPdUpdateThread::threadedFunction()
+{
+	while ( !should_stop )
+	{
+		target->update();
+		usleep( 3 );
+	}
+	stopped = true;
 }

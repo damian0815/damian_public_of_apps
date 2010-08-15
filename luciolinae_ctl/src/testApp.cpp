@@ -108,10 +108,6 @@ void testApp::update(){
 	// send light levels
 	lights.flush();
 	
-#ifdef DO_PD
-	pd.update();
-#endif
-	
 	
 }
 
