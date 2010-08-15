@@ -7,25 +7,27 @@
 
 
 //DAMIAN
+// pull in oF TARGET_* defines
 #if defined( __WIN32__ ) || defined( _WIN32 )
-#define TARGET_WIN32
+	#define TARGET_WIN32
 #elif defined( __APPLE_CC__)
-#include <TargetConditionals.h>
+	#include <TargetConditionals.h>
 
-#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
-#define TARGET_OF_IPHONE
-#define TARGET_OPENGLES
+	#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+		#define TARGET_OF_IPHONE
+		#define TARGET_OPENGLES
+	#else
+		#define TARGET_OSX
+	#endif
 #else
-#define TARGET_OSX
-#endif
-#else
-#define TARGET_LINUX
+	#define TARGET_LINUX
 #endif
 
 #if defined TARGET_OSX || defined TARGET_LINUX || defined TARGET_OF_IPHONE
-#define UNIX
+	#define UNIX
+	#define UNISTD
 #else
-#define MSW
+	#define MSW
 #endif
 
 //END DAMIAN
