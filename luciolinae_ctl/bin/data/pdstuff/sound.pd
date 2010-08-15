@@ -1,4 +1,4 @@
-#N canvas 80 36 1200 720 10;
+#N canvas 140 36 1200 720 10;
 #X obj 75 334 r~ blip_r;
 #X obj 9 334 r~ blip_l;
 #X obj 9 368 *~;
@@ -14,7 +14,7 @@
 #X obj 252 336 r~ delaunay_l;
 #X obj 342 336 r~ delaunay_r;
 #X obj 276 69 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 8890 1;
+-1 -1 6350 1;
 #X text 275 198 delaunay;
 #X text 191 199 blip;
 #X text 115 129 Volumes;
@@ -32,7 +32,7 @@
 #X obj 213 89 vsl 12 96 0 1 0 0 empty empty empty 0 -9 0 10 -262144
 -1 -1 95 1;
 #X obj 303 89 vsl 12 96 0 1 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 3800 1;
+-1 -1 1900 1;
 #X obj 522 89 vsl 12 96 0 1 0 0 empty empty empty 0 -9 0 10 -262144
 -1 -1 428 1;
 #X obj 196 469 r background-lvl;
@@ -123,9 +123,9 @@
 #X obj 1077 319 delay 200;
 #X obj 990 561 *~ 1.3;
 #X obj 1113 563 *~ 1.3;
-#X msg 277 44 0.7;
-#X msg 301 64 0.4;
 #X msg 495 44 0.02;
+#X msg 301 64 0.2;
+#X msg 277 44 0.5;
 #X connect 0 0 3 0;
 #X connect 0 0 54 0;
 #X connect 1 0 2 0;
@@ -138,8 +138,8 @@
 #X connect 5 0 44 0;
 #X connect 6 0 5 0;
 #X connect 7 0 6 0;
-#X connect 7 0 81 0;
 #X connect 7 0 83 0;
+#X connect 7 0 81 0;
 #X connect 7 0 82 0;
 #X connect 7 0 73 0;
 #X connect 7 0 76 0;
@@ -199,6 +199,6 @@
 #X connect 78 0 75 0;
 #X connect 79 0 77 0;
 #X connect 80 0 77 1;
-#X connect 81 0 13 0;
+#X connect 81 0 22 0;
 #X connect 82 0 28 0;
-#X connect 83 0 22 0;
+#X connect 83 0 13 0;

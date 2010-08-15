@@ -50,7 +50,7 @@
 #X obj 38 166 sel 0 1 2 3;
 #X obj -23 332 osc~ 960;
 #X connect 0 0 25 0;
-#X connect 1 2 4 1;
+#X connect 1 1 4 1;
 #X connect 4 0 2 0;
 #X connect 4 1 3 0;
 #X connect 5 0 4 0;
