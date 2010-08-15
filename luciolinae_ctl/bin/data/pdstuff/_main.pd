@@ -4,5 +4,3 @@
 #X obj 24 173 sound;
 #X obj 74 103 delaunay;
 #X obj 147 108 background;
-#X obj 239 109 chunks;
-#X obj 299 110 seqcrackles;
