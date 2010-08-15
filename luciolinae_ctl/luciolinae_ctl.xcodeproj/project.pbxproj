@@ -65,11 +65,8 @@
 		2D303D5012134CA5008C7851 /* s_inter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303CF212134CA5008C7851 /* s_inter.c */; };
 		2D303D5112134CA5008C7851 /* s_loader.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303CF312134CA5008C7851 /* s_loader.c */; };
 		2D303D5212134CA5008C7851 /* s_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303CF412134CA5008C7851 /* s_main.c */; };
-		2D303D5312134CA5008C7851 /* s_midi.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303CF612134CA5008C7851 /* s_midi.c */; };
-		2D303D5612134CA5008C7851 /* s_midi_oss.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303CF912134CA5008C7851 /* s_midi_oss.c */; };
 		2D303D5812134CA5008C7851 /* s_path.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303CFB12134CA5008C7851 /* s_path.c */; };
 		2D303D5912134CA5008C7851 /* s_print.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303CFC12134CA5008C7851 /* s_print.c */; };
-		2D303D5C12134CA5008C7851 /* t_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303D0012134CA5008C7851 /* t_main.c */; };
 		2D303D6012134CA5008C7851 /* x_acoustics.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303D0612134CA5008C7851 /* x_acoustics.c */; };
 		2D303D6112134CA5008C7851 /* x_arithmetic.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303D0712134CA5008C7851 /* x_arithmetic.c */; };
 		2D303D6212134CA5008C7851 /* x_connective.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D303D0812134CA5008C7851 /* x_connective.c */; };
@@ -94,6 +91,7 @@
 		2D30405C12143BF5008C7851 /* pipelist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D30404B12143BF5008C7851 /* pipelist.c */; };
 		2D30405D12143BF5008C7851 /* routeOSC.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D30404D12143BF5008C7851 /* routeOSC.c */; };
 		2D30405E12143BF5008C7851 /* unpackOSC.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D30405212143BF5008C7851 /* unpackOSC.c */; };
+		2D30451012183524008C7851 /* AnimKapelica.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D30450F12183524008C7851 /* AnimKapelica.cpp */; };
 		2D83940111ABD0630091A5E2 /* StateAnimChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D83940011ABD0630091A5E2 /* StateAnimChunk.cpp */; };
 		2D84293511A402E200A388E1 /* AnimSeq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D84293411A402E200A388E1 /* AnimSeq.cpp */; };
 		2D84293811A4030100A388E1 /* AnimSweep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D84293711A4030100A388E1 /* AnimSweep.cpp */; };
@@ -289,12 +287,9 @@
 		2D303CF312134CA5008C7851 /* s_loader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s_loader.c; sourceTree = "<group>"; };
 		2D303CF412134CA5008C7851 /* s_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s_main.c; sourceTree = "<group>"; };
 		2D303CF512134CA5008C7851 /* s_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = s_main.h; sourceTree = "<group>"; };
-		2D303CF612134CA5008C7851 /* s_midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s_midi.c; sourceTree = "<group>"; };
-		2D303CF912134CA5008C7851 /* s_midi_oss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s_midi_oss.c; sourceTree = "<group>"; };
 		2D303CFB12134CA5008C7851 /* s_path.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s_path.c; sourceTree = "<group>"; };
 		2D303CFC12134CA5008C7851 /* s_print.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s_print.c; sourceTree = "<group>"; };
 		2D303CFD12134CA5008C7851 /* s_stuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = s_stuff.h; sourceTree = "<group>"; };
-		2D303D0012134CA5008C7851 /* t_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = t_main.c; sourceTree = "<group>"; };
 		2D303D0112134CA5008C7851 /* t_tk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t_tk.h; sourceTree = "<group>"; };
 		2D303D0612134CA5008C7851 /* x_acoustics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_acoustics.c; sourceTree = "<group>"; };
 		2D303D0712134CA5008C7851 /* x_arithmetic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x_arithmetic.c; sourceTree = "<group>"; };
@@ -340,6 +335,8 @@
 		2D30405212143BF5008C7851 /* unpackOSC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpackOSC.c; sourceTree = "<group>"; };
 		2D30405312143BF5008C7851 /* unpackOSCstream-help.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "unpackOSCstream-help.pd"; sourceTree = "<group>"; };
 		2D30405412143BF5008C7851 /* unpackOSCstream.pd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unpackOSCstream.pd; sourceTree = "<group>"; };
+		2D30450E12183524008C7851 /* AnimKapelica.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimKapelica.h; sourceTree = "<group>"; };
+		2D30450F12183524008C7851 /* AnimKapelica.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimKapelica.cpp; sourceTree = "<group>"; };
 		2D8393FF11ABD0630091A5E2 /* StateAnimChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateAnimChunk.h; sourceTree = "<group>"; };
 		2D83940011ABD0630091A5E2 /* StateAnimChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateAnimChunk.cpp; sourceTree = "<group>"; };
 		2D84293311A402E200A388E1 /* AnimSeq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimSeq.h; sourceTree = "<group>"; };
@@ -546,6 +543,8 @@
 		2D2D323C119CA0A5001D76C9 /* Animation */ = {
 			isa = PBXGroup;
 			children = (
+				2D30450E12183524008C7851 /* AnimKapelica.h */,
+				2D30450F12183524008C7851 /* AnimKapelica.cpp */,
 				2DA8B6EE11A4699C008B545A /* State Machine */,
 				2DA5E5881194616800301C42 /* Animation.h */,
 				2DA5E5891194616800301C42 /* Animation.cpp */,
@@ -687,12 +686,9 @@
 				2D303CF312134CA5008C7851 /* s_loader.c */,
 				2D303CF412134CA5008C7851 /* s_main.c */,
 				2D303CF512134CA5008C7851 /* s_main.h */,
-				2D303CF612134CA5008C7851 /* s_midi.c */,
-				2D303CF912134CA5008C7851 /* s_midi_oss.c */,
 				2D303CFB12134CA5008C7851 /* s_path.c */,
 				2D303CFC12134CA5008C7851 /* s_print.c */,
 				2D303CFD12134CA5008C7851 /* s_stuff.h */,
-				2D303D0012134CA5008C7851 /* t_main.c */,
 				2D303D0112134CA5008C7851 /* t_tk.h */,
 				2D303D0612134CA5008C7851 /* x_acoustics.c */,
 				2D303D0712134CA5008C7851 /* x_arithmetic.c */,
@@ -1409,11 +1405,8 @@
 				2D303D5012134CA5008C7851 /* s_inter.c in Sources */,
 				2D303D5112134CA5008C7851 /* s_loader.c in Sources */,
 				2D303D5212134CA5008C7851 /* s_main.c in Sources */,
-				2D303D5312134CA5008C7851 /* s_midi.c in Sources */,
-				2D303D5612134CA5008C7851 /* s_midi_oss.c in Sources */,
 				2D303D5812134CA5008C7851 /* s_path.c in Sources */,
 				2D303D5912134CA5008C7851 /* s_print.c in Sources */,
-				2D303D5C12134CA5008C7851 /* t_main.c in Sources */,
 				2D303D6012134CA5008C7851 /* x_acoustics.c in Sources */,
 				2D303D6112134CA5008C7851 /* x_arithmetic.c in Sources */,
 				2D303D6212134CA5008C7851 /* x_connective.c in Sources */,
@@ -1438,6 +1431,7 @@
 				2D30405C12143BF5008C7851 /* pipelist.c in Sources */,
 				2D30405D12143BF5008C7851 /* routeOSC.c in Sources */,
 				2D30405E12143BF5008C7851 /* unpackOSC.c in Sources */,
+				2D30451012183524008C7851 /* AnimKapelica.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

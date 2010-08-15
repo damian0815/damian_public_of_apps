@@ -5,6 +5,7 @@
 #include "AnimStateMachine.h"
 #include "AnimSeq.h"
 #include "StateAnimIdle.h"
+#include "AnimKapelica.h"
 
 
 //--------------------------------------------------------------
@@ -62,6 +63,7 @@ void testApp::setup(){
 	}
 
 	AnimationFactory::useLights( &lights );
+	anim_switcher.addAnim( AnimKapelica::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSweep::NAME );
 	anim_switcher.addAnim( AnimDelaunay::NAME );
@@ -74,8 +76,8 @@ void testApp::setup(){
 	
 	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
 	pd.setup( "" );
-	pd.addOpenFile( "pd-test.pd" );
-	//pd.addOpenFile( "pdstuff/_main.pd" );
+	//pd.addOpenFile( "pd-test.pd" );
+	pd.addOpenFile( "pdstuff/_main.pd" );
 	pd.start();
 	
 	printf("testApp::setup() finished\n");

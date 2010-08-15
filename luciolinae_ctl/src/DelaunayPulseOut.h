@@ -18,7 +18,7 @@ using namespace std;
 class DelaunayPulseOut : public DelaunayPulse
 {
 public:
-	DelaunayPulseOut( Lights* _lights ) : lights( _lights ) {};
+	DelaunayPulseOut( Lights* _lights, LightsDelaunay* del ) : lights( _lights ), delaunay(del) {};
 	
 	void start ( int which_source, float brightness, float _falloff, float _speed );
 	void update( float elapsed );
@@ -48,5 +48,6 @@ private:
 	float timer;
 	
 	Lights* lights;
+	LightsDelaunay* delaunay;
 	
 };

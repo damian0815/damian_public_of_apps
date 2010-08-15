@@ -10,6 +10,26 @@
  * and lists of files for all purposes.
  */ 
 
+#if defined( __WIN32__ ) || defined( _WIN32 )
+#define TARGET_WIN32
+#elif defined( __APPLE_CC__)
+#include <TargetConditionals.h>
+
+#if (TARGET_OF_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+#define TARGET_OF_IPHONE
+#define TARGET_OPENGLES
+#else
+#define TARGET_OSX
+#endif
+#else
+#define TARGET_LINUX
+#endif
+
+#if defined TARGET_OSX || defined TARGET_LINUX
+#define UNISTD
+#define DL_OPEN
+#endif
+
 /* #define DEBUG(x) x */
 #define DEBUG(x)
 

@@ -20,9 +20,6 @@ extern "C"
 extern void sched_audio_callbackfn(void);
 };
 
-
-typedef uint32_t UInt32;
-
 void ofxPd::setup( string _lib_dir )
 {
 	lib_dir = ofToDataPath(_lib_dir);
@@ -105,9 +102,9 @@ void ofxPd::audioRequested( float* output, int bufferSize, int nChannels )
     assert(inNumberFrames % sys_schedblocksize == 0);
 	
     // How many times to generate a DSP event in PD
-    UInt32 times = inNumberFrames / sys_schedblocksize;
+    int times = inNumberFrames / sys_schedblocksize;
 
-    for(UInt32 i = 0; i < times; i++) {
+    for(int i = 0; i < times; i++) {
         
 		// do one DSP block
         sys_lock();
@@ -132,3 +129,7 @@ void ofxPd::audioRequested( float* output, int bufferSize, int nChannels )
 	
 }
 
+bool ofxPd::isReady()
+{
+	return isThreadRunning() && sys_hasstarted;
+}

@@ -13,7 +13,7 @@
 
 #include "ofxPd.h"
 
-#define NO_WINDOW
+//#define NO_WINDOW
 
 class testApp : public ofBaseApp{
 	

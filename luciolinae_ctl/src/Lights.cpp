@@ -21,9 +21,18 @@ static const unsigned char FUNC_LATCH = 0x04;
 
 
 
+static const int board_ids[16] = { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xa0, 0xb0, 0xc0, 0xd0, 0xe0, 0xf0 };
+
+
 Lights::~Lights()
 { 
 	if ( delaunay ) delete delaunay; 
+	for ( map< int, LightsDelaunay* >::iterator it = boards_delaunay.begin();
+		 it != boards_delaunay.end();
+		 ++it )
+	{
+		delete (*it).second;
+	}
 }
 
 
@@ -500,8 +509,26 @@ LightsDelaunay* Lights::getDelaunay()
 			delete delaunay;
 		}
 		delaunay = new LightsDelaunay( *this );
+		rebuild_delaunay = false;
 	}
 	return delaunay;
+}
+
+LightsDelaunay* Lights::getBoardDelaunay( int board_id )
+{
+	if ( rebuild_boards_delaunay )
+	{
+		for ( int i=0; i<num_boards; i++ )
+		{
+			if ( boards_delaunay[board_ids[i]] != NULL );
+			{
+				delete boards_delaunay[board_ids[i]];
+			}
+			boards_delaunay[board_ids[i]] = new LightsDelaunay( *this, board_ids[i] );
+		}
+		rebuild_boards_delaunay = false;
+	}
+	return boards_delaunay[board_id];
 }
 
 void Lights::toggleLightIsBig( int id ) {
@@ -577,3 +604,13 @@ unsigned char Lights::updateCRC( unsigned char* data, int length, unsigned char 
 }
 
 
+vector<int> Lights::getLightIdsForBoard( int board_id ) const
+{
+	vector<int> results;
+	for ( int i=0; i<lights.size(); i++ )
+	{
+		if ( lights[i].getBoardId() == board_id )
+			results.push_back(i);
+	}
+	return results;
+}

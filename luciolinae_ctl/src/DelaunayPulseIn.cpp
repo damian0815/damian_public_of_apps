@@ -94,7 +94,7 @@ void DelaunayPulseIn::update( float elapsed )
 			continue;
 		
 		// add the closest neighbours to queue
-		set<int> adj = lights->getDelaunay()->getNeighbours( curr );
+		set<int> adj = delaunay->getNeighbours( curr );
 		ofxVec2f curr_pos( lights->getLight( curr ).getX(), 
 						  lights->getLight( curr ).getY() );
 		ofxVec2f target_pos( lights->getLight( target_index ).getX(),

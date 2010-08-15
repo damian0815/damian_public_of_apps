@@ -11,6 +11,7 @@
 
 #pragma once
 class Lights;
+class LightsDelaunay;
 
 #include <assert.h>
 
@@ -36,8 +37,8 @@ public:
 	DelaunayPulses( Lights* _lights ) : lights( _lights ) { instance = this; };
 	static DelaunayPulses* getInstance() { assert( instance != NULL ); return instance; }
 	
-	void addPulseIn( int target, float max_brightness=0.2f, float start_radius=0.66f, float speed = 1.0f );
-	void addPulseOut( int source, float brightness=0.2f, float falloff = 3.0f, float speed = 1.0f );
+	void addPulseIn( int target, float max_brightness=0.2f, float start_radius=0.66f, float speed = 1.0f, LightsDelaunay* del = NULL );
+	void addPulseOut( int source, float brightness=0.2f, float falloff = 3.0f, float speed = 1.0f, LightsDelaunay* del = NULL );
 	void update( float elapsed );
 
 private:

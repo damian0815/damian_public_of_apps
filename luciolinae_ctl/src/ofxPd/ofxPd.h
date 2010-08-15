@@ -18,6 +18,7 @@ class AudioRingBuffer
 		AudioRingBuffer()
 		{
 			num_bufs = 0;
+			ready = 0;
 		}
 
 		void setup(int buffsize, int num_bufs )
@@ -38,8 +39,7 @@ class AudioRingBuffer
 		}
 
 
-
-		float* getNextBuffer()
+		float* getNextBufferToReadFrom()
 		{
 			if ( ready == 0 )
 			{
@@ -47,14 +47,20 @@ class AudioRingBuffer
 				return NULL;
 			}
 
-			int next = current++;
-			ready--;
-			if ( current >= num_bufs )
-				current = 0;
+			int next = current_read++;
+			if ( current_read >= num_bufs )
+				current_read = 0;
 
+			ready--;
 			return buffers[next];
 		}
+	
+		float* getNextBufferToWriteTo()
+		{
+		}
 
+		void lock();
+		void unlock();
 
 	private:
 		float** buffers;
@@ -69,6 +75,7 @@ class AudioRingBuffer
 class ofxPd : public ofxThread
 {
 public:	
+	ofxPd() { ready = false; }
 	
 	/// lib_dir is the directory in which to look for pd files
 	void setup( string lib_dir );
@@ -89,6 +96,7 @@ public:
 	
 	/// true if pd has been started properly and is ready
 	bool isReady();
+	
 private:
 
 	// the thing to run in a thread
@@ -100,6 +108,6 @@ private:
 	vector <string> search_path;
 	vector <string> open_files;
 	
-	
+	bool ready;
 };
 
