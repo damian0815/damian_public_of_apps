@@ -72,6 +72,7 @@ void testApp::setup(){
 
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
 	
+#ifdef DO_PD
 	printf("starting pd...\n");
 	
 	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
@@ -79,6 +80,7 @@ void testApp::setup(){
 	//pd.addOpenFile( "pd-test.pd" );
 	pd.addOpenFile( "pdstuff/_main.pd" );
 	pd.start();
+#endif
 	
 	printf("testApp::setup() finished\n");
 	

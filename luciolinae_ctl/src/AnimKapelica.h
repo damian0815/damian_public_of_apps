@@ -19,30 +19,16 @@ public:
 	typedef enum { KU_IDLE, KU_DELAUNAY_DOWN, KU_PULSE, KU_DELAUNAY_UP } KUState;
 	
 	KapelicaUnit();
-	KapelicaUnit( int _id ) { id = _id; cycle_time = ofRandom( 2.0f, 3.0f ); timer = cycle_time; state = KU_IDLE; };
+	KapelicaUnit( int _id );
 	
 	
-	void update( Lights* lights, float elapsed )
-	{
-		timer -= elapsed;
-		if ( state == KU_IDLE && timer < 0.0f )
-		{
-			state = KU_DELAUNAY_DOWN;
-			
-
-			// pulse the big light
-			int which = lights->getBigLightIndex( id );
-			
-			lights->pulse( which, 1.0f, true );
-			timer += cycle_time;
-		}
-	}
+	void update( Lights* lights, float elapsed );
 	
 private:
 	
 	int id;
 	float timer;
-	float cycle_time;
+	float time_scalar;
 	
 	KUState state;
 	

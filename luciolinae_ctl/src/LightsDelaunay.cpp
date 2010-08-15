@@ -107,7 +107,7 @@ LightsDelaunay::LightsDelaunay( const Lights& lights, int use_board_id )
 	Delaunay::Triangulate( num_lights, xyz, triangles, num_triangles );
 	
 	// construct adjacency lists
-	adjacencies.resize( num_lights );
+	adjacencies.resize( lights.getNumLights() );
 	for ( int i=0; i<num_triangles; i++ )
 	{
 		int a = vertices[triangles[i].p1].index;

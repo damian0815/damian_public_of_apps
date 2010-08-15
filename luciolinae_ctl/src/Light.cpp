@@ -45,7 +45,7 @@ void Light::save( ofxXmlSettings& data )
 {
 	data.addValue( "x", x );
 	data.addValue( "y", y );
-	data.getValue( "z", z );
+	data.addValue( "z", z );
 	data.addValue( "board_id", board_id );
 	data.addValue( "light_id", light_id );
 	data.addValue( "big", big );
