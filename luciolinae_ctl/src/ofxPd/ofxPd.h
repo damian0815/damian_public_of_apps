@@ -10,6 +10,62 @@
 #include "ofMain.h"
 #include "ofxThread.h"
 
+
+class AudioRingBuffer
+{
+	public:
+
+		AudioRingBuffer()
+		{
+			num_bufs = 0;
+		}
+
+		void setup(int buffsize, int num_bufs )
+		{
+			for ( int i=0; i<num_bufs; i++ )
+			{
+				buffers[i] = new float[buffsize];
+			}
+		}
+
+		~AudioRingBuffer()
+		{
+			for ( int i=0; i<num_bufs; i++ )
+			{
+				delete[] buffers[i];
+			}
+			num_bufs = 0;
+		}
+
+
+
+		float* getNextBuffer()
+		{
+			if ( ready == 0 )
+			{
+				fprintf(stderr,"AudioRingBuffer()::buffer under-run\n");
+				return NULL;
+			}
+
+			int next = current++;
+			ready--;
+			if ( current >= num_bufs )
+				current = 0;
+
+			return buffers[next];
+		}
+
+
+	private:
+		float** buffers;
+
+		int num_bufs;
+		int ready;
+		int current_read;
+		int current_write;
+
+};
+
 class ofxPd : public ofxThread
 {
 public:	
@@ -31,6 +87,8 @@ public:
 	/// callback for audio rendering
 	void audioRequested( float* output, int bufferSize, int nChannels );
 	
+	/// true if pd has been started properly and is ready
+	bool isReady();
 private:
 
 	// the thing to run in a thread

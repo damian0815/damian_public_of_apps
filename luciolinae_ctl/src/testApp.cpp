@@ -74,8 +74,8 @@ void testApp::setup(){
 	
 	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
 	pd.setup( "" );
-	//pd.addOpenFile( "pd-test.pd" );
-	pd.addOpenFile( "pdstuff/_main.pd" );
+	pd.addOpenFile( "pd-test.pd" );
+	//pd.addOpenFile( "pdstuff/_main.pd" );
 	pd.start();
 	
 	printf("testApp::setup() finished\n");
@@ -232,7 +232,7 @@ void testApp::windowResized(int w, int h){
 
 void testApp::audioRequested( float* input, int bufferSize, int nChannels )
 {
-	if ( pd.isThreadRunning() )
+	if ( pd.isReady() )
 	{
 		pd.audioRequested( input, bufferSize, nChannels );
 	}
