@@ -7,6 +7,7 @@
 #include "StateAnimIdle.h"
 #include "AnimKapelica.h"
 
+#define DO_PD
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
@@ -107,34 +108,9 @@ void testApp::update(){
 	// send light levels
 	lights.flush();
 	
-	/*
-	// test
-	static unsigned int current = 2048<<4;	
-	static float current_float = 2048;
-	unsigned int elapsed = ofGetLastFrameTime()*(1<<10);
-	float decay_float = 0.5f;
-	unsigned int decay_fixed = decay_float*(1<<4);
-	// floating point math: current = current-current*elapsed*decay_pct
-	// this would mean that every second, current would lose decay_pct of its value
-	//
-	// fixed point math: current is *2^0, elapsed is *2^-10 (millis->seconds), decay is *2^-4
-	// we have 32 bits of precision in an unsigned long int, so this is ok
-	// and then shift to correct for multiplication
-	// -10+-4 = -14
-	unsigned int next;
-	if ( current == 0 )
-		next = current;
-	else
-		next = current - (((current*elapsed*decay_fixed)>>14)+1);
-	
-	// float to compare
-	float float_factor = ofGetLastFrameTime()*decay_float;
-	float next_float = current_float - current_float*float_factor;
-	
-	printf("elapsed %3u; %4u decays by %f/%u -> fixed: %4u, float: %f (factor %f)\n", elapsed, current>>4, decay_float, decay_fixed, next>>4, next_float, float_factor );
-	current_float = next_float;
-	current = next;
-	 */
+#ifdef DO_PD
+	pd.update();
+#endif
 	
 	
 }
