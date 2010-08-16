@@ -1,3 +1,4 @@
 ofxOsc
 ofxVectorMath
 ofxXmlSettings
+ofxThread

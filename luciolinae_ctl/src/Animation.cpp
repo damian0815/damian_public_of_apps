@@ -25,6 +25,8 @@
 #include "StateAnimSweepOnce.h"
 #include "StateAnimBlipAll.h"
 #include "StateAnimSeq.h"
+#include "AnimKapelica.h"
+
 
 
 
@@ -52,6 +54,8 @@ Animation* AnimationFactory::makeAnimation( string name )
 			cache[name] = new AnimDelaunay( lights );
 		else if ( name == AnimSeq::NAME )
 			cache[name] = new AnimSeq( lights );
+		else if ( name == AnimKapelica::NAME )
+			cache[name] = new AnimKapelica( lights );
 		
 		else if ( name == AnimStateMachine::NAME )
 			cache[name] = new AnimStateMachine( lights );

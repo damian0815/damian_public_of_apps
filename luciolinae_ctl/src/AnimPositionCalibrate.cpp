@@ -96,6 +96,12 @@ void AnimPositionCalibrate::mouseMoved( int x, int y )
 
 void AnimPositionCalibrate::draw()
 {
+	ofSetColor( 64, 64, 64, 128 );
+	for ( int i=0; i<4; i++ )
+	{
+		ofLine( 0, i*ofGetHeight()/4, ofGetWidth(), i*ofGetHeight()/4 );
+		ofLine( i*ofGetWidth()/4, 0, i*ofGetWidth()/4, ofGetHeight() );
+	}
 
 	// figure out which lights should be on
 	float x, y, dx, dy;

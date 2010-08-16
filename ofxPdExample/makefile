@@ -25,12 +25,12 @@
 # edit the following  vars to customize the makefile
 
 
+COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
 EXCLUDE_FROM_SOURCE="bin,.xcodeproj,obj"
-USER_CFLAGS = -Isrc/ofxPd -Isrc/ofxPd/mrpeach -Isrc/ofxPd/pd_src
+USER_CFLAGS = 
 USER_LD_FLAGS = 
 USER_LIBS = 
 
-SKIP_SHARED_LIBS = 
 
 
 
@@ -43,33 +43,22 @@ CXX =  g++
 ARCH = $(shell uname -m)
 ifeq ($(ARCH),x86_64)
 	LIBSPATH=linux64
-	SKIP_SHARED_LIBS += none
-	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
-else ifeq ($(ARCH),armv7l)
-	LIBSPATH=linuxarmv7l
-	SKIP_SHARED_LIBS += fmodex
-	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
 else
 	LIBSPATH=linux
-	SKIP_SHARED_LIBS += none
-	COMPILER_OPTIMIZATION = -march=native -mtune=native -O3
 endif
-
 
 NODEPS = clean
 SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed s/\,/\\\\\|/g)
 SOURCE_DIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d | grep -v $(SED_EXCLUDE_FROM_SRC) | sed s/.\\///)
 SOURCES = $(shell find $(SOURCE_DIRS) -name "*.cpp")
 OBJFILES = $(patsubst %.cpp,%.o,$(SOURCES))
-SOURCES_C = $(shell find $(SOURCE_DIRS) -iname "*.c")
-OBJFILES_C = $(patsubst %.c,%.o,$(SOURCES_C))
 APPNAME = $(shell basename `pwd`)
 CORE_INCLUDES = $(shell find ../../../libs/openFrameworks/ -type d)
 CORE_INCLUDE_FLAGS = $(addprefix -I,$(CORE_INCLUDES))
 INCLUDES = $(shell find ../../../libs/*/include -type d)
 INCLUDES_FLAGS = $(addprefix -I,$(INCLUDES))
-LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | egrep -v $(SKIP_SHARED_LIBS) | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/" )
-LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled | egrep -v $(SKIP_SHARED_LIBS) | sed "s/.*\\/lib\([^/]*\)\.so/-l\1/" )
+LIB_STATIC = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.a | grep -v openFrameworksCompiled | sed "s/.*\\/lib\([^/]*\)\.a/-l\1/")
+LIB_SHARED = $(shell ls ../../../libs/*/lib/$(LIBSPATH)/*.so | grep -v openFrameworksCompiled| sed "s/.*\\/lib\([^/]*\)\.so/-l\1/")
 
 #LIB_PATHS_FLAGS = -L../../../libs/openFrameworksCompiled/lib/$(LIBSPATH)
 LIB_PATHS_FLAGS = $(shell ls -d ../../../libs/*/lib/$(LIBSPATH) | sed "s/\(\.*\)/-L\1/")
@@ -138,7 +127,6 @@ endif
 OBJ_OUTPUT = obj/$(TARGET_NAME)/
 CLEANTARGET = Clean$(TARGET_NAME)
 OBJS = $(addprefix $(OBJ_OUTPUT), $(OBJFILES))
-OBJS_C = $(addprefix $(OBJ_OUTPUT), $(OBJFILES_C))
 DEPFILES = $(patsubst %.o,%.d,$(OBJS))
 ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	ADDONS_OBJS = $(addprefix $(OBJ_OUTPUT), $(ADDONS_OBJFILES))
@@ -161,22 +149,15 @@ $(OBJ_OUTPUT)%.o: %.cpp
 	mkdir -p $(@D)
 	$(CXX) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<  
 
-$(OBJ_OUTPUT)%.o: %.c
-	@echo "compiling object for: " $<
-	mkdir -p $(@D)
-	$(CC) -c $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<  
 
 $(OBJ_OUTPUT)%.o: ../../../%.cpp
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
 	
-$(TARGET): $(OBJS) $(OBJS_C) $(ADDONS_OBJS)
+$(TARGET): $(OBJS) $(ADDONS_OBJS)
 	@echo "linking" $(TARGET)
-	@echo "libs path flags is" $(LIBS_PATHS_FLAGS)
-	@echo "libs shared" $(LIB_SHARED)
-	@echo "libs static" $(LIB_STATIC)
-	$(CXX) -o $@ $(OBJS) $(OBJS_C) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
+	$(CXX) -o $@ $(OBJS) $(ADDONS_OBJS) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) $(LDFLAGS) $(USER_LDFLAGS) $(TARGET_LIBS) $(LIBS) $(ADDONSLIBS) $(USER_LIBS)
 
 -include $(DEPFILES)
 

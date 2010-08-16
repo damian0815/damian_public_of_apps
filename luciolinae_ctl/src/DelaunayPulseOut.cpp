@@ -51,7 +51,7 @@ void DelaunayPulseOut::update( float elapsed )
 			seen.insert( curr );
 			
 			// add neighbours to queue
-			set<int> adj = lights->getDelaunay()->getNeighbours( curr );
+			set<int> adj = delaunay->getNeighbours( curr );
 			// check neighbours against seen. 
 			ofxVec2f curr_pos( lights->getLight( curr ).getX(), 
 							  lights->getLight( curr ).getY() );

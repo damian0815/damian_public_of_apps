@@ -18,6 +18,7 @@ class LightsDelaunay
 public:
 	/// construct Delaunay triangulation for lights
 	LightsDelaunay( const Lights& lights );
+	LightsDelaunay( const Lights& lights, int use_board_id );
 
 	/// return the ids of all the neighbours of this light
 	const set<int> getNeighbours( int target_id ) { return adjacencies.at(target_id); }
