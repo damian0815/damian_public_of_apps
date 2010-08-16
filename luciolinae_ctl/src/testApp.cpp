@@ -7,7 +7,7 @@
 #include "StateAnimIdle.h"
 #include "AnimKapelica.h"
 
-#define DO_PD
+//#define DO_PD
 
 //--------------------------------------------------------------
 void testApp::setup(){	 

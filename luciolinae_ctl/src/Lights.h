@@ -61,6 +61,8 @@ public:
 	const Light& getLight( int i ) const { return lights.at(i); }
 	void setLightPosition( int id, float x, float y ) { lights.at(id).setPosition( x, y ); rebuild_boards_delaunay = true; rebuild_delaunay = true; }
 	vector<int> getLightIdsForBoard( int board_id ) const;
+	int getBoardIndexForId( int board_id ) const { return (board_id/16)-1; }
+	int getBoardIdForIndex( int board_index ) const { return (board_index+1)*16; }
 	
 	// big lights (high current)
 	int getNumBigLights() const { return big_lights.size(); }

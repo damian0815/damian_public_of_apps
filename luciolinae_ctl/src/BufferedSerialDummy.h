@@ -14,11 +14,13 @@
 class BufferedSerialDummy: public BufferedSerial
 {
 public:
-	virtual void setup( ofSerial* _serial, int baud_rate ) {};
+	virtual void setup( ofSerial* _serial, int baud_rate, float delay ) {};
 	virtual void shutdown() {};
 	virtual void beginWrite() {};
 	virtual bool writeBytes( unsigned char* buffer, int count ) { return count; }
 	virtual void endWrite() {};
-	
+
+private:
+	virtual bool writeBytes_real( unsigned char* buffer, int count ) { return true; }
 	
 };

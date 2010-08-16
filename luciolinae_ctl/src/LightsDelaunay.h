@@ -24,12 +24,16 @@ public:
 	const set<int> getNeighbours( int target_id ) { return adjacencies.at(target_id); }
 
 	const vector<int>& getLights() { return valid_lights; }
+	
+	int getId() { return id; }
 
 private:
 
 	// adjacency lists
 	vector<set<int> > adjacencies;
 	vector<int> valid_lights;
+	
+	int id;
 
 };
 

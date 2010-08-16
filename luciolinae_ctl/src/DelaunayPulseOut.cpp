@@ -79,6 +79,7 @@ void DelaunayPulseOut::update( float elapsed )
 		const Light& light = lights->getLight( pings[i].first );
 		m.addFloatArg( light.getX() );
 		m.addFloatArg( light.getY() );
+		m.addFloatArg( delaunay->getId() );
 		Osc::getInstance()->sendMessage( m );
 	}
 }

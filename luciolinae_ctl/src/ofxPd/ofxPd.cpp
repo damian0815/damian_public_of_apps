@@ -49,6 +49,11 @@ void ofxPd::start()
 {
 	// start the main thread
 	this->startThread();
+	printf("pd thread started, sleeping until ready\n");
+	while( !isReady() )
+		usleep( 100000 );
+	usleep( 100000 );
+	printf("starting update thread\n");
 	// start the updating thread
 	update_thread.startThread();
 }
@@ -96,24 +101,27 @@ void ofxPd::threadedFunction()
 
 void ofxPd::audioRequested( float* output, int bufferSize, int nChannels )
 {
-	assert( bufferSize*nChannels == ring_buffer.getBufferFrames() );
 	// pull some sound from the ring buffer
 	float* buffer = ring_buffer.getNextBufferToReadFrom();
 	if ( buffer == NULL )
 	{
 		// send 0
 		memset( output, 0, sizeof(float)*bufferSize*nChannels);
-		usleep( 100 );
 	}
 	else
 	{
 		memcpy( output, buffer, sizeof(float)*bufferSize*nChannels );
+		// unlock the ring buffer
+		ring_buffer.unlock();
 	}
 }
 
 bool ofxPd::isReady()
 {
-	return isThreadRunning() && sys_hasstarted;
+	sys_lock();
+	bool res = isThreadRunning() && sys_hasstarted;
+	sys_unlock();
+	return res;
 }
 
 
@@ -158,7 +166,9 @@ void ofxPd::update()
 			}
 			
 			// After loading the samples, we need to clear them for the next iteration
+			sys_lock();
 			memset(sys_soundout, 0, sizeof(t_sample)*sys_noutchannels*sys_schedblocksize);        
+			sys_unlock();
 		}
 		
 		// push to ring buffer
@@ -218,7 +228,7 @@ float* AudioRingBuffer::getNextBufferToReadFrom()
 		{
 			underrunning = true;
 			underrun_count = 0;
-			fprintf(stderr,"AudioRingBuffer()::getNextBufferToReadFrom(): buffer under-run\n");
+			//fprintf(stderr,"AudioRingBuffer()::getNextBufferToReadFrom(): buffer under-run\n");
 		}
 		underrun_count++;
 		return NULL;
@@ -238,19 +248,12 @@ float* AudioRingBuffer::getNextBufferToReadFrom()
 	
 	ready--;
 	float* ret = buffers[next];
-	unlock();
 	
 	return ret;
 }
 
 void AudioRingBuffer::writeToNextBuffer( float* data )
 {
-	if ( isFull() )
-	{
-		fprintf(stderr,"AudioRingBuffer()::writeToNextBuffer(): buffer would overflow, not writing\n");
-		return;
-	}
-	//else printf("write: ready %i\n", ready );
 	lock();
 	memcpy( buffers[current_write], data, buf_size_bytes );
 	ready++;

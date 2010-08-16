@@ -21,6 +21,8 @@ class AudioRingBuffer
 
 		~AudioRingBuffer();
 
+	/// returns next buffer to read from, or NULL if no buffer is available (underrun)
+	/// if non-null, YOU MUST CALL unlock()
 		float* getNextBufferToReadFrom();
 		
 		void writeToNextBuffer( float* data );
