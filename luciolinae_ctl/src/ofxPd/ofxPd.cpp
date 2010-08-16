@@ -210,20 +210,23 @@ AudioRingBuffer::~AudioRingBuffer()
 float* AudioRingBuffer::getNextBufferToReadFrom()
 {
 	static bool underrunning = false;
+	static int underrun_count = 0;
 	if ( isEmpty() )
 	{
 
 		if ( !underrunning )
 		{
 			underrunning = true;
+			underrun_count = 0;
 			fprintf(stderr,"AudioRingBuffer()::getNextBufferToReadFrom(): buffer under-run\n");
 		}
+		underrun_count++;
 		return NULL;
 
 	}
 	if ( underrunning )
 	{
-		fprintf(stderr, "AudioRingBuffer()::getNextBufferToReadFrom(): underr-run recovered\n");
+		fprintf(stderr, "AudioRingBuffer()::getNextBufferToReadFrom(): underr-run recovered (%i times)\n", underrun_count);
 		underrunning = false;
 	}
 	//else printf("read: ready %i\n", ready );
