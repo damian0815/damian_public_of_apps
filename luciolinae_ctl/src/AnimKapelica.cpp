@@ -16,8 +16,8 @@ const char* AnimKapelica::NAME = "Kapelica";
 #include "DelaunayPulse.h"
 
 // how long to wait after triggering a delaunay down before pulsing
-static const float DELAUNAY_DOWN_MIN = 1.5f;
-static const float DELAUNAY_DOWN_MAX = 2.5f;
+static const float DELAUNAY_DOWN_MIN = 0.5f;
+static const float DELAUNAY_DOWN_MAX = 1.5f;
 // how long to wait after pulsing to wait before triggering a delaunay up
 static const float DELAUNAY_UP_MIN = 0.1f;
 static const float DELAUNAY_UP_MAX = 0.5f;
@@ -69,7 +69,7 @@ void KapelicaUnit::update( Lights* lights, float elapsed )
 				state = KU_DELAUNAY_DOWN;
 				timer = time_scalar*ofRandom( DELAUNAY_DOWN_MIN, DELAUNAY_DOWN_MAX );
 				const Light& which_light = lights->getBigLight( id );
-				DelaunayPulses::getInstance()->addPulseIn( lights->getBigLightIndex( id ), 0.5f, 1.0f, 0.5f, 
+				DelaunayPulses::getInstance()->addPulseIn( lights->getBigLightIndex( id ), 0.5f, time_scalar, 0.5f, 
 														  lights->getBoardDelaunay( which_light.getBoardId() ) );
 			}
 			break;
@@ -114,7 +114,7 @@ void KapelicaUnit::update( Lights* lights, float elapsed )
 			{
 				state = KU_DELAUNAY_UP;
 				const Light& which_light = lights->getBigLight( id );
-				DelaunayPulses::getInstance()->addPulseOut( lights->getBigLightIndex( id ), 0.5f, 1.0f, 0.5f, 
+				DelaunayPulses::getInstance()->addPulseOut( lights->getBigLightIndex( id ), 0.5f, time_scalar, 0.5f, 
 														  lights->getBoardDelaunay( which_light.getBoardId() ) );
 				timer = time_scalar*ofRandom( IDLE_MIN, IDLE_MAX );
 			}

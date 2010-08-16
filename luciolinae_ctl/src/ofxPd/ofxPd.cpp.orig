@@ -23,7 +23,7 @@ extern void sched_audio_callbackfn(void);
 
 // number of frames per section in the ring buffer
 const static int BUFFER_SIZE_PER_CHANNEL = 256;
-const static int NUM_BUFFERS = 8;
+const static int NUM_BUFFERS = 16;
 
 void ofxPd::setup( string _lib_dir )
 {
@@ -125,7 +125,11 @@ void ofxPd::update()
 		printf("pd is not ready\n");
 		return;
 	}
+<<<<<<< HEAD
 	//else printf("pd is ready\n");
+=======
+//	else printf("pd is ready\n");
+>>>>>>> dee3100323f6fa97c320f72e330a770055faf508
 	while ( !ring_buffer.isFull() )
 	{
 		// fill buffer
@@ -223,7 +227,7 @@ float* AudioRingBuffer::getNextBufferToReadFrom()
 	float* ret = buffers[next];
 	unlock();
 	
-	return ret;
+	return buffers[next];
 }
 
 void AudioRingBuffer::writeToNextBuffer( float* data )

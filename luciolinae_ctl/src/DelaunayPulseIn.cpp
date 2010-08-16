@@ -32,7 +32,7 @@ void DelaunayPulseIn::start ( int which_target, float start_radius, float _max_b
 			float brightness_pct = 1.0f-((distance-start_radius*0.7f)/(start_radius*0.7f));
 			float brightness = max_brightness*brightness_pct/**brightness_pct*/;
 			brightness *= ofRandom( 0.8f, 1.2f );
-			queued_pulses.push( MovingPulse( i, brightness, 0 ) );
+			queued_pulses.push( MovingPulse( i, brightness, ofRandom(0.8f,1.2f)*(timer+(distance/speed))) );
 		}
 	}
 	timer = 0;

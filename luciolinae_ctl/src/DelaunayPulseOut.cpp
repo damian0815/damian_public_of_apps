@@ -22,7 +22,7 @@ void DelaunayPulseOut::start( int which_source, float brightness, float _falloff
 	seen.clear();
 	while ( !queued_pulses.empty() )
 		queued_pulses.pop();
-	queued_pulses.push( MovingPulse( which_source, brightness, 0 ) );
+	queued_pulses.push( MovingPulse( which_source, brightness, ofRandom(0.0f,0.8f) ) );
 	timer = 0;
 }
 
