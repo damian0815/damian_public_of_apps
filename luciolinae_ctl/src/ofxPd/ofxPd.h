@@ -25,8 +25,9 @@ class AudioRingBuffer
 		
 		void writeToNextBuffer( float* data );
 	
-		bool isEmpty() { return ready == 0; }
-		bool isFull() { return num_bufs == ready; }
+	bool isEmpty() { lock(); bool res = (ready == 0); unlock(); return res; }
+	bool isFull() { lock(); bool res = (num_bufs == ready); unlock(); return res; }
+	int spacesFree() { lock(); int res = (ready-num_bufs); unlock(); return res; }
 	
 		int getBufferFrames() { return buf_size_bytes/sizeof(float); }
 	

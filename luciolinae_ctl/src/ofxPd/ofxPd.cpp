@@ -126,8 +126,10 @@ void ofxPd::update()
 		return;
 	}
 	//else printf("pd is ready\n");
-	if ( !ring_buffer.isFull() )
+	int num_times = ring_buffer.spacesFree();
+	while ( num_times>0 )
 	{
+		num_times--;
 		// fill buffer
 		static float* buffer = NULL;
 		if ( buffer == NULL )
