@@ -17,13 +17,19 @@ static unsigned char ACK=0x7f;
 
 // #define WAIT_FOR_ACK
 
-void BufferedSerial::setup( ofSerial* _serial , int baud )
+void BufferedSerial::setup( ofSerial* _serial , int baud, float _delay )
 {
 	baudrate = baud;
 	baud_timer = 0;
 	bytes_written = 0;
 	serial = _serial;
 	sent_this_block = 0;
+	
+	delay_ms = _delay*1000;
+	read_packet = 0;
+	write_packet = 0;
+	ready_packets = 0;
+	
 	
 	ofLog( OF_LOG_NOTICE, "BufferedSerial:: setup() synchronising board/pc" );
 	// clear out serial read buffer
@@ -108,6 +114,34 @@ void BufferedSerial::beginWrite()
 }
 
 bool BufferedSerial::writeBytes( unsigned char* bytes, int size )
+{
+	if ( ready_packets == NUM_PACKETS )
+		pushOutPacket();
+	memcpy( packets[write_packet].data, bytes, size );
+	packets[write_packet].count = size;
+	packets[write_packet].timer = ofGetElapsedTimeMillis()+delay_ms;
+	
+	ready_packets++;
+	write_packet++;
+	if ( write_packet >= NUM_PACKETS )
+		write_packet = 0;
+	
+	return true;
+}
+
+void BufferedSerial::pushOutPacket()
+{
+	if ( ready_packets == 0 )
+		return;
+	
+	writeBytes_real( packets[read_packet].data, packets[read_packet].count );
+	ready_packets--;
+	read_packet++;
+	if ( read_packet >= NUM_PACKETS )
+		read_packet = 0;
+}
+
+bool BufferedSerial::writeBytes_real( unsigned char* bytes, int size )
 {
 	int count = size;
 	while ( count > 0 )
@@ -205,6 +239,11 @@ void BufferedSerial::endWrite()
 void BufferedSerial::update( float elapsed )
 {
 	baud_timer += elapsed;
+	
+	while ( ready_packets> 0 && packets[read_packet].timer < ofGetElapsedTimeMillis() )
+	{
+		pushOutPacket();
+	}
 	
 	if ( bytes_written > 1024 )
 	{
