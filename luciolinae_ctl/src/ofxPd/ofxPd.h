@@ -27,7 +27,7 @@ class AudioRingBuffer
 	
 	bool isEmpty() { lock(); bool res = (ready == 0); unlock(); return res; }
 	bool isFull() { lock(); bool res = (num_bufs == ready); unlock(); return res; }
-	int spacesFree() { lock(); int res = (ready-num_bufs); unlock(); return res; }
+	int spacesFree() { lock(); int res = (num_bufs-ready); unlock(); return res; }
 	
 		int getBufferFrames() { return buf_size_bytes/sizeof(float); }
 	
