@@ -23,10 +23,13 @@ public:
 	/// return the ids of all the neighbours of this light
 	const set<int> getNeighbours( int target_id ) { return adjacencies.at(target_id); }
 
+	const vector<int>& getLights() { return valid_lights; }
+
 private:
 
 	// adjacency lists
 	vector<set<int> > adjacencies;
+	vector<int> valid_lights;
 
 };
 

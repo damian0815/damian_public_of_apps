@@ -23,7 +23,7 @@ extern void sched_audio_callbackfn(void);
 
 // number of frames per section in the ring buffer
 const static int BUFFER_SIZE_PER_CHANNEL = 256;
-const static int NUM_BUFFERS = 8;
+const static int NUM_BUFFERS = 16;
 
 void ofxPd::setup( string _lib_dir )
 {
@@ -101,9 +101,9 @@ void ofxPd::audioRequested( float* output, int bufferSize, int nChannels )
 	float* buffer = ring_buffer.getNextBufferToReadFrom();
 	if ( buffer == NULL )
 	{
-		printf("underrun\n");
 		// send 0
 		memset( output, 0, sizeof(float)*bufferSize*nChannels);
+		usleep( 100 );
 	}
 	else
 	{
@@ -126,7 +126,7 @@ void ofxPd::update()
 		return;
 	}
 	//else printf("pd is ready\n");
-	while ( !ring_buffer.isFull() )
+	if ( !ring_buffer.isFull() )
 	{
 		// fill buffer
 		static float* buffer = NULL;
@@ -207,10 +207,22 @@ AudioRingBuffer::~AudioRingBuffer()
 
 float* AudioRingBuffer::getNextBufferToReadFrom()
 {
+	static bool underrunning = false;
 	if ( isEmpty() )
 	{
-		fprintf(stderr,"AudioRingBuffer()::getNextBufferToReadFrom(): buffer under-run\n");
+
+		if ( !underrunning )
+		{
+			underrunning = true;
+			fprintf(stderr,"AudioRingBuffer()::getNextBufferToReadFrom(): buffer under-run\n");
+		}
 		return NULL;
+
+	}
+	if ( underrunning )
+	{
+		fprintf(stderr, "AudioRingBuffer()::getNextBufferToReadFrom(): underr-run recovered\n");
+		underrunning = false;
 	}
 	//else printf("read: ready %i\n", ready );
 	

@@ -23,16 +23,19 @@ void DelaunayPulseIn::start ( int which_target, float start_radius, float _max_b
 		queued_pulses.pop();
 	// find all lights closer than start_radius and add
 	ofxVec2f source_pos( lights->getLight(which_target).getX(), lights->getLight(which_target).getY() );
-	for ( int i=0; i<lights->getNumLights(); i++ )
+	const vector< int >& valid_lights = delaunay->getLights();
+	for ( int i=0; i< valid_lights.size(); i++ )
 	{
-		ofxVec2f test_pos( lights->getLight(i).getX(), lights->getLight(i).getY() );
+		ofxVec2f test_pos( lights->getLight(valid_lights[i]).getX(), lights->getLight(valid_lights[i]).getY() );
 		float distance = (source_pos-test_pos).length();
 		if ( distance < start_radius  && distance > start_radius*0.7f )
 		{
 			float brightness_pct = 1.0f-((distance-start_radius*0.7f)/(start_radius*0.7f));
 			float brightness = max_brightness*brightness_pct/**brightness_pct*/;
 			brightness *= ofRandom( 0.8f, 1.2f );
-			queued_pulses.push( MovingPulse( i, brightness, ofRandom(0.8f,1.2f)*(timer+(distance/speed))) );
+			float rand = ofRandomuf();
+			rand*=rand;
+			queued_pulses.push( MovingPulse( valid_lights[i], brightness, rand*0.2f ) );
 		}
 	}
 	timer = 0;

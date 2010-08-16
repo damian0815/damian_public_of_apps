@@ -16,8 +16,8 @@ const char* AnimKapelica::NAME = "Kapelica";
 #include "DelaunayPulse.h"
 
 // how long to wait after triggering a delaunay down before pulsing
-static const float DELAUNAY_DOWN_MIN = 0.5f;
-static const float DELAUNAY_DOWN_MAX = 1.5f;
+static const float DELAUNAY_DOWN_MIN = 1.0f;
+static const float DELAUNAY_DOWN_MAX = 2.5f;
 // how long to wait after pulsing to wait before triggering a delaunay up
 static const float DELAUNAY_UP_MIN = 0.1f;
 static const float DELAUNAY_UP_MAX = 0.5f;

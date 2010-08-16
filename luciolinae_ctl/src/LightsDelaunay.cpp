@@ -34,12 +34,15 @@ static int IndexedVec3fCompare( const void *v1, const void *v2)
 
 LightsDelaunay::LightsDelaunay( const Lights& lights )
 {
+	valid_lights.clear();
 	
 	// first, sort vertices, maintaining index associations
+	
 	int num_lights = lights.getNumLights();
 	IndexedVec3f vertices[num_lights];
 	for ( size_t i=0; i<num_lights; i++ )
 	{
+		valid_lights.push_back( i) ;
 		vertices[i].index = i;
 		vertices[i].vec = ofxVec3f( lights.getLight(i).getX(), lights.getLight(i).getY(), lights.getLight(i).getZ() );
 	}
@@ -82,13 +85,15 @@ LightsDelaunay::LightsDelaunay( const Lights& lights )
 
 LightsDelaunay::LightsDelaunay( const Lights& lights, int use_board_id )
 {
-	
+	valid_lights.clear();
+
 	// first, sort vertices, maintaining index associations
 	vector<int> board_lights = lights.getLightIdsForBoard( use_board_id );
 	int num_lights = board_lights.size();
 	IndexedVec3f vertices[num_lights];
 	for ( size_t i=0; i<num_lights; i++ )
 	{
+		valid_lights.push_back( board_lights[i] ) ;
 		vertices[i].index = board_lights[i];
 		vertices[i].vec = ofxVec3f( lights.getLight(board_lights[i]).getX(), lights.getLight(board_lights[i]).getY(), 0 );
 	}
