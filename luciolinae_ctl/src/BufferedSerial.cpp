@@ -104,7 +104,9 @@ void BufferedSerial::shutdown()
 
 void BufferedSerial::beginWrite()
 {
+#ifdef WAIT_FOR_ACK
 	assert( sent_this_block%CHUNKSIZE == 0);
+#endif
 	
 	unsigned char dummy[2];
 	dummy[0] = 0;
