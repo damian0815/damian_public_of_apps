@@ -11,7 +11,7 @@
 #X msg 107 132 1;
 #X obj 62 185 pack f f f;
 #X obj 62 212 route 1 2 3 4 5 6 7 8;
-#X obj 62 156 poly 8 1;
+#X obj 62 156 poly 4 1;
 #X obj 63 385 biquad~ 0.041825 0.712579 0.0823115 -0.164623 0.0823115
 ;
 #X obj 272 335 ping;
