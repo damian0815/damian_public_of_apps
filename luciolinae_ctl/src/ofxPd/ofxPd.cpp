@@ -23,7 +23,7 @@ extern void sched_audio_callbackfn(void);
 
 // number of frames per section in the ring buffer
 const static int BUFFER_SIZE_PER_CHANNEL = 256;
-const static int NUM_BUFFERS = 16;
+const static int NUM_BUFFERS = 24;
 
 void ofxPd::setup( string _lib_dir )
 {
@@ -223,7 +223,7 @@ float* AudioRingBuffer::getNextBufferToReadFrom()
 	float* ret = buffers[next];
 	unlock();
 	
-	return buffers[next];
+	return ret;
 }
 
 void AudioRingBuffer::writeToNextBuffer( float* data )
