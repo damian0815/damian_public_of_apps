@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "cal3d.h"
+#include "cal3d/cal3d.h"
 #include "cal3d/animcallback.h"
 #include "ofxVectorMath.h"
 #include <set>
