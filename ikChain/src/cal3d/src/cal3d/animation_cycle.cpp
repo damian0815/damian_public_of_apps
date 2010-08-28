@@ -141,7 +141,7 @@ bool CalAnimationCycle::update(float deltaTime)
       setTime(getTime() + getCoreAnimation()->getDuration());
 
   }
-	
+
   return true;
 }
 
