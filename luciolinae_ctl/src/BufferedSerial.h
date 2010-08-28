@@ -18,7 +18,7 @@ class BufferedSerial
 {
 public:
 	
-	virtual void setup( ofSerial* _serial, int baud );
+	virtual void setup( ofSerial* _serial, int baud, float delay = 0.2f );
 	virtual void shutdown();
 	virtual void beginWrite();
 	// blocks until all bytes are written + return true. returns false on error
@@ -29,6 +29,10 @@ public:
 	
 	
 protected:
+	
+	virtual bool writeBytes_real( unsigned char* buffer, int count );
+	void pushOutPacket();
+	
 	int sent_this_block;
 
 	ofSerial* serial;
@@ -36,6 +40,23 @@ protected:
 	int baudrate;
 	int bytes_written;
 	float baud_timer;
+	
+	
+	int delay_ms;
+	const static int NUM_PACKETS = 64;
+	struct Packet
+	{
+		int timer;
+		unsigned char data[64];
+		int count;
+	};
+	Packet packets[NUM_PACKETS];
+	int read_packet;
+	int write_packet;
+	int ready_packets;
+	
+	
+	
 	
 	
 };

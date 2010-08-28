@@ -28,12 +28,14 @@ void Light::setup( int _board_id, int _light_id, float _x, float _y )
 	light_id = _light_id;
 	x = _x;
 	y = _y;
+	z = 0;
 }
 
 void Light::setup( ofxXmlSettings& data )
 {
 	x = data.getValue( "x", 0.0f );
 	y = data.getValue( "y", 0.0f );
+	z = data.getValue( "z", 0.0f );
 	board_id = data.getValue( "board_id", 0 );
 	light_id = data.getValue( "light_id", 0 );	
 	big = data.getValue( "big", false );
@@ -43,6 +45,7 @@ void Light::save( ofxXmlSettings& data )
 {
 	data.addValue( "x", x );
 	data.addValue( "y", y );
+	data.addValue( "z", z );
 	data.addValue( "board_id", board_id );
 	data.addValue( "light_id", light_id );
 	data.addValue( "big", big );

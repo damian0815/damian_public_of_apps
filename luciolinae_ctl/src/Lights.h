@@ -21,7 +21,7 @@ class LightsDelaunay;
 class Lights
 {
 public:
-	Lights() { rebuild_delaunay = true; delaunay = NULL; 	
+	Lights() { rebuild_delaunay = true; rebuild_boards_delaunay = true, delaunay = NULL; 	
 		blend_state_stack.resize(1);
 		disableBlending(); setBlendMode( BLEND_MIX ); setBlendAlpha( 1 );
 		small_bright_factor = 1.0f; }
@@ -59,13 +59,17 @@ public:
 	// accessors
 	int getNumLights() const { return lights.size(); }
 	const Light& getLight( int i ) const { return lights.at(i); }
-	void setLightPosition( int id, float x, float y ) { lights.at(id).setPosition( x, y ); rebuild_delaunay = true; }
+	void setLightPosition( int id, float x, float y ) { lights.at(id).setPosition( x, y ); rebuild_boards_delaunay = true; rebuild_delaunay = true; }
+	vector<int> getLightIdsForBoard( int board_id ) const;
+	int getBoardIndexForId( int board_id ) const { return (board_id/16)-1; }
+	int getBoardIdForIndex( int board_index ) const { return (board_index+1)*16; }
 	
 	// big lights (high current)
 	int getNumBigLights() const { return big_lights.size(); }
+	// we have 2 sets of indices: big light indices [0..num big lights], and light indices [0..num lights]
+	// get the ith big light
 	const Light& getBigLight( int i ) const { return lights[big_lights.at(i)]; }
-	// we have 2 sets of indices: big light indices, and light indices.
-	// get the light index for the given big light index
+	// get the light index for the ith big light index
 	int getBigLightIndex( int i ) const { return big_lights.at(i); }
 	// get the big light index for the given light index, or -1 if this isn't a big light
 	int getLightIndexForBig( int i ) const;
@@ -82,6 +86,8 @@ public:
 	// get delaunay triangulation
 	LightsDelaunay* getDelaunay();
 	
+	// get delaunay triangulation for just one board
+	LightsDelaunay* getBoardDelaunay( int board_id );
 	
 	// blending
 	void enableBlending() { blend_state_stack.back().blending = true; }
@@ -112,9 +118,11 @@ private:
 	
 	BufferedSerial* serial;
 	LightsDelaunay* delaunay;
+	map<int, LightsDelaunay*> boards_delaunay;
 	
 	int num_boards;
 	bool rebuild_delaunay;
+	bool rebuild_boards_delaunay;
 	
 	
 	vector<Light> lights;
@@ -135,5 +143,6 @@ private:
 	vector<int> debug_sent;
 	
 
+	
 };
 

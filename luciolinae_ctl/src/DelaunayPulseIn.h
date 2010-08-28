@@ -19,7 +19,7 @@ using namespace std;
 class DelaunayPulseIn : public DelaunayPulse
 {
 public:
-	DelaunayPulseIn( Lights* _lights ) : lights( _lights ) {};
+	DelaunayPulseIn( Lights* _lights, LightsDelaunay* del ) : lights( _lights ), delaunay(del) {};
 	
 	// buildup is the inverse of falloff
 	void start ( int which_source, float start_radius, float max_brightness, float _speed );
@@ -50,4 +50,6 @@ private:
 	
 	Lights* lights;
 	
+	LightsDelaunay* delaunay;
+
 };

@@ -48,7 +48,7 @@ ifeq ($(ARCH),x86_64)
 else ifeq ($(ARCH),armv7l)
 	LIBSPATH=linuxarmv7l
 	SKIP_SHARED_LIBS += fmodex
-	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -O3
+	COMPILER_OPTIMIZATION = -march=armv7-a -mtune=cortex-a8 -O3 -funsafe-math-optimizations -mfpu=neon -ftree-vectorize -mfloat-abi=softfp
 else
 	LIBSPATH=linux
 	SKIP_SHARED_LIBS += none

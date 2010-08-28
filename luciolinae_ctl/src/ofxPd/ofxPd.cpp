@@ -21,11 +21,15 @@ extern void sched_audio_callbackfn(void);
 };
 
 
-typedef uint32_t UInt32;
+// number of frames per section in the ring buffer
+const static int BUFFER_SIZE_PER_CHANNEL = 256;
+const static int NUM_BUFFERS = 16;
 
 void ofxPd::setup( string _lib_dir )
 {
 	lib_dir = ofToDataPath(_lib_dir);
+	num_channels = 2;
+	ring_buffer.setup( BUFFER_SIZE_PER_CHANNEL*num_channels, NUM_BUFFERS );
 }
 
 void ofxPd::addOpenFile( string file_path )
@@ -43,7 +47,15 @@ void ofxPd::addSearchPath( string path )
 
 void ofxPd::start()
 {
+	// start the main thread
 	this->startThread();
+	printf("pd thread started, sleeping until ready\n");
+	while( !isReady() )
+		usleep( 100000 );
+	usleep( 100000 );
+	printf("starting update thread\n");
+	// start the updating thread
+	update_thread.startThread();
 }
 
 
@@ -80,7 +92,7 @@ void ofxPd::threadedFunction()
 	
 	int sound_rate = 44100;
 	int block_size = 64;
-	int n_out_channels = 2;
+	int n_out_channels = num_channels;
 	int n_in_channels = 0;
 	sys_main( lib_dir.c_str(), externs_cat.c_str(), open_files_cat.c_str(), search_path_cat.c_str(),
 			 sound_rate, block_size, n_out_channels, n_in_channels );
@@ -89,46 +101,175 @@ void ofxPd::threadedFunction()
 
 void ofxPd::audioRequested( float* output, int bufferSize, int nChannels )
 {
-    //assert(inBusNumber == 0);
-    //assert(ioData->mNumberBuffers == 1);  // doing one callback, right?
-    //assert(sizeof(t_sample) == 4);  // assume 32-bit floats here
-	
-    //AudioCallbackParams *params = (AudioCallbackParams*)inRefCon;
-    
-    // sys_schedblocksize is How many frames we have per PD dsp_tick
-    // inNumberFrames is how many CoreAudio wants
-	int inNumberFrames = bufferSize;
-    
-    // Make sure we're dealing with evenly divisible numbers between
-    // the number of frames CoreAudio needs vs the block size for a given PD dsp tick.
-    //Otherwise this looping scheme we're doing below doesn't make much sense.
-    assert(inNumberFrames % sys_schedblocksize == 0);
-	
-    // How many times to generate a DSP event in PD
-    UInt32 times = inNumberFrames / sys_schedblocksize;
-
-    for(UInt32 i = 0; i < times; i++) {
-        
-		// do one DSP block
-        sys_lock();
-        //(*params->callback)(inTimeStamp);
-		sched_audio_callbackfn();
-        sys_unlock();
-		
-        // This should cover sys_noutchannels channels. Turns non-interleaved into 
-        // interleaved audio.
-        for (int n = 0; n < sys_schedblocksize; n++) {
-            for(int ch = 0; ch < sys_noutchannels; ch++) {
-                t_sample fsample = CLAMP(sys_soundout[n+sys_schedblocksize*ch],-1,1);
-                output[(n*sys_noutchannels+ch) + // offset in iteration
-					    i*sys_schedblocksize*sys_noutchannels] // iteration starting address
-					= fsample;
-            }        
-        }
-        
-        // After loading the samples, we need to clear them for the next iteration
-        memset(sys_soundout, 0, sizeof(t_sample)*sys_noutchannels*sys_schedblocksize);        
-    }
-	
+	// pull some sound from the ring buffer
+	float* buffer = ring_buffer.getNextBufferToReadFrom();
+	if ( buffer == NULL )
+	{
+		// send 0
+		memset( output, 0, sizeof(float)*bufferSize*nChannels);
+	}
+	else
+	{
+		memcpy( output, buffer, sizeof(float)*bufferSize*nChannels );
+		// unlock the ring buffer
+		ring_buffer.unlock();
+	}
 }
 
+bool ofxPd::isReady()
+{
+	sys_lock();
+	bool res = isThreadRunning() && sys_hasstarted;
+	sys_unlock();
+	return res;
+}
+
+
+
+void ofxPd::update()
+{
+	if ( !isReady() )
+	{
+		printf("pd is not ready\n");
+		return;
+	}
+	//else printf("pd is ready\n");
+	int num_times = ring_buffer.spacesFree();
+	while ( num_times>0 )
+	{
+		num_times--;
+		// fill buffer
+		static float* buffer = NULL;
+		if ( buffer == NULL )
+			buffer = new float[BUFFER_SIZE_PER_CHANNEL*num_channels];
+		
+		// how many times to tick Pd
+		int times = BUFFER_SIZE_PER_CHANNEL/sys_schedblocksize;
+		
+		// go
+		for ( int i=0; i<times; i++ )
+		{
+			// do one DSP block
+			sys_lock();
+			sched_audio_callbackfn();
+			sys_unlock();
+			
+			// This should cover sys_noutchannels channels. Turns non-interleaved into 
+			// interleaved audio.
+			for (int n = 0; n < sys_schedblocksize; n++) {
+				for(int ch = 0; ch < sys_noutchannels; ch++) {
+					t_sample fsample = CLAMP(sys_soundout[n+sys_schedblocksize*ch],-1,1);
+					buffer[(n*sys_noutchannels+ch) + // offset in iteration
+						   i*sys_schedblocksize*sys_noutchannels] // iteration starting address
+					= fsample;
+				}        
+			}
+			
+			// After loading the samples, we need to clear them for the next iteration
+			sys_lock();
+			memset(sys_soundout, 0, sizeof(t_sample)*sys_noutchannels*sys_schedblocksize);        
+			sys_unlock();
+		}
+		
+		// push to ring buffer
+		ring_buffer.writeToNextBuffer( buffer );
+	}
+}
+
+
+
+
+
+
+
+
+AudioRingBuffer::AudioRingBuffer()
+{
+	num_bufs = 0;
+	ready = 0;
+	pthread_mutex_init(&mutex, NULL); 
+}
+
+void AudioRingBuffer::setup(int buffsize, int _num_bufs )
+{
+	num_bufs = _num_bufs;
+	buffers = new float*[num_bufs];
+	for ( int i=0; i<num_bufs; i++ )
+	{
+		buffers[i] = new float[buffsize];
+	}
+	buf_size_bytes = buffsize*sizeof(float);
+	current_read = 0;
+	current_write = 0;
+}
+
+AudioRingBuffer::~AudioRingBuffer()
+{
+	if ( num_bufs > 0 )
+	{
+		for ( int i=0; i<num_bufs; i++ )
+		{
+			delete[] buffers[i];
+		}
+		delete[] buffers;
+	}
+	num_bufs = 0;
+}
+
+
+float* AudioRingBuffer::getNextBufferToReadFrom()
+{
+	static bool underrunning = false;
+	static int underrun_count = 0;
+	if ( isEmpty() )
+	{
+
+		if ( !underrunning )
+		{
+			underrunning = true;
+			underrun_count = 0;
+			//fprintf(stderr,"AudioRingBuffer()::getNextBufferToReadFrom(): buffer under-run\n");
+		}
+		underrun_count++;
+		return NULL;
+
+	}
+	if ( underrunning )
+	{
+		fprintf(stderr, "AudioRingBuffer()::getNextBufferToReadFrom(): underr-run recovered (%i times)\n", underrun_count);
+		underrunning = false;
+	}
+	//else printf("read: ready %i\n", ready );
+	
+	lock();
+	int next = current_read++;
+	if ( current_read >= num_bufs )
+		current_read = 0;
+	
+	ready--;
+	float* ret = buffers[next];
+	
+	return ret;
+}
+
+void AudioRingBuffer::writeToNextBuffer( float* data )
+{
+	lock();
+	memcpy( buffers[current_write], data, buf_size_bytes );
+	ready++;
+	current_write++;
+	if ( current_write >= num_bufs )
+		current_write = 0;
+	unlock();
+}
+
+
+void ofxPdUpdateThread::threadedFunction()
+{
+	while ( !should_stop )
+	{
+		target->update();
+		usleep( 3 );
+	}
+	stopped = true;
+}

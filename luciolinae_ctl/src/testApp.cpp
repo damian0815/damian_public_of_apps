@@ -5,7 +5,9 @@
 #include "AnimStateMachine.h"
 #include "AnimSeq.h"
 #include "StateAnimIdle.h"
+#include "AnimKapelica.h"
 
+//#define DO_PD
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
@@ -62,6 +64,7 @@ void testApp::setup(){
 	}
 
 	AnimationFactory::useLights( &lights );
+	anim_switcher.addAnim( AnimKapelica::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSweep::NAME );
 	anim_switcher.addAnim( AnimDelaunay::NAME );
@@ -70,6 +73,7 @@ void testApp::setup(){
 
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
 	
+#ifdef DO_PD
 	printf("starting pd...\n");
 	
 	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
@@ -77,6 +81,7 @@ void testApp::setup(){
 	//pd.addOpenFile( "pd-test.pd" );
 	pd.addOpenFile( "pdstuff/_main.pd" );
 	pd.start();
+#endif
 	
 	printf("testApp::setup() finished\n");
 	
@@ -102,35 +107,6 @@ void testApp::update(){
 
 	// send light levels
 	lights.flush();
-	
-	/*
-	// test
-	static unsigned int current = 2048<<4;	
-	static float current_float = 2048;
-	unsigned int elapsed = ofGetLastFrameTime()*(1<<10);
-	float decay_float = 0.5f;
-	unsigned int decay_fixed = decay_float*(1<<4);
-	// floating point math: current = current-current*elapsed*decay_pct
-	// this would mean that every second, current would lose decay_pct of its value
-	//
-	// fixed point math: current is *2^0, elapsed is *2^-10 (millis->seconds), decay is *2^-4
-	// we have 32 bits of precision in an unsigned long int, so this is ok
-	// and then shift to correct for multiplication
-	// -10+-4 = -14
-	unsigned int next;
-	if ( current == 0 )
-		next = current;
-	else
-		next = current - (((current*elapsed*decay_fixed)>>14)+1);
-	
-	// float to compare
-	float float_factor = ofGetLastFrameTime()*decay_float;
-	float next_float = current_float - current_float*float_factor;
-	
-	printf("elapsed %3u; %4u decays by %f/%u -> fixed: %4u, float: %f (factor %f)\n", elapsed, current>>4, decay_float, decay_fixed, next>>4, next_float, float_factor );
-	current_float = next_float;
-	current = next;
-	 */
 	
 	
 }
@@ -232,7 +208,7 @@ void testApp::windowResized(int w, int h){
 
 void testApp::audioRequested( float* input, int bufferSize, int nChannels )
 {
-	if ( pd.isThreadRunning() )
+	if ( pd.isReady() )
 	{
 		pd.audioRequested( input, bufferSize, nChannels );
 	}

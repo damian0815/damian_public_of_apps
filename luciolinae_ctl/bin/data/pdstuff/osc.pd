@@ -9,7 +9,6 @@
 #X obj 26 153 routeOSC /blip /delaunay /breath /chunks /blip_all /seq
 ;
 #X obj 371 183 s osc_seq;
-#X obj 118 63 print;
 #X connect 0 0 7 0;
 #X connect 2 0 0 0;
 #X connect 7 0 1 0;

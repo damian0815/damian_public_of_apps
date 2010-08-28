@@ -38,13 +38,14 @@ public:
 	// position
 	float getX() const { return x; }
 	float getY() const { return y; }
+	float getZ() const { return z; }
 	void setPosition( float _x, float _y ) { x = _x; y = _y; }
 	void toggleBig() { big = !big; }
 	bool isBig() const { return big; }
 	
 	// board/light data
-	unsigned char getBoardId() { return board_id; }
-	unsigned char getLightId() { return light_id; }
+	unsigned char getBoardId() const { return board_id; }
+	unsigned char getLightId() const { return light_id; }
 	
 private:
 	
@@ -60,7 +61,7 @@ private:
 	bool big;
 	float last_set_timer;
 	
-	float x,y;
+	float x,y,z;
 	
 };
 

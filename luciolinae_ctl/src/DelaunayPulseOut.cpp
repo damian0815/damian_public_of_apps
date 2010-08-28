@@ -22,7 +22,7 @@ void DelaunayPulseOut::start( int which_source, float brightness, float _falloff
 	seen.clear();
 	while ( !queued_pulses.empty() )
 		queued_pulses.pop();
-	queued_pulses.push( MovingPulse( which_source, brightness, 0 ) );
+	queued_pulses.push( MovingPulse( which_source, brightness, ofRandom(0.0f,0.2f) ) );
 	timer = 0;
 }
 
@@ -51,7 +51,7 @@ void DelaunayPulseOut::update( float elapsed )
 			seen.insert( curr );
 			
 			// add neighbours to queue
-			set<int> adj = lights->getDelaunay()->getNeighbours( curr );
+			set<int> adj = delaunay->getNeighbours( curr );
 			// check neighbours against seen. 
 			ofxVec2f curr_pos( lights->getLight( curr ).getX(), 
 							  lights->getLight( curr ).getY() );
@@ -79,6 +79,7 @@ void DelaunayPulseOut::update( float elapsed )
 		const Light& light = lights->getLight( pings[i].first );
 		m.addFloatArg( light.getX() );
 		m.addFloatArg( light.getY() );
+		m.addFloatArg( delaunay->getId() );
 		Osc::getInstance()->sendMessage( m );
 	}
 }

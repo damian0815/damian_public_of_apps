@@ -14,19 +14,23 @@
 
 DelaunayPulses* DelaunayPulses::instance = NULL;
 
-void DelaunayPulses::addPulseOut( int target, float brightness, float decay, float speed )
+void DelaunayPulses::addPulseOut( int target, float brightness, float decay, float speed, LightsDelaunay* del )
 {
 	if ( pulses.size()> 8 )
 		return;
-	pulses.push_back( new DelaunayPulseOut( lights ) );
+	if ( del == NULL )
+		del = lights->getDelaunay();
+	pulses.push_back( new DelaunayPulseOut( lights, del ) );
 	pulses.back()->start( target, brightness, decay, speed );
 }
 
-void DelaunayPulses::addPulseIn( int target, float max_brightness, float start_radius, float speed )
+void DelaunayPulses::addPulseIn( int target, float max_brightness, float start_radius, float speed, LightsDelaunay* del )
 {
 	if ( pulses.size()> 8 )
 		return;
-	pulses.push_back( new DelaunayPulseIn( lights ) );
+	if ( del == NULL )
+		del = lights->getDelaunay();
+	pulses.push_back( new DelaunayPulseIn( lights, del ) );
 	pulses.back()->start( target, start_radius, max_brightness, speed );
 }
 
