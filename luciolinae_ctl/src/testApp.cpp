@@ -4,6 +4,7 @@
 #include "AnimDelaunay.h"
 #include "AnimStateMachine.h"
 #include "AnimSeq.h"
+#include "AnimSeqSine.h"
 #include "StateAnimIdle.h"
 #include "AnimKapelica.h"
 
@@ -64,12 +65,13 @@ void testApp::setup(){
 	}
 
 	AnimationFactory::useLights( &lights );
-	anim_switcher.addAnim( AnimKapelica::NAME );
+	//anim_switcher.addAnim( AnimKapelica::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSweep::NAME );
 	anim_switcher.addAnim( AnimDelaunay::NAME );
 	anim_switcher.addAnim( AnimPositionCalibrate::NAME );
 	anim_switcher.addAnim( AnimSeq::NAME );
+	anim_switcher.addAnim( AnimSeqSine::NAME );
 
 	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
 	
