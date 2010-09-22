@@ -13,7 +13,9 @@
 
 #include "ofxPd.h"
 
+#ifdef TARGET_LINUX
 #define NO_WINDOW
+#endif
 
 class testApp : public ofBaseApp{
 	

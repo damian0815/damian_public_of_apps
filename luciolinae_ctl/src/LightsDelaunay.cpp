@@ -35,6 +35,7 @@ static int IndexedVec3fCompare( const void *v1, const void *v2)
 LightsDelaunay::LightsDelaunay( const Lights& lights )
 {
 	valid_lights.clear();
+	id = 0;
 	
 	// first, sort vertices, maintaining index associations
 	
@@ -86,6 +87,7 @@ LightsDelaunay::LightsDelaunay( const Lights& lights )
 LightsDelaunay::LightsDelaunay( const Lights& lights, int use_board_id )
 {
 	valid_lights.clear();
+	id = lights.getBoardIndexForId( use_board_id );
 
 	// first, sort vertices, maintaining index associations
 	vector<int> board_lights = lights.getLightIdsForBoard( use_board_id );
@@ -133,4 +135,21 @@ LightsDelaunay::LightsDelaunay( const Lights& lights, int use_board_id )
 	}
 	
 }
+
+
+
+void LightsDelaunay::removeNeighbour( int from, int to )
+{
+	adjacencies[from].erase(to);
+	adjacencies[to].erase(from);
+}
+
+
+void LightsDelaunay::addNeighbour( int from, int to )
+{
+	adjacencies[from].insert(to);
+	adjacencies[to].insert(from);
+	
+}
+
 

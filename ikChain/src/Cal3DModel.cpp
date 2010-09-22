@@ -209,7 +209,14 @@ void Cal3DModel::draw( bool wireframe, float scale )
 					printf("%7.3f %7.3f %7.3f\n", meshVertices[i][0], meshVertices[i][1], meshVertices[i][2] );
 				}*/
 				ofEnableAlphaBlending();
-				glColor4f( 0,0,0,0.2f );
+				if ( wireframe )
+				{
+					glColor4f( 0,0,0,0.2f );
+				}
+				else
+				{
+					glColor4f( 0,0,0, 1 );
+				}
 				glPushAttrib( GL_DEPTH_BUFFER_BIT );
 				glDepthMask( GL_TRUE );
 				//glColor4f( 0,0,0,1 );

@@ -187,19 +187,21 @@ void IKTagger::update( float elapsed )
 }
 
 
-void IKTagger::draw()
+void IKTagger::draw( bool debug_draw )
 {
 	glPushMatrix();
 	glTranslatef( root_pos.x, root_pos.y, root_pos.z );
 	glTranslatef( -target_offset.x, -target_offset.y, -target_offset.z );
-	bool draw_extended = false;
-	character.draw( 1.0f, draw_extended );
-
+	if ( debug_draw )
+	{
+		bool draw_extended = false;
+		character.draw( 1.0f, draw_extended );
+	}
 	glRotatef( 180, 0, 1, 0 );
 	glRotatef( -90, 1, 0, 0 );
 	// swap left handed to right handed
 	glScalef( -1, 1, 1 );
-	bool draw_wireframe = true;
+	bool draw_wireframe = debug_draw;
 	model.draw( draw_wireframe );
 	glPopMatrix();
 }

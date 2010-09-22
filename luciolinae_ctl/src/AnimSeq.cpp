@@ -16,12 +16,12 @@ AnimSeq::AnimSeq( Lights* _lights )
 {
 	anim_pct = 0.0f;
 	current_active = -1;
-	speed = 1.0f;
+	speed = 0.1f;
 }
 
 void AnimSeq::update( float elapsed )
 {
-	float real_speed = 16*1.0f/lights->getNumLights();
+	float real_speed = speed*16.0f*1.0f/lights->getNumLights();
 	
 	// update pct
 	anim_pct += elapsed * real_speed;
