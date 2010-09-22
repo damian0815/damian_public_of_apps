@@ -16,11 +16,11 @@ const char* AnimKapelica::NAME = "Kapelica";
 #include "DelaunayPulse.h"
 
 // how long to wait after triggering a delaunay down before pulsing
-static const float DELAUNAY_DOWN_MIN = 1.0f;
-static const float DELAUNAY_DOWN_MAX = 2.5f;
+static const float DELAUNAY_DOWN_MIN = 2.0f;
+static const float DELAUNAY_DOWN_MAX = 3.0f;
 // how long to wait after pulsing to wait before triggering a delaunay up
 static const float DELAUNAY_UP_MIN = 0.1f;
-static const float DELAUNAY_UP_MAX = 0.5f;
+static const float DELAUNAY_UP_MAX = 0.7f;
 // how long to stay doing nothing
 static const float IDLE_MIN = 2.0f;
 static const float IDLE_MAX = 20.0f;
@@ -127,7 +127,7 @@ void KapelicaUnit::update( Lights* lights, float elapsed )
 			if ( timer < 0.0f )
 			{
 				state = KU_IDLE;
-				timer = 0.0f;
+				timer = 1.0f;
 				time_scalar = ofRandom (MIN_TIME_SCALAR, MAX_TIME_SCALAR );
 			}
 			break;
