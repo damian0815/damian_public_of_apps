@@ -7,6 +7,7 @@
 #include "AnimSeqSine.h"
 #include "StateAnimIdle.h"
 #include "AnimKapelica.h"
+#include "AnimGazebo.h"
 
 //#define DO_PD
 
@@ -66,6 +67,7 @@ void testApp::setup(){
 
 	AnimationFactory::useLights( &lights );
 	//anim_switcher.addAnim( AnimKapelica::NAME );
+	anim_switcher.addAnim( AnimGazebo::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSweep::NAME );
 	anim_switcher.addAnim( AnimDelaunay::NAME );

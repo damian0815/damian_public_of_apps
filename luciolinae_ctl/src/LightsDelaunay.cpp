@@ -136,3 +136,20 @@ LightsDelaunay::LightsDelaunay( const Lights& lights, int use_board_id )
 	
 }
 
+
+
+void LightsDelaunay::removeNeighbour( int from, int to )
+{
+	adjacencies[from].erase(to);
+	adjacencies[to].erase(from);
+}
+
+
+void LightsDelaunay::addNeighbour( int from, int to )
+{
+	adjacencies[from].insert(to);
+	adjacencies[to].insert(from);
+	
+}
+
+

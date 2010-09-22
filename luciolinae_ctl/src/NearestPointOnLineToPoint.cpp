@@ -15,10 +15,10 @@
 
 // Calculate the nearest point on the given line segment to the given point.
 // Return the intersection point on the line. If linePosition is non-NULL, 
-// return the normalised line position (0=LineStart, 1=LineEnd, <0=before 
+// set it to be the normalised line position (0=LineStart, 1=LineEnd, <0=before 
 // LineStart, >1=after LineEnd).
 ofxVec3f NearestPointOnLineToPoint::calculateNearestPoint( const ofxVec3f &LineStart, const ofxVec3f &LineEnd, const ofxVec3f &Point, 
-							   float* linePosition )
+							   float* linePosition, bool clamp_to_line )
 {
 	float LineMagSq;
 	float U;
@@ -35,6 +35,9 @@ ofxVec3f NearestPointOnLineToPoint::calculateNearestPoint( const ofxVec3f &LineS
 	else
 		U = 1.0f;
 	
+	
+	if ( clamp_to_line )
+		U = max( 0.0f, min(U, 1.0f ) );
 	
 	ofxVec3f intersection = LineStart + U*(LineEnd-LineStart);
 	// save linePosition

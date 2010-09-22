@@ -27,6 +27,7 @@
 #include "StateAnimBlipAll.h"
 #include "StateAnimSeq.h"
 #include "AnimKapelica.h"
+#include "AnimGazebo.h"
 
 
 
@@ -59,6 +60,8 @@ Animation* AnimationFactory::makeAnimation( string name )
 			cache[name] = new AnimSeqSine( lights );
 		else if ( name == AnimKapelica::NAME )
 			cache[name] = new AnimKapelica( lights );
+		else if ( name == AnimGazebo::NAME )
+			cache[name] = new AnimGazebo( lights );
 		
 		else if ( name == AnimStateMachine::NAME )
 			cache[name] = new AnimStateMachine( lights );

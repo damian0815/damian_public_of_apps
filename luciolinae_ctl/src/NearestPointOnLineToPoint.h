@@ -14,6 +14,6 @@
 namespace NearestPointOnLineToPoint
 {
 	extern ofxVec3f calculateNearestPoint( const ofxVec3f &LineStart, const ofxVec3f &LineEnd, const ofxVec3f &Point, 
-										  float* linePosition=NULL );
+										  float* linePosition=NULL, bool clamp_to_line = false );
 
 };
