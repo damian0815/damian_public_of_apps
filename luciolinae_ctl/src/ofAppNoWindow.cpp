@@ -40,6 +40,7 @@ void set_conio_terminal_mode()
 
 int kbhit()
 {
+	return 0;
     struct timeval tv = { 0L, 0L };
     fd_set fds;
     FD_SET(0, &fds);
@@ -88,7 +89,7 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	#if defined TARGET_OSX || defined TARGET_LINUX
 	// for keyboard
-	set_conio_terminal_mode();
+	//set_conio_terminal_mode();
 	#endif
 
 	#ifdef OF_USING_POCO
