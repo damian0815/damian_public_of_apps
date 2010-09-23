@@ -9,7 +9,7 @@
 #include "AnimKapelica.h"
 #include "AnimGazebo.h"
 
-//#define DO_PD
+#define DO_PD
 
 //--------------------------------------------------------------
 void testApp::setup(){	 
