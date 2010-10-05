@@ -1,0 +1,3 @@
+[submodule "artvertiser"]
+	path = artvertiser
+	url = dnz_gitosis@frey.co.nz:artvertiser
