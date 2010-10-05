@@ -5,15 +5,17 @@
 #X obj 85 225 s osc_delaunay;
 #X obj 144 191 s osc_breath;
 #X obj 223 213 s osc_chunks;
-#X obj 270 188 s osc_blip_all;
+#X obj 268 194 s osc_blip_all;
+#X obj 367 196 s osc_seq;
 #X obj 26 153 routeOSC /blip /delaunay /breath /chunks /blip_all /seq
-;
-#X obj 371 183 s osc_seq;
-#X connect 0 0 7 0;
+/volume;
+#X obj 344 233 s osc_volume;
+#X connect 0 0 8 0;
 #X connect 2 0 0 0;
-#X connect 7 0 1 0;
-#X connect 7 1 3 0;
-#X connect 7 2 4 0;
-#X connect 7 3 5 0;
-#X connect 7 4 6 0;
-#X connect 7 5 8 0;
+#X connect 8 0 1 0;
+#X connect 8 1 3 0;
+#X connect 8 2 4 0;
+#X connect 8 3 5 0;
+#X connect 8 4 6 0;
+#X connect 8 5 7 0;
+#X connect 8 6 9 0;
