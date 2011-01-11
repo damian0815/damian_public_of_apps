@@ -28,6 +28,8 @@
 #include <vector>
 using namespace std;
 
+static const int OFSYNTH_SAMPLE_RATE = 44100;
+
 class ofSynthUnit
 {
 public:	

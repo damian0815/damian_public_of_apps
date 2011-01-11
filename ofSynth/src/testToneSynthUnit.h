@@ -14,15 +14,16 @@
 
 class testToneSynthUnit: public ofSynthUnit
 {
-public:
-	
-	testToneSynthUnit() { phase = 0; }
+public:	
+	testToneSynthUnit() { phase = 0; setFrequency( 440.0f ); }
 
 	/// Return our name
 	string getName() { return "testToneSynthUnit"; }
-	
 	/// We are stereo
 	bool isMono() { return false; }
+	
+	/// Set our frequency
+	void setFrequency( float freq );
 	
 	void process( float* input, float* output, int numFrames, int numChannels );
 	
@@ -30,6 +31,7 @@ public:
 private:
 	
 	float phase;
+	float phaseAdvancePerFrame;
 	
 };
 

@@ -22,9 +22,18 @@ void testApp::setup(){
 	ofSetFrameRate(60);
 
 	
+	// concert A
+	testToneA.setFrequency( 440.0f );
 	// connect the test tone to the mixer
-	testTone.addOutputToMixer();
-	mixer.setVolume( &testTone, volume );
+	testToneA.addOutputToMixer();
+	mixer.setVolume( &testToneA, volume );
+	
+	// concert E
+	testToneE.setFrequency( 329.6f );
+	// connect to mixer
+	testToneE.addOutputToMixer();
+	mixer.setVolume( &testToneE, 0.2f );
+	
 	
 }
 
@@ -69,11 +78,11 @@ void testApp::keyPressed  (int key){
 	if (key == '-'){
 		volume -= 0.05;
 		volume = MAX(volume, 0);
-		mixer.setVolume( &testTone, volume );
+		mixer.setVolume( &testToneA, volume );
 	} else if (key == '+'){
 		volume += 0.05;
 		volume = MIN(volume, 1);
-		mixer.setVolume( &testTone, volume );
+		mixer.setVolume( &testToneA, volume );
 	}
 }
 

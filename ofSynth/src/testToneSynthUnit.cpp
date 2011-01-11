@@ -10,11 +10,18 @@
 #include "ofMain.h"
 #include "testToneSynthUnit.h"
 
+
+
+void testToneSynthUnit::setFrequency( float frequency )
+{
+	// calculate a phase advance per audio frame (sample)
+	// basically, every OFSYNTH_SAMPLE_RATE frames (1s of audio), we want
+	// to advance phase by frequency*TWO_PI.
+	phaseAdvancePerFrame = (1.0f/OFSYNTH_SAMPLE_RATE)*frequency*TWO_PI;
+}
+
 void testToneSynthUnit::process( float* input, float* output, int numFrames, int numChannels )
 {
-	// 440hz
-	static const float PHASE_ADVANCE_PER_FRAME = (1.0f/44100.0f)*440.0f*TWO_PI;
-
 	// loop through all the frames
 	for ( int i=0; i<numFrames; i++ ) 
 	{
@@ -25,7 +32,7 @@ void testToneSynthUnit::process( float* input, float* output, int numFrames, int
 			output[i*numChannels+j] = value;
 		}
 		// advance phase
-		phase += PHASE_ADVANCE_PER_FRAME;
+		phase += phaseAdvancePerFrame;
 	}
 	// wrap phase to 0..TWO_PI
 	phase = remainderf( phase, TWO_PI );

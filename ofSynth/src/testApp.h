@@ -34,7 +34,8 @@ class testApp : public ofBaseApp{
 	float targetFrequency;*/
 
 	
-	testToneSynthUnit testTone;
+	testToneSynthUnit testToneA;
+	testToneSynthUnit testToneE;
 	ofSynthMixer mixer;
 	
 };
