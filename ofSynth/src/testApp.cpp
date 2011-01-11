@@ -30,9 +30,11 @@ void testApp::setup(){
 	
 	// concert E
 	testToneE.setFrequency( 329.6f );
-	// connect to mixer
-	testToneE.addOutputToMixer();
-	mixer.setVolume( &testToneE, 0.2f );
+	// connect tone to volume
+	testToneE.addOutputTo( &testVolume );
+	// connect volume to mixer
+	testVolume.addOutputToMixer();
+	mixer.setVolume( &testToneE, 1.0f );
 	
 	
 }
@@ -65,7 +67,7 @@ void testApp::draw(){
 
 	ofSetHexColor(0x333333);
 	char reportString[255];
-	sprintf(reportString, "volume: (%6.3f) modify with -/+ keys", volume );
+	sprintf(reportString, "volume: (%6.3f) modify with -/+ keys\nvolume: (%6.3f) modify with up/down keys", volume, testVolume.getVolume() );
 	//if (!bNoise) sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
 
 	ofDrawBitmapString(reportString,80,380);
@@ -83,6 +85,15 @@ void testApp::keyPressed  (int key){
 		volume += 0.05;
 		volume = MIN(volume, 1);
 		mixer.setVolume( &testToneA, volume );
+	}
+	
+	if ( key == OF_KEY_UP )
+	{
+		testVolume.adjustVolume( +1.0f );
+	}
+	else if ( key == OF_KEY_DOWN )
+	{
+		testVolume.adjustVolume( -1.0f );
 	}
 }
 

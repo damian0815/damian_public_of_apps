@@ -74,10 +74,12 @@ private:
 	vector<Edge> graph;
 
 	// Return true if adding this edge to the graph would create a cycle
-	bool newEdgeWillCreateCycle( const Edge& test_edge );
+	bool newEdgeWouldCreateCycle( const Edge& test_edge );
 	// Return true if adding this edge to the graph would create a branch
-	bool newEdgeWillCreateBranch( const Edge& test_edge );
-
+	bool newEdgeWouldCreateBranch( const Edge& test_edge );
+	
+	// Return all the units that are immediate (1 edge) downstream neighbours of the given unit
+	vector<ofSynthUnit*> getImmediateDownstreamNeighbourUnits( ofSynthUnit* unit );
 
 	
 	// Render the linear chain portion of the DSP graph ending at tail to 

@@ -4,7 +4,8 @@
 
 #include "ofMain.h"
 #include "ofSynthMixer.h"
-#include "testToneSynthUnit.h"
+#include "ofSynthUnitTestTone.h"
+#include "ofSynthUnitVolume.h"
 
 class testApp : public ofBaseApp{
 
@@ -34,8 +35,10 @@ class testApp : public ofBaseApp{
 	float targetFrequency;*/
 
 	
-	testToneSynthUnit testToneA;
-	testToneSynthUnit testToneE;
+	ofSynthUnitTestTone testToneA;
+	ofSynthUnitTestTone testToneE;
+	ofSynthUnitVolume testVolume;
+	
 	ofSynthMixer mixer;
 	
 };

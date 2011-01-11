@@ -10,6 +10,7 @@
 #include "ofSynthMixer.h"
 #include "ofSynthUnit.h"
 #include "ofMain.h"
+#include <set>
 
 ofSynthMixer* instance = NULL;
 
@@ -36,6 +37,7 @@ ofSynthMixer* ofSynthMixer::getInstance()
 
 void ofSynthMixer::addMixerInput( ofSynthUnit* input )
 {
+	mutex.lock();
 	// check for existing
 	for ( int i=0; i<inputs.size(); i++ )
 	{
@@ -49,16 +51,142 @@ void ofSynthMixer::addMixerInput( ofSynthUnit* input )
 	// add with default volume (1.0f) and pan (0.5f)
 	inputs.push_back( MixerInput( input, 1.0f, 0.5f ) );
 	
-}
-
-
-
-void ofSynthMixer::removeUnit( ofSynthUnit* input )
-{
-	// remove all edges from graph
+	mutex.unlock();
 	
-	// remove all inputs
 }
+
+
+
+void ofSynthMixer::removeUnit( ofSynthUnit* unit )
+{
+	mutex.lock();
+
+	// remove all edges from graph
+	for ( int i=0; i<graph.size(); i++ )
+	{
+		Edge& e = graph[i];
+		if ( e.from == unit || e.to == unit )
+		{
+			// remove from the graph
+			graph.erase( graph.begin()+i );
+			--i;
+		}
+	}
+	
+	// remove from inputs list if necessary
+	for ( int i=0; i<inputs.size() ;i++ )
+	{
+		MixerInput& input = inputs[i];
+		if ( input.unit == unit )
+		{
+			inputs.erase( inputs.begin()+i );
+			i--;
+		}
+	}
+	
+	mutex.unlock();
+}
+
+
+void ofSynthMixer::addConnection( ofSynthUnit* from, ofSynthUnit* to )
+{
+	mutex.lock();
+
+	Edge e = Edge( from, to );
+	if ( newEdgeWouldCreateCycle( e ) )
+	{
+		ofLog( OF_LOG_ERROR, "ofSynthMixer: can't connect '%s' (%x) to '%s' (%x): this would create a cycle in the DSP graph",
+			  from->getName().c_str(), from, to->getName().c_str(), to );
+		return;
+	}
+	
+	if ( newEdgeWouldCreateBranch( e ) )
+	{
+		ofLog( OF_LOG_ERROR, "ofSynthMixer: can't connect '%s' (%x) to '%s' (%x): this would create a branch in the DSP graph",
+			  from->getName().c_str(), from, to->getName().c_str(), to );
+		return;
+	}
+	
+	graph.push_back( e );
+	
+	mutex.unlock();
+
+}
+
+
+
+
+
+// Return true if adding this edge to the graph would create a cycle
+bool ofSynthMixer::newEdgeWouldCreateCycle( const Edge& test_edge )
+{
+
+	// assuming the graph has no cycles from the start, can we trace a path 
+	// from test_edge.to to test_edge.from? if we can, then adding test_edge will create a cycle
+
+	// do a depth-first traversal
+	deque<ofSynthUnit*> stack;
+	stack.push_back( test_edge.to );
+	while ( !stack.empty() )
+	{
+		ofSynthUnit* u = stack.back();
+		stack.pop_back();
+		// if u is test_edge.from, then we have looped round to the beginning
+		if ( u == test_edge.from )
+			return true;
+
+		// fetch all immediate downstream neighbours
+		vector<ofSynthUnit*> downstream = getImmediateDownstreamNeighbourUnits( u );
+		// copy downstream to the back of stack
+		copy( downstream.begin(), downstream.end(), back_inserter( stack ) );
+	}
+	
+	// if we made it here, the cycle test has failed to find a cycle
+	return false;
+}
+
+
+// Return true if adding this edge to the graph would create a branch
+bool ofSynthMixer::newEdgeWouldCreateBranch( const Edge& test_edge )
+{
+	set<ofSynthUnit*> inputs;
+	set<ofSynthUnit*> outputs;
+	
+	// loop through all the edges on the graph. if a unit is used as an input or
+	// an output more than once, then we have a branch.
+	for ( int i=0; i<graph.size(); i++ )
+	{
+		inputs.insert( graph[i].from );
+		outputs.insert( graph[i].to );
+	}
+	
+	// check if the units on the new edge are already in use as inputs or outputs
+	if ( inputs.find( test_edge.from ) != inputs.end() )
+		return true;
+	if ( outputs.find( test_edge.to ) != outputs.end() )
+		return true;
+
+	// all good
+	return false;
+}
+
+
+
+// Return all the units that are immediate (1 edge) downstream neighbours of the given unit
+vector<ofSynthUnit*> ofSynthMixer::getImmediateDownstreamNeighbourUnits( ofSynthUnit* unit )
+{
+	vector<ofSynthUnit*> result;
+	for ( int i=0; i<graph.size(); i++ )
+	{
+		if ( graph[i].from == unit )
+			result.push_back( graph[i].to );
+	}
+	return result;
+}
+
+
+
+
 
 
 void ofSynthMixer::setVolume( ofSynthUnit* input, float vol )
@@ -89,7 +217,8 @@ void ofSynthMixer::render( float* output, int numFrames, int numChannels )
 	// clear output array
 	memset( output, 0, numFrames*numChannels*sizeof(float) );
 
-//	deque<UnitCallTail> tails;
+	mutex.lock();
+
 	// allocate working space
 	float working[numFrames*numChannels*sizeof(float)];
 	for ( int i=0; i<inputs.size(); i++ )
@@ -125,6 +254,7 @@ void ofSynthMixer::render( float* output, int numFrames, int numChannels )
 		}
 	}
 	
+	mutex.unlock();
 	
 //	compileDSPChainWithTails( tails );
 	

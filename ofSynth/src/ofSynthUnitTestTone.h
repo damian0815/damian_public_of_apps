@@ -1,5 +1,5 @@
 /*
- *  testToneSynthUnit.h
+ *  ofSynthUnitTestTone.h
  *  ofSynth
  *
  *  Created by damian on 11/01/11.
@@ -11,14 +11,13 @@
 
 #include "ofSynthUnit.h"
 
-
-class testToneSynthUnit: public ofSynthUnit
+class ofSynthUnitTestTone: public ofSynthUnit
 {
 public:	
-	testToneSynthUnit() { phase = 0; setFrequency( 440.0f ); }
+	ofSynthUnitTestTone() { phase = 0; setFrequency( 440.0f ); }
 
 	/// Return our name
-	string getName() { return "testToneSynthUnit"; }
+	string getName() { return "ofSynthUnitTestTone"; }
 	/// We are stereo
 	bool isMono() { return false; }
 	
