@@ -3,6 +3,8 @@
 
 
 #include "ofMain.h"
+#include "ofSynthMixer.h"
+#include "testToneSynthUnit.h"
 
 class testApp : public ofBaseApp{
 
@@ -23,19 +25,18 @@ class testApp : public ofBaseApp{
 
 		void audioRequested 	(float * input, int bufferSize, int nChannels);
 
-		float 	pan;
 		int		sampleRate;
-		bool 	bNoise;
-		float 	volume;
-
 		float 	* lAudio;
 		float   * rAudio;
+	float volume;
+/*	float pan;
+	bool bNoise;
+	float targetFrequency;*/
 
-		//------------------- for the simple sine wave synthesis
-		float 	targetFrequency;
-		float 	phase;
-		float 	phaseAdder;
-		float 	phaseAdderTarget;
+	
+	testToneSynthUnit testTone;
+	ofSynthMixer mixer;
+	
 };
 
 #endif
