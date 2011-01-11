@@ -77,8 +77,8 @@ void testApp::setup(){
     
     anim_switcher.addAnim( AnimSeq::NAME );
 
-    //anim_switcher.addAnim( AnimKapelica::NAME );
 	anim_switcher.addAnim( AnimGazebo::NAME );
+	anim_switcher.addAnim( AnimKapelica::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSweep::NAME );
 	anim_switcher.addAnim( AnimDelaunay::NAME );
@@ -95,6 +95,8 @@ void testApp::setup(){
 	//pd.addOpenFile( "pd-test.pd" );
 	pd.addOpenFile( "pdstuff/_main.pd" );
 	pd.start();
+
+	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
 #endif
 	
 	ofSoundStreamSetup(2, 0, this, 44100, 256, 12 );
@@ -138,7 +140,7 @@ void testApp::update(){
 		m.addFloatArg( vol );
 		osc.sendMessage(m);
 	}
-	else if ( ofGetElapsedTimeMillis() > ontime_ms )
+	else if ( ontime_ms > 0 && ofGetElapsedTimeMillis() > ontime_ms )
 	{
 		// calculate a volume
 		float vol = float(ofGetElapsedTimeMillis()-ontime_ms)/FADE_TIME;
@@ -166,11 +168,13 @@ void testApp::draw(){
 #ifndef NO_WINDOW
 	lights.draw();
 	current_anim->draw();
+	anim_switcher.draw();
 #endif
 }
 
 void testApp::exit()
 {
+	pd.stop();
 	printf("clearing lights\n");
 	lights.clear( true );
 	buffered_serial->shutdown();
@@ -196,10 +200,12 @@ void testApp::keyPressed  (int key){
 			data.addValue("ontime_ms", ontime_ms);
 			break;
 		}
+		case OF_KEY_LEFT:
 		case '[':
 			current_anim = anim_switcher.prevAnim();
 			lights.clear();
 			break;
+		case OF_KEY_RIGHT:
 		case ']':
 			current_anim = anim_switcher.nextAnim();
 			lights.clear();
@@ -232,7 +238,7 @@ void testApp::keyReleased(int key){
 	
 }
 
-//--------------------------------------------------------------
+//-------------------------------------------------------------- 
 void testApp::mouseMoved(int x, int y ){
 	current_anim->mouseMoved( x, y );
 }
@@ -259,15 +265,6 @@ void testApp::windowResized(int w, int h){
 
 void testApp::audioRequested( float* input, int bufferSize, int nChannels )
 {
-	/*
-	if ( pd.isReady() )
-	{
-		pd.audioRequested( input, bufferSize, nChannels );
-	}
-	else
-	{
-		memset( input, 0, sizeof( input ) );
-	}*/
 	pd.renderAudio( input, bufferSize, nChannels );
 		
 }

@@ -41,10 +41,12 @@ private:
 	
 	int which;
 	bool editing_delaunay;
+	bool draw_delaunay;
 	
 	float speed;
 	int closest_a, closest_b;
 	float timer;
+	
 	
 	vector<pair<int, int> > removed_neighbours;
 	bool inout;
