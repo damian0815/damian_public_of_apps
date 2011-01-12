@@ -31,16 +31,19 @@ class testApp : public ofBaseApp{
 	float targetFrequency;*/
 
 	
-/*	ofSoundSourceTestTone testToneA;
+	ofSoundSourceTestTone testToneA;
 	ofSoundSourceTestTone testToneC;
-	ofSoundSourceTestTone testToneE;*/
+	ofSoundSourceTestTone testToneE;
+	
+	ofSoundSinkMicrophone microphone;
 	
 	vector<ofSoundSourceTestTone*> tones;
 	
-//	ofSoundEffectVolume testVolume;
+	ofSoundEffectVolume testVolume;
 	ofSoundEffectPassthrough passthrough;
 	
 	ofSoundMixer mixer;
+	ofSoundSourceMultiplexor mux;
 	
 };
 

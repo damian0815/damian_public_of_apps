@@ -19,45 +19,58 @@ void testApp::setup(){
 	rAudio = new float[1024];
 	
 	
-	ofSoundStreamSetup(2,0, sampleRate,1024, 4);
+	
+	ofSoundStreamSetup(2,2, sampleRate,1024, 4);
 
 	ofSetFrameRate(60);
 
-	/*
-	// concert A
-	testToneA.setFrequency( 440.0f );
-	// connect the test tone to the mixer
-	mixer.addInputFrom( &testToneA );
-	
-	mixer.setVolume( &testToneA, volume );
-	
 	// concert E
 	testToneE.setFrequency( 329.6f );
-	// connect tone to volume
-	testVolume.addInputFrom( &testToneE );
-	// connect volume to mixer
+	// connect tone to mixer
+	mixer.addInputFrom( &testToneE );
+	// set volume
+	mixer.setVolume( &testToneE, 1.0f );
+	
+	// concert A
+	testToneA.setFrequency( 440.0f );
+	// connect to multiplexor
+	mux.addInputFrom( &testToneA );
+	// multiplex
+	// paths are mux->mixer and mux->testVolume->mixer
+	// mux->mixer
+	mixer.addInputFrom( &mux );
+	// mux->testVolume->mixer
+	testVolume.addInputFrom( &mux );
 	mixer.addInputFrom( &testVolume );
-	mixer.setVolume( &testVolume, 1.0f );
-*/
-	// connect mixer to passthrough
+	
+	
+	// microphone
+	ofSoundStreamAddSoundSink( &microphone );
+	// connect to mixer
+	mixer.addInputFrom( &microphone );
+	
+
+	// connect mixer to passthrough (for visualisation)
 	passthrough.addInputFrom( &mixer );
 
 	
+	// pass the completed graph to ofSoundStream interface
 	ofSoundStreamAddSoundSource( &passthrough );
 	
 
-	
 }
 
 
 //--------------------------------------------------------------
 void testApp::update(){
 
+	// fetch audio data, for visualisation
 	const ofSoundBuffer& output = passthrough.getBuffer();
 	output.copyChannel( 0, lAudio );
 	output.copyChannel( 1, rAudio );
 	
-	if ( ofGetFrameNum() % 5 == 0 )
+	//if ( ofGetFrameNum() % 5 == 0 )
+	if ( false )
 	{
 		
 		ofLog( OF_LOG_WARNING, "adding %i", ofGetFrameNum()/5 );
