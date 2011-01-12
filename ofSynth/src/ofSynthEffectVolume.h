@@ -1,5 +1,5 @@
 /*
- *  ofSynthUnitVolume.h
+ *  ofSynthEffectVolume.h
  *  ofSynth
  *
  *  Created by damian on 11/01/11.
@@ -10,14 +10,15 @@
 #pragma once
 
 #include "ofSynthUnit.h"
+#include "ofSynthDeclickedFloat.h"
 
-class ofSynthUnitVolume : public ofSynthUnit
+class ofSynthEffectVolume : public ofSynthEffect
 {
 public:	
-	ofSynthUnitVolume() { setVolume( 1.0f ); }
+	ofSynthEffectVolume() { setVolume( 1.0f ); }
 	
 	/// Return our name
-	string getName() { return "ofSynthUnitVolume"; }
+	string getName() { return "ofSynthEffectVolume"; }
 	/// We are stereo
 	bool isMono() { return false; }
 	
@@ -28,7 +29,7 @@ public:
 	/// Get current volume (not declicked)
 	float getVolume() { return volume.getRawValue(); }
 	
-	void process( float* input, float* output, int numFrames, int numChannels );
+	void process( float* input, float* output, int numFrames, int numInChannels, int numOutChannels );
 	
 private:
 	ofSynthDeclickedFloat volume;

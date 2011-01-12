@@ -4,8 +4,8 @@
 
 #include "ofMain.h"
 #include "ofSynthMixer.h"
-#include "ofSynthUnitTestTone.h"
-#include "ofSynthUnitVolume.h"
+#include "ofSynthGeneratorTestTone.h"
+#include "ofSynthEffectVolume.h"
 
 class testApp : public ofBaseApp{
 
@@ -24,7 +24,6 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 
-		void audioRequested 	(float * input, int bufferSize, int nChannels);
 
 		int		sampleRate;
 		float 	* lAudio;
@@ -35,9 +34,11 @@ class testApp : public ofBaseApp{
 	float targetFrequency;*/
 
 	
-	ofSynthUnitTestTone testToneA;
-	ofSynthUnitTestTone testToneE;
-	ofSynthUnitVolume testVolume;
+	ofSynthGeneratorTestTone testToneA;
+	ofSynthGeneratorTestTone testToneE;
+	ofSynthGeneratorTestTone testToneE2;
+	ofSynthEffectVolume testVolume;
+	ofSynthEffectPassthrough passthrough;
 	
 	ofSynthMixer mixer;
 	

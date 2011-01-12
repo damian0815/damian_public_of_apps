@@ -25,90 +25,137 @@
  
  */
 
+#include "ofSoundStream.h"
 #include <vector>
 using namespace std;
 
-static const int OFSYNTH_SAMPLE_RATE = 44100;
+
+class ofSoundBuffer
+{
+public:
+	
+	float* buffer;
+	int numFrames;
+	int numChannels;
+	
+	ofSoundBuffer() { numFrames = 0; numChannels = 0; buffer = NULL; }
+	ofSoundBuffer( int nFrames, int nChannels ) { numFrames = nFrames; numChannels = nChannels; buffer = new float[nFrames*nChannels]; }
+	~ofSoundBuffer() { if ( buffer ) delete[] buffer; }
+	
+	void clear() { if ( buffer ) memset( buffer, 0, sizeof(float)*numFrames*numChannels); }
+	void allocate( int nFrames, int nChannels ) 
+	{ 
+		if ( !buffer || numFrames != nFrames || numChannels != nChannels )
+		{
+			numFrames = nFrames; numChannels = nChannels; 
+			if ( buffer )
+			{
+				delete[] buffer;
+			}
+			
+			buffer = new float[nFrames*nChannels];
+		}
+	}
+	void copyChannel( int channel, float* output ) const
+	{
+		if ( buffer && channel < numChannels )
+		{
+			for ( int i=0; i<numFrames; i++ )
+			{
+				output[i] = buffer[numChannels*i + channel];
+			}
+		}
+	}
+};
+
+
+
+class ofSynthGenerator;
 
 class ofSynthUnit
 {
 public:	
 	
-	ofSynthUnit() {};
-	virtual ~ofSynthUnit();
-	
-
 	/// Return the name of this synth unit.
 	virtual string getName() = 0;
-	
-	
-	/// Add an output to the target object
-	void addOutputTo( ofSynthUnit* target );
-	/// Add an output to the global mixer
-	void addOutputToMixer();
-	
-	/// Process audio data. If this synth unit just does output, it will ignore inputBuffer.
-	virtual void process( float* inputBuffer, float* outputBuffer, int numFrames, int numChannels ) = 0;
-	
-	/// Returns a boolean as to whether this unit does mono or stereo processing. 
-	virtual bool isMono() = 0;
-	
+
+	/// Return our inputs in a vector (but at ofSynthUnit level we have no inputs).
+	virtual vector<ofSynthGenerator*> getInputs();
 	
 protected:
 	
-	
-	
-	vector< ofSynthUnit* > outputs;
-	
 };
 
 
-/** ofSynthDeclickedFloat
 
- Declick a changing float value by using a 64 sample ramp (around 1.5ms at 44.1kHz).
-
- You must call rebuildRampIfNecessary before processing every audio block, in order to apply incoming
- value changes.
- 
- Also, you must call frameTick() for every audio frame (sample) to advance the ramp.
- 
- */
-
-class ofSynthDeclickedFloat
+class ofSynthGenerator: public ofSynthUnit, public ofSoundSource
 {
 public:
-	ofSynthDeclickedFloat( float startValue=0.0f ) { rampPos = 0; current = startValue; setValue( startValue ); }
-	
-	/// Return the current value, declicked
-	float getDeclickedValue() { return current; }
-	/// Return the raw value (the target for declicking)
-	float getRawValue() { return target; }
-	/// Set a new value + rebuild ramp
-	void setValue( float newValue ) { target = newValue; rampNeedsRebuild = true; }
-	
-	/// Rebuild the ramp, if necessary. Call before processing a block of samples.
-	void rebuildRampIfNecessary() { if ( rampNeedsRebuild ) rebuildRamp(); rampNeedsRebuild = false; }
-	
-	/// Update, to be called for every frame
-	void frameTick() { current = ramp[rampPos]; ramp[rampPos] = target; rampPos = (rampPos+1)%64; }
 
-	/// operator overloading
-	ofSynthDeclickedFloat& operator=( float new_value ) { setValue( new_value ); return *this; }
-	ofSynthDeclickedFloat& operator+=( float adjustment ) { setValue( target+adjustment ); return *this; }
-	ofSynthDeclickedFloat& operator-=( float adjustment ) { setValue( target-adjustment ); return *this; }
+	virtual void audioRequested( float* buffer, int numFrames, int numChannels ) = 0;
 	
-private:
-	
-	void rebuildRamp() { float v = current; float step = (target-current)/63; for ( int i=0; i<64; i++ ) { ramp[(i+rampPos)%64] = v; v += step; } }
-	
-	float current;
-	float target;
-
-	bool rampNeedsRebuild;
-	int rampPos;
-	float ramp[64];
+protected:
 };
 
 
+class ofSynthReceiver: public ofSynthUnit
+{
+public:
+	ofSynthReceiver() { input = NULL; }
+	
+	/// Set the sample rate of this synth unit. If you overload this remember to call the base class.
+	virtual void setSampleRate( int rate );
+
+	/// Add an input to this unit from the given source unit. If overloading remember to call base.
+	virtual bool addInputFrom( ofSynthGenerator* source );
+	
+	/// Return our inputs in a vector.
+	virtual vector<ofSynthGenerator*> getInputs();
+	
+protected:
+	// walk the DSP graph and see if adding test_input as an input to ourselves; return true if it would
+	bool addingInputWouldCreateCycle( ofSynthGenerator* test_input );
+
+	
+	
+/*	struct SynthReceiverInput
+	{
+		ofSynthGenerator* unit;
+		ofSoundBuffer inputBuffer;
+		SynthReceiverInput() { unit = NULL; }
+		SynthReceiverInput( ofSynthGenerator* i ) { unit = i; }
+	};
+	vector< SynthReceiverInput > inputs;*/
+	ofSynthGenerator* input;
+	ofSoundBuffer inputBuffer;
+
+	float sampleRate;
+};
 
 
+class ofSynthEffect: public ofSynthGenerator, public ofSynthReceiver
+{
+public:
+	
+	/// Pass sample rate changes through; if your override this remember to call base.
+	void setSampleRate( int rate );
+	
+	/// Override this function to do your own processing. Be sure to match numInChannels and numOutChannels
+	virtual void process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels ) = 0;
+	
+
+	/// implementation of the generate function from ofSynthGenerator
+	void audioRequested( float* buffer, int numFrames, int numChannels );
+};
+
+
+class ofSynthEffectPassthrough: public ofSynthEffect
+{
+public:
+	string getName() { return "ofSynthEffectPassthrough"; }
+	
+	virtual void process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels );
+	
+	/// return the buffer we saw as we passed it through
+	ofSoundBuffer& getBuffer() { return inputBuffer; }
+};

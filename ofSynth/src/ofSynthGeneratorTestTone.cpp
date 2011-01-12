@@ -1,5 +1,5 @@
 /*
- *  ofSynthUnitTestTone.cpp
+ *  ofSynthGeneratorTestTone.cpp
  *  ofSynth
  *
  *  Created by damian on 11/01/11.
@@ -8,19 +8,26 @@
  */
 
 #include "ofMain.h"
-#include "ofSynthUnitTestTone.h"
+#include "ofSynthGeneratorTestTone.h"
 
 
-
-void ofSynthUnitTestTone::setFrequency( float frequency )
+void ofSynthGeneratorTestTone::setSampleRate( int rate )
 {
+	ofLog(OF_LOG_WARNING, "ofSynthGeneratorTestTone(%x)::setSampleRate %i", this, rate );
+	sampleRate = rate;
+	setFrequency( frequency );
+}
+
+void ofSynthGeneratorTestTone::setFrequency( float freq )
+{
+	frequency = freq;
 	// calculate a phase advance per audio frame (sample)
 	// basically, every OFSYNTH_SAMPLE_RATE frames (1s of audio), we want
 	// to advance phase by frequency*TWO_PI.
-	phaseAdvancePerFrame = (1.0f/OFSYNTH_SAMPLE_RATE)*frequency*TWO_PI;
+	phaseAdvancePerFrame = (1.0f/sampleRate)*frequency*TWO_PI;
 }
 
-void ofSynthUnitTestTone::process( float* input, float* output, int numFrames, int numChannels )
+void ofSynthGeneratorTestTone::audioRequested( float* output, int numFrames, int numChannels )
 {
 	// loop through all the frames
 	for ( int i=0; i<numFrames; i++ ) 

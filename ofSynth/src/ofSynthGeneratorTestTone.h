@@ -1,5 +1,5 @@
 /*
- *  ofSynthUnitTestTone.h
+ *  ofSynthGeneratorTestTone.h
  *  ofSynth
  *
  *  Created by damian on 11/01/11.
@@ -11,10 +11,10 @@
 
 #include "ofSynthUnit.h"
 
-class ofSynthUnitTestTone: public ofSynthUnit
+class ofSynthGeneratorTestTone: public ofSynthGenerator
 {
 public:	
-	ofSynthUnitTestTone() { phase = 0; setFrequency( 440.0f ); }
+	ofSynthGeneratorTestTone() { phase = 0; setFrequency( 440.0f ); }
 
 	/// Return our name
 	string getName() { return "ofSynthUnitTestTone"; }
@@ -23,13 +23,17 @@ public:
 	
 	/// Set our frequency
 	void setFrequency( float freq );
+	/// Update generation for the new sample rate
+	void setSampleRate( int rate );
 	
-	void process( float* input, float* output, int numFrames, int numChannels );
+	void audioRequested( float* output, int numFrames, int numChannels );
 	
 	
 private:
 	
 	float phase;
+	float frequency;
+	int sampleRate;
 	float phaseAdvancePerFrame;
 	
 };

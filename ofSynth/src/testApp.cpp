@@ -17,7 +17,9 @@ void testApp::setup(){
 	volume				= 0.1f;
 	lAudio = new float[256];
 	rAudio = new float[256];
-	ofSoundStreamSetup(2,0,this, sampleRate,256, 4);
+	
+	
+	ofSoundStreamSetup(2,0, sampleRate,256, 4);
 
 	ofSetFrameRate(60);
 
@@ -25,17 +27,25 @@ void testApp::setup(){
 	// concert A
 	testToneA.setFrequency( 440.0f );
 	// connect the test tone to the mixer
-	testToneA.addOutputToMixer();
+	mixer.addInputFrom( &testToneA );
+	
 	mixer.setVolume( &testToneA, volume );
 	
 	// concert E
 	testToneE.setFrequency( 329.6f );
 	// connect tone to volume
-	testToneE.addOutputTo( &testVolume );
+	testVolume.addInputFrom( &testToneE );
 	// connect volume to mixer
-	testVolume.addOutputToMixer();
-	mixer.setVolume( &testToneE, 1.0f );
+	mixer.addInputFrom( &testVolume );
+	mixer.setVolume( &testVolume, 1.0f );
+
+	// connect mixer to passthrough
+	passthrough.addInputFrom( &mixer );
+
 	
+	ofSoundStreamAddSoundSource( &passthrough );
+	
+
 	
 }
 
@@ -43,6 +53,19 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 
+	const ofSoundBuffer& output = passthrough.getBuffer();
+	output.copyChannel( 0, lAudio );
+	output.copyChannel( 1, rAudio );
+	
+	if ( ofGetFrameNum() == 30 )
+	{
+		ofLog( OF_LOG_WARNING, "adding next" );
+		// concert E
+		testToneE2.setFrequency( 332.6f );
+		// connect volume to mixer
+		mixer.addInputFrom( &testToneE2 );
+		mixer.setVolume( &testToneE2, 1.0f );
+	}		
 }
 
 //--------------------------------------------------------------
@@ -89,11 +112,11 @@ void testApp::keyPressed  (int key){
 	
 	if ( key == OF_KEY_UP )
 	{
-		testVolume.adjustVolume( +1.0f );
+		testVolume.adjustVolume( +0.25f );
 	}
 	else if ( key == OF_KEY_DOWN )
 	{
-		testVolume.adjustVolume( -1.0f );
+		testVolume.adjustVolume( -0.25f );
 	}
 }
 
@@ -122,18 +145,5 @@ void testApp::mouseReleased(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 
-}
-//--------------------------------------------------------------
-void testApp::audioRequested 	(float * output, int bufferSize, int nChannels){
-	
-	// render DSP chain
-	mixer.render( output, bufferSize, nChannels );
-	
-	// store output in buffers
-	for (int i = 0; i < bufferSize; i++){
-		lAudio[i] = output[i*nChannels    ];
-		rAudio[i] = output[i*nChannels + 1];
-	}
-	
 }
 

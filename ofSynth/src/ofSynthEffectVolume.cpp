@@ -1,5 +1,5 @@
 /*
- *  ofSynthUnitVolume.cpp
+ *  ofSynthEffectVolume.cpp
  *  ofSynth
  *
  *  Created by damian on 11/01/11.
@@ -9,11 +9,11 @@
 
 #include <string>
 using namespace std;
-#include "ofSynthUnitVolume.h"
+#include "ofSynthEffectVolume.h"
 
 
 
-void ofSynthUnitVolume::process( float* input, float* output, int numFrames, int numChannels )
+void ofSynthEffectVolume::process( float* input, float* output, int numFrames, int numInChannels, int numOutChannels )
 {
 	volume.rebuildRampIfNecessary();
 	
@@ -21,9 +21,9 @@ void ofSynthUnitVolume::process( float* input, float* output, int numFrames, int
 	for ( int i=0; i<numFrames; i++ ) 
 	{
 		// write value to all the channels
-		for ( int j=0; j<numChannels; j++ )
+		for ( int j=0; j<numOutChannels; j++ )
 		{
-			output[i*numChannels+j] = input[i*numChannels+j] * volume.getDeclickedValue(); 
+			output[i*numOutChannels+j] = input[i*numInChannels+j] * volume.getDeclickedValue(); 
 		}
 		volume.frameTick();
 	}
