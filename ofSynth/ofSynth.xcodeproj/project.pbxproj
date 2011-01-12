@@ -7,11 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2DBB084B12DBE505000401BE /* ofSynthUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB084A12DBE505000401BE /* ofSynthUnit.cpp */; };
-		2DBB085012DBE5E5000401BE /* ofSynthMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB084F12DBE5E5000401BE /* ofSynthMixer.cpp */; };
-		2DBB0CB412DD034C000401BE /* ofSynthDeclickedFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB0CB312DD034C000401BE /* ofSynthDeclickedFloat.cpp */; };
-		2DBB0EE812DD3DC5000401BE /* ofSynthEffectVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB0EE412DD3DC5000401BE /* ofSynthEffectVolume.cpp */; };
-		2DBB0EE912DD3DC5000401BE /* ofSynthGeneratorTestTone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB0EE612DD3DC5000401BE /* ofSynthGeneratorTestTone.cpp */; };
 		E45BE0AA0E8CC67C009D7055 /* GLee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE0A90E8CC67C009D7055 /* GLee.a */; };
 		E45BE2E40E8CC69C009D7055 /* rtAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE2E30E8CC69C009D7055 /* rtAudio.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -82,16 +77,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2DBB084712DBE23E000401BE /* ofSynthUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSynthUnit.h; sourceTree = "<group>"; };
-		2DBB084A12DBE505000401BE /* ofSynthUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSynthUnit.cpp; sourceTree = "<group>"; };
-		2DBB084E12DBE5E5000401BE /* ofSynthMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSynthMixer.h; sourceTree = "<group>"; };
-		2DBB084F12DBE5E5000401BE /* ofSynthMixer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSynthMixer.cpp; sourceTree = "<group>"; };
-		2DBB0CB212DD034C000401BE /* ofSynthDeclickedFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSynthDeclickedFloat.h; sourceTree = "<group>"; };
-		2DBB0CB312DD034C000401BE /* ofSynthDeclickedFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSynthDeclickedFloat.cpp; sourceTree = "<group>"; };
-		2DBB0EE412DD3DC5000401BE /* ofSynthEffectVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSynthEffectVolume.cpp; sourceTree = "<group>"; };
-		2DBB0EE512DD3DC5000401BE /* ofSynthEffectVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSynthEffectVolume.h; sourceTree = "<group>"; };
-		2DBB0EE612DD3DC5000401BE /* ofSynthGeneratorTestTone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSynthGeneratorTestTone.cpp; sourceTree = "<group>"; };
-		2DBB0EE712DD3DC5000401BE /* ofSynthGeneratorTestTone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSynthGeneratorTestTone.h; sourceTree = "<group>"; };
 		E45BE0390E8CC647009D7055 /* FreeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeImage.h; path = ../../../libs/freeimage/include/FreeImage.h; sourceTree = SOURCE_ROOT; };
 		E45BE03F0E8CC650009D7055 /* fmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmod.h; path = ../../../libs/fmodex/include/fmod.h; sourceTree = SOURCE_ROOT; };
 		E45BE0400E8CC650009D7055 /* fmod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fmod.hpp; path = ../../../libs/fmodex/include/fmod.hpp; sourceTree = SOURCE_ROOT; };
@@ -113,7 +98,7 @@
 		E45BE9770E8CC7DD009D7055 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		E45BE9790E8CC7DD009D7055 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		E4B69B5B0A3A1756003C02F2 /* ofSynthTestbedDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ofSynthTestbedDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4B69B5B0A3A1756003C02F2 /* ofSynthTestbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ofSynthTestbed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = testApp.cpp; path = src/testApp.cpp; sourceTree = SOURCE_ROOT; };
 		E4B69E1F0A3A1BDC003C02F2 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = testApp.h; path = src/testApp.h; sourceTree = SOURCE_ROOT; };
@@ -346,7 +331,7 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
-				E4B69B5B0A3A1756003C02F2 /* ofSynthTestbedDebug.app */,
+				E4B69B5B0A3A1756003C02F2 /* ofSynthTestbed.app */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4C2422310CC54B6004149E2 /* openFrameworks */,
@@ -357,16 +342,6 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2DBB0EE412DD3DC5000401BE /* ofSynthEffectVolume.cpp */,
-				2DBB0EE512DD3DC5000401BE /* ofSynthEffectVolume.h */,
-				2DBB0EE612DD3DC5000401BE /* ofSynthGeneratorTestTone.cpp */,
-				2DBB0EE712DD3DC5000401BE /* ofSynthGeneratorTestTone.h */,
-				2DBB0CB212DD034C000401BE /* ofSynthDeclickedFloat.h */,
-				2DBB0CB312DD034C000401BE /* ofSynthDeclickedFloat.cpp */,
-				2DBB084E12DBE5E5000401BE /* ofSynthMixer.h */,
-				2DBB084F12DBE5E5000401BE /* ofSynthMixer.cpp */,
-				2DBB084712DBE23E000401BE /* ofSynthUnit.h */,
-				2DBB084A12DBE505000401BE /* ofSynthUnit.cpp */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
@@ -476,7 +451,7 @@
 			);
 			name = ofSynthTestbed;
 			productName = myOFApp;
-			productReference = E4B69B5B0A3A1756003C02F2 /* ofSynthTestbedDebug.app */;
+			productReference = E4B69B5B0A3A1756003C02F2 /* ofSynthTestbed.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -543,11 +518,6 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
-				2DBB084B12DBE505000401BE /* ofSynthUnit.cpp in Sources */,
-				2DBB085012DBE5E5000401BE /* ofSynthMixer.cpp in Sources */,
-				2DBB0CB412DD034C000401BE /* ofSynthDeclickedFloat.cpp in Sources */,
-				2DBB0EE812DD3DC5000401BE /* ofSynthEffectVolume.cpp in Sources */,
-				2DBB0EE912DD3DC5000401BE /* ofSynthGeneratorTestTone.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

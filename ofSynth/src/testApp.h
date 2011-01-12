@@ -3,9 +3,6 @@
 
 
 #include "ofMain.h"
-#include "ofSynthMixer.h"
-#include "ofSynthGeneratorTestTone.h"
-#include "ofSynthEffectVolume.h"
 
 class testApp : public ofBaseApp{
 
@@ -34,13 +31,16 @@ class testApp : public ofBaseApp{
 	float targetFrequency;*/
 
 	
-	ofSynthGeneratorTestTone testToneA;
-	ofSynthGeneratorTestTone testToneE;
-	ofSynthGeneratorTestTone testToneE2;
-	ofSynthEffectVolume testVolume;
-	ofSynthEffectPassthrough passthrough;
+/*	ofSoundSourceTestTone testToneA;
+	ofSoundSourceTestTone testToneC;
+	ofSoundSourceTestTone testToneE;*/
 	
-	ofSynthMixer mixer;
+	vector<ofSoundSourceTestTone*> tones;
+	
+//	ofSoundEffectVolume testVolume;
+	ofSoundEffectPassthrough passthrough;
+	
+	ofSoundMixer mixer;
 	
 };
 

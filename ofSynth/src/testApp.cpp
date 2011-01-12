@@ -15,15 +15,15 @@ void testApp::setup(){
 
 	sampleRate 			= 44100;
 	volume				= 0.1f;
-	lAudio = new float[256];
-	rAudio = new float[256];
+	lAudio = new float[1024];
+	rAudio = new float[1024];
 	
 	
-	ofSoundStreamSetup(2,0, sampleRate,256, 4);
+	ofSoundStreamSetup(2,0, sampleRate,1024, 4);
 
 	ofSetFrameRate(60);
 
-	
+	/*
 	// concert A
 	testToneA.setFrequency( 440.0f );
 	// connect the test tone to the mixer
@@ -38,7 +38,7 @@ void testApp::setup(){
 	// connect volume to mixer
 	mixer.addInputFrom( &testVolume );
 	mixer.setVolume( &testVolume, 1.0f );
-
+*/
 	// connect mixer to passthrough
 	passthrough.addInputFrom( &mixer );
 
@@ -57,14 +57,20 @@ void testApp::update(){
 	output.copyChannel( 0, lAudio );
 	output.copyChannel( 1, rAudio );
 	
-	if ( ofGetFrameNum() == 30 )
+	if ( ofGetFrameNum() % 5 == 0 )
 	{
-		ofLog( OF_LOG_WARNING, "adding next" );
+		
+		ofLog( OF_LOG_WARNING, "adding %i", ofGetFrameNum()/5 );
+		/*
 		// concert E
-		testToneE2.setFrequency( 332.6f );
+		testToneC.setFrequency( 523.251f );
 		// connect volume to mixer
-		mixer.addInputFrom( &testToneE2 );
-		mixer.setVolume( &testToneE2, 1.0f );
+		mixer.addInputFrom( &testToneC );
+		mixer.setVolume( &testToneC, 0.5f );*/
+		ofSoundSourceTestTone* tone = new ofSoundSourceTestTone();
+		tone->setFrequencyMidiNote( ofRandom(-0.05f,0.05f)+int((ofRandom( 24, 76 )/3.0f)*3.0f) );
+		mixer.addInputFrom( tone );
+		mixer.setVolume( tone, ofRandom( 0.1f, 0.2f ) );
 	}		
 }
 
@@ -90,7 +96,7 @@ void testApp::draw(){
 
 	ofSetHexColor(0x333333);
 	char reportString[255];
-	sprintf(reportString, "volume: (%6.3f) modify with -/+ keys\nvolume: (%6.3f) modify with up/down keys", volume, testVolume.getVolume() );
+	//sprintf(reportString, "volume: (%6.3f) modify with -/+ keys\nvolume: (%6.3f) modify with up/down keys", volume, testVolume.getVolume() );
 	//if (!bNoise) sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
 
 	ofDrawBitmapString(reportString,80,380);
@@ -100,6 +106,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
+	/*
 	if (key == '-'){
 		volume -= 0.05;
 		volume = MAX(volume, 0);
@@ -117,7 +124,7 @@ void testApp::keyPressed  (int key){
 	else if ( key == OF_KEY_DOWN )
 	{
 		testVolume.adjustVolume( -0.25f );
-	}
+	}*/
 }
 
 //--------------------------------------------------------------
