@@ -3,6 +3,7 @@
 
 
 #include "ofMain.h"
+#include "FloatingSine.h"
 
 class testApp : public ofBaseApp{
 
@@ -30,6 +31,7 @@ class testApp : public ofBaseApp{
 	bool bNoise;
 	float targetFrequency;*/
 
+	/*
 	
 	ofSoundSourceTestTone testToneA;
 	ofSoundSourceTestTone testToneC;
@@ -40,10 +42,14 @@ class testApp : public ofBaseApp{
 	vector<ofSoundSourceTestTone*> tones;
 	
 	ofSoundEffectVolume testVolume;
+	*/
 	ofSoundEffectPassthrough passthrough;
 	
 	ofSoundMixer mixer;
-	ofSoundSourceMultiplexor mux;
+	//ofSoundSourceMultiplexor mux;
+	
+	
+	vector<FloatingSine*> floating;
 	
 };
 

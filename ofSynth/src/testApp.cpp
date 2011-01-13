@@ -18,12 +18,14 @@ void testApp::setup(){
 	lAudio = new float[1024];
 	rAudio = new float[1024];
 	
+	ofSetLogLevel( OF_LOG_NOTICE );
 	
 	
-	ofSoundStreamSetup(2,2, sampleRate,1024, 4);
+	ofSoundStreamSetup(2,0, sampleRate,1024, 4);
 
 	ofSetFrameRate(60);
 
+/*	
 	// concert E
 	testToneE.setFrequency( 329.6f );
 	// connect tone to mixer
@@ -48,21 +50,42 @@ void testApp::setup(){
 	ofSoundStreamAddSoundSink( &microphone );
 	// connect to mixer
 	mixer.addInputFrom( &microphone );
-	
+	 
+ */
 
 	// connect mixer to passthrough (for visualisation)
 	passthrough.addInputFrom( &mixer );
 
 	
+	for ( float i = -1.5; i<1.5f; i+=0.2f )
+	{
+		ofLog(OF_LOG_NOTICE, "remainderf( %5.1f, 1.0f ) = %5.1f", i, remainderf( i, 2.0f ) );
+	}
+	
+	int num_floating = 20;
+	for ( int i=0; i<num_floating; i++ )
+	{
+		FloatingSine* f = new FloatingSine();
+		floating.push_back( f );
+	}
+	for ( int i=0; i<floating.size(); i++ )
+	{
+		floating[i]->setup( &mixer, &floating );
+	}
+	
 	// pass the completed graph to ofSoundStream interface
 	ofSoundStreamAddSoundSource( &passthrough );
-	
 
 }
 
 
 //--------------------------------------------------------------
 void testApp::update(){
+
+	for ( int i=0; i<floating.size(); i++ )
+	{
+		floating[i]->update();
+	}
 
 	// fetch audio data, for visualisation
 	const ofSoundBuffer& output = passthrough.getBuffer();
@@ -90,7 +113,6 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-
 	// draw the left:
 	ofSetHexColor(0x333333);
 	ofRect(100,100,256,200);
@@ -107,6 +129,12 @@ void testApp::draw(){
 		ofLine(600+i,200,600+i,200+rAudio[i]*100.0f);
 	}
 
+	ofSetHexColor( 0x885555 );
+	for ( int i=0; i<floating.size(); i++ )
+	{
+		floating[i]->draw();
+	}
+	
 	ofSetHexColor(0x333333);
 	char reportString[255];
 	//sprintf(reportString, "volume: (%6.3f) modify with -/+ keys\nvolume: (%6.3f) modify with up/down keys", volume, testVolume.getVolume() );
@@ -114,6 +142,7 @@ void testApp::draw(){
 
 	ofDrawBitmapString(reportString,80,380);
 
+	
 }
 
 
