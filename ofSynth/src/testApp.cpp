@@ -20,7 +20,7 @@ void testApp::setup(){
 	
 	ofSetLogLevel( OF_LOG_NOTICE );
 	
-	
+	filter.setup();
 	ofSoundStreamSetup(2,0, sampleRate,1024, 4);
 
 	ofSetFrameRate(60);
@@ -54,7 +54,6 @@ void testApp::setup(){
  */
 
 	// connect mixer to passthrough (for visualisation)
-	passthrough.addInputFrom( &mixer );
 
 	
 	for ( float i = -1.5; i<1.5f; i+=0.2f )
@@ -73,6 +72,9 @@ void testApp::setup(){
 		floating[i]->setup( &mixer, &floating );
 	}
 	
+	filter.addInputFrom( &mixer );
+	passthrough.addInputFrom( &filter );
+
 	// pass the completed graph to ofSoundStream interface
 	ofSoundStreamAddSoundSource( &passthrough );
 
@@ -176,6 +178,7 @@ void testApp::keyReleased  (int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
+	filter.setCutoff((float)x/(float)ofGetWidth());
 }
 
 //--------------------------------------------------------------
