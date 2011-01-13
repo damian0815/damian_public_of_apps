@@ -20,6 +20,8 @@ void testApp::setup(){
 	
 	ofSetLogLevel( OF_LOG_NOTICE );
 	
+	ofSetCircleResolution( 60 );
+	ofEnableSmoothing();
 	
 	ofSoundStreamSetup(2,0, sampleRate,1024, 4);
 
@@ -62,7 +64,7 @@ void testApp::setup(){
 		ofLog(OF_LOG_NOTICE, "remainderf( %5.1f, 1.0f ) = %5.1f", i, remainderf( i, 2.0f ) );
 	}
 	
-	int num_floating = 20;
+	int num_floating = 32;
 	for ( int i=0; i<num_floating; i++ )
 	{
 		FloatingSine* f = new FloatingSine();
@@ -114,6 +116,7 @@ void testApp::update(){
 void testApp::draw(){
 
 	// draw the left:
+	ofFill();
 	ofSetHexColor(0x333333);
 	ofRect(100,100,256,200);
 	ofSetHexColor(0xFFFFFF);
@@ -184,6 +187,13 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
+	for ( int i=0; i<floating.size(); i++ )
+	{
+		ofVec2f delta = (floating[i]->position - ofVec2f( x,y ));
+		float distance = delta.length();
+		ofVec2f deltaNorm = delta/distance;
+		floating[i]->velocity += (deltaNorm*300.0f);
+	}
 }
 
 

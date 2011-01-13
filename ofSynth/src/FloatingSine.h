@@ -35,5 +35,9 @@ private:
 	float frequency;
 	int buddy;
 	int enemy;
+	float distanceUnits;
 	
+	float shellDistance;
+	
+	int octaveOffset;
 };
