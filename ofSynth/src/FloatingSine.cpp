@@ -13,17 +13,16 @@
 
 static const float RADIUS = 10.0f;
 
-/*
+
 // pentatonic
 static const int	SCALE_STEPS = 5;
 static const float	SCALE[SCALE_STEPS] = { 0, 2, 5, 7, 10 };
- */
 
-
+/*
 // lydian Tone, tone, semitone, tone, tone, tone, semitone
 static const int	SCALE_STEPS = 8;
 static const float	SCALE[SCALE_STEPS] = { 0, 2, 3, 5, 7, 9, 10 };
-
+*/
 
 static const float BASE_MIDI_NOTE = 62.0f;
 
@@ -93,7 +92,7 @@ void FloatingSine::update( )
 	position += velocity*ofGetLastFrameTime();
 	
 	// damp the velocity
-	velocity *= powf(0.73f,ofGetLastFrameTime());
+	velocity *= powf(0.99f,ofGetLastFrameTime());
 
 
 	ofVec2f delta = neighbours->at( buddy )->position - position;
@@ -134,7 +133,7 @@ void FloatingSine::update( )
 	
 	// volume
 	float vol = 1.0f-min(1.0f,(distance/ofGetWidth()));
-	volume.setVolume( vol/neighbours->size() );
+	volume.setVolume( 4.0f*vol/neighbours->size() );
 	
 	
 	static const float BUDDY_FORCE_MUL = 1000.0f;
@@ -143,43 +142,44 @@ void FloatingSine::update( )
 	
 
 	// push towards shell
-	velocity += ((remainder>0.0f)&&(distanceUnits>1.0f)>0.0f?-1.0f:1.0f)*
+	ofVec2f dv = ((remainder>0.0f)&&(distanceUnits>1.0f)>0.0f?-1.0f:1.0f)*
 		remainder*remainder*deltaNorm*ofGetLastFrameTime()*BUDDY_FORCE_MUL;
+	velocity += dv*0.5f;
+	neighbours->at(buddy)->velocity -= dv*0.5f;
 	
 	
 	/*
-	for ( int i=0; i<neighbours->size(); i++ )
+	for ( int j=0; j<neighbours->size(); j++ )
 	{
-		for ( int j=i+1; j<neighbours->size(); j++ )
+		ofVec2f neighbourPos = neighbours->at(j)->position;
+		if ( (neighbourPos-position).lengthSquared() < 4.0f*RADIUS*RADIUS )
 		{
-			ofVec2f neighbourPos = neighbours->at(i)->position;
-			if ( (neighbourPos-position).lengthSquared() < 4.0f*RADIUS*RADIUS )
-			{
-				// reflect
-				ofVec2f delta = neighbourPos-position;
-				ofVec2f deltaNorm = delta.normalized();
+			// reflect
+			ofVec2f delta = neighbourPos-position;
+			ofVec2f deltaNorm = delta.normalized();
 
-				// move out
-				ofVec2f shouldBeAt = neighbourPos - deltaNorm*RADIUS*2;
-				ofVec2f move = shouldBeAt-position;
-				position += move;
-				neighbours->at(i)->position -= move;
-				
-				ofVec2f velocityParallel = velocity.dot( deltaNorm );
-				ofVec2f velocityAdj = velocity - velocityParallel;
-				//velocity = velocityAdj - velocityParallel*0.5f;
-				//neighbours->at(i)->velocity = 0.5f*(deltaAdj-deltaParallel);
-			}
+			// move out
+			ofVec2f shouldBeAt = neighbourPos - deltaNorm*RADIUS*2;
+			ofVec2f move = shouldBeAt-position;
+			position += move;
+			neighbours->at(i)->position -= move;
+			
+			ofVec2f velocityParallel = velocity.dot( deltaNorm );
+			ofVec2f velocityAdj = velocity - velocityParallel;
+			velocity *= 0.5f;
+			//velocity = velocityAdj - velocityParallel*0.5f;
+			//neighbours->at(i)->velocity = 0.5f*(deltaAdj-deltaParallel);
 		}
-	}
-	 */
+	}*/
 	
 	
 	// run away from enemy
 	ofVec2f enemyDelta = neighbours->at( enemy )->position - position;
 	float enemyDistance = enemyDelta.length();
 	ofVec2f enemyDeltaNorm = enemyDelta/enemyDistance;
-	velocity -= enemyDeltaNorm*(1.0f/enemyDistance)*ofGetLastFrameTime()*ENEMY_FORCE_MUL;
+	dv = enemyDeltaNorm*(1.0f/enemyDistance)*ofGetLastFrameTime()*ENEMY_FORCE_MUL;
+	velocity -= dv*0.5f;
+	neighbours->at( enemy )->velocity += dv*0.5f;
 	
 	// centre tug
 	ofVec2f centreDelta = ofVec2f(ofGetWidth()/2,ofGetHeight()/2)-position;

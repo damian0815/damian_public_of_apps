@@ -183,6 +183,7 @@ void testApp::keyReleased  (int key){
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
 	filter.setCutoff((float)x/(float)ofGetWidth());
+	filter.setRes((float)y/(float)ofGetHeight());
 }
 
 //--------------------------------------------------------------
