@@ -4,6 +4,7 @@
 
 #include "ofMain.h"
 #include "FloatingSine.h"
+#include "ofxSynthFilter.h"
 
 class testApp : public ofBaseApp{
 
@@ -44,6 +45,7 @@ class testApp : public ofBaseApp{
 	ofSoundEffectVolume testVolume;
 	*/
 	ofSoundEffectPassthrough passthrough;
+	ofxSynthFilter filter;
 	
 	ofSoundMixer mixer;
 	//ofSoundSourceMultiplexor mux;
