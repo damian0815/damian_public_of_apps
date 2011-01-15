@@ -11,6 +11,13 @@
 #include "ofMain.h"
 #include "ofVboMesh.h"
 
+#define DRAW_WITH_MESHIES
+
+#ifdef DRAW_WITH_MESHIES
+typedef struct _meshy { GLint mode; vector<ofPoint>vertices; } meshy;
+#endif
+
+
 /** ofPolyline
  
  A line composed of straight line segments.
@@ -39,6 +46,8 @@ private:
 
 
 
+#include "ofTessellator.h"
+
 
 /** ofShape
  
@@ -64,6 +73,7 @@ public:
 	void addCurveVertex( float x, float y ) 
 		{ addCurveVertex( ofPoint( x,y ) ); }
 
+	/// close the shape
 	void close();
 
 	/// must call tessellate before calling draw, if the shape has changed
@@ -71,9 +81,10 @@ public:
 	void draw();
 	
 	/// drawing style
-	void setFilled( bool bFill ) { bFilled = bFill; }
+	void setFilled( bool bFill ) { bFilled = bFill; bNeedsTessellation = true; }
 	void setLineColor( const ofColor& color ) { lineColor = color; }
 	void setFillColor( const ofColor& color ) { fillColor = color; }
+	void setPolyWindingMode( int newMode ) { polyWindingMode = newMode; bNeedsTessellation = true; }
 	
 private:		
 	
@@ -116,11 +127,18 @@ private:
 	bool bFilled;
 	ofColor fillColor;
 	
+	// true if this shape should be closed
+	bool bShouldClose;
+	
 	int resolution;
 	vector <ofShapeSegment> segments;
 	
+	int polyWindingMode;
 	bool bNeedsTessellation;
 	ofPolyline cachedPolyline;
 	ofVboMesh cachedTessellation;
+#ifdef DRAW_WITH_MESHIES
+	vector<meshy> cachedMeshies;
+#endif
 	
 };

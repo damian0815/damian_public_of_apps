@@ -71,15 +71,17 @@ void testApp::draw(){
 	ofPushMatrix( );
 	ofTranslate( 0, 100, 0 ); 
 	ofShape starOdd;
-//	starOdd.setPolyWindingMode( OF_POLY_WINDING_ODD );
+	ofLog( OF_LOG_NOTICE, "StarOdd ofShape" );
+	starOdd.setPolyWindingMode( OF_POLY_WINDING_ODD );
 	starOdd.addVertex(200,135);
 	starOdd.addVertex(15,135);
 	starOdd.addVertex(165,25);
 	starOdd.addVertex(105,200);
 	starOdd.addVertex(50,25);
 	starOdd.close();
-	starOdd.tessellate();
+	starOdd.setFilled(true);
 	starOdd.draw();
+	ofLog( OF_LOG_NOTICE, "StarOdd ofShape end" );
 	ofPopMatrix();
 	
 	
@@ -106,15 +108,18 @@ void testApp::draw(){
 	ofPushMatrix( );
 	ofTranslate( 0, 100, 0 ); 
 	ofSetHexColor(0xb5de10);
+	ofLog( OF_LOG_NOTICE, "StarNonZero ofShape" );
 	ofShape starNonZero;
-//	starNonZero.setPolyWindingMode( OF_POLY_WINDING_NONZERO );
+	starNonZero.setPolyWindingMode( OF_POLY_WINDING_NONZERO );
 	starNonZero.addVertex(400,135);
 	starNonZero.addVertex(215,135);
 	starNonZero.addVertex(365,25);
 	starNonZero.addVertex(305,200);
 	starNonZero.addVertex(250,25);
 	starNonZero.close();
+	starNonZero.setFilled(true);
 	starNonZero.draw();
+	ofLog( OF_LOG_NOTICE, "StarNonZero ofShape end" );
 	ofPopMatrix();
 	
 	//-------------------------------------
@@ -161,6 +166,7 @@ void testApp::draw(){
 	// now with ofShape
 	ofPushMatrix();
 	ofTranslate( 0, 200, 0 );
+	ofLog( OF_LOG_NOTICE, "Curve ofShape" );
 	ofShape s;
 	for (int i = 0; i < nCurveVertexes; i++){
 		if (i == 0){
@@ -174,7 +180,10 @@ void testApp::draw(){
 			s.addCurveVertex(curveVertices[i].x, curveVertices[i].y);
 		}
 	}
+	s.close();
+	s.setFilled(true);
 	s.draw();
+	ofLog( OF_LOG_NOTICE, "Curve ofShape done" );
 	ofPopMatrix();
 	
 	
@@ -239,12 +248,15 @@ void testApp::draw(){
 	// now using ofPath
 	ofPushMatrix();
 	ofTranslate( 0, 100, 0 );
+	ofLog( OF_LOG_NOTICE, "Bezier ofShape" );
 	ofShape path;
 	path.addVertex( x0, y0 );
 	path.addBezierVertex( x1, y1, x2, y2, x3, y3 );
 	ofSetHexColor(0xFF9933);
 	path.close();
+	path.setFilled(true);
 	path.draw();
+	ofLog( OF_LOG_NOTICE, "Bezier ofShape done" );
 
 	ofEnableAlphaBlending();
 	ofFill();

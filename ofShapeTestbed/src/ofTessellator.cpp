@@ -66,6 +66,10 @@ vector<ofPoint> ofTessellator::vertices;
 
 
 
+vector<meshy> ofTessellator::resultMeshies;
+
+
+
 
 //----------------------------------------------------------
 void CALLBACK ofTessellator::error(GLenum errCode){
@@ -90,6 +94,14 @@ void CALLBACK ofTessellator::begin(GLint type){
 void CALLBACK ofTessellator::end(){
 	// here we take our big pile of vertices and push them at the mesh
 
+#ifdef DRAW_WITH_MESHIES
+	meshy m;
+	m.mode = currentTriType;
+	m.vertices = vertices;
+	resultMeshies.push_back( m );
+#endif
+
+	ofLog( OF_LOG_WARNING, "ofTessellator::end() %i with %i vertices", currentTriType, vertices.size() );
 	if ( currentTriType == GL_TRIANGLES ) {
 		resultMesh.addTriangles( vertices );
 	}
@@ -100,7 +112,7 @@ void CALLBACK ofTessellator::end(){
 		resultMesh.addTriangleStrip( vertices );
 	}
 	else if ( currentTriType == GL_LINE_LOOP ){
-		ofLog( OF_LOG_WARNING, "ofTessellate: GL_LINE_LOOP with %i vertices:", vertices.size() );
+		ofLog( OF_LOG_WARNING, "ofTessellate: GL_LINE_LOOP" );
 	/*	for ( int i=0; i<vertices.size(); i++ ) {
 			ofLog( OF_LOG_WARNING, " %s", ofToString( vertices[i] ).c_str() );
 		}*/
@@ -153,13 +165,18 @@ void ofTessellator::clear(){
 }
 
 //----------------------------------------------------------
-ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, bool bIs2D ){
+#ifdef DRAW_WITH_MESHIES
+vector<meshy> ofTessellator::tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D ){
+#else
+ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D ){
+#endif
 
 	mutex.lock();
 	
 	clear();
 	resultMesh = ofVboMesh();
-//	resultMesh.clear();
+	resultMeshies.clear();
+	
 	
 	// now get the tesselator object up and ready:
 	GLUtesselator * ofShapeTobj = gluNewTess();
@@ -192,7 +209,7 @@ ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, bool bIs2D ){
 	gluTessCallback( ofShapeTobj, GLU_TESS_ERROR, OF_GLU_CALLBACK_HACK &ofTessellator::error);
 	
 	gluTessProperty( ofShapeTobj, GLU_TESS_WINDING_RULE, ofGetStyle().polyMode);
-	if (!ofGetStyle().bFill){
+	if (!bFilled){
 		gluTessProperty( ofShapeTobj, GLU_TESS_BOUNDARY_ONLY, true);
 	} else {
 		gluTessProperty( ofShapeTobj, GLU_TESS_BOUNDARY_ONLY, false);
@@ -238,7 +255,11 @@ ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, bool bIs2D ){
 
 	mutex.unlock();
 	
+#ifdef DRAW_WITH_MESHIES
+	return resultMeshies;
+#else
 	return resultMesh;
+#endif
 	
 }
 

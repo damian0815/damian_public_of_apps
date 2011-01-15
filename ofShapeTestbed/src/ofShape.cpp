@@ -24,40 +24,11 @@ ofShape::ofShape(){
 	bFilled = false;
 	resolution = 16;
 	bNeedsTessellation = true;
+	polyWindingMode = ofGetStyle().polyMode;
 	lineColor = ofColor::gray;
 	fillColor = ofColor::green;
+	bShouldClose = false;
 }
-
-/*
-void ofShape::addVertex(ofPoint p1){
-	
-	if( segments.empty() || segments.back().getType() != OFXSHAPE_SEG_LINE ){
-		segments.push_back( ofShapeSegment() );
-	}
-	
-	segments.back().addPoint(p1);
-}
-
-void ofShape::addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p2){
-	
-	if ( segments.empty() || segments.back().getType() != OFXSHAPE_SEG_BEZIER || segments.back().getNumPoints() == 0 ) {
-		//you need at least one point before a bezier
-		return;
-	}
-
-	segments.back().addControlPoint(cp1);
-	segments.back().addControlPoint(cp2);
-	segments.back().addPoint(p2);
-}
-
-void ofShape::addCurveVertex(ofPoint p){
-	if( segments.empty() || segments.back().getType() != OFXSHAPE_SEG_CURVE ){
-		segments.push_back( ofShapeSegment() );
-	}
-	
-	segments.back().addCurvePoint(p);
-}*/
-
 
 
 
@@ -66,13 +37,9 @@ void ofShape::setCurveResolution(int numPoints) {
 }
 
 void ofShape::close() {
-	if ( segments.size()>0 ) {
-		if ( segments.front().getPoints().size()>0 ) {
-			// add the first vertex again
-			addVertex( segments.front().getPoints()[0] );
-		}
-	}
+	bShouldClose = true;
 }
+
 
 
 void ofShape::bezierSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& polyline ){
@@ -172,8 +139,17 @@ void ofShape::tessellate(){
 			}
 		}
 		
+		// close?
+		if ( bShouldClose && cachedPolyline.size() > 0 ) {
+			cachedPolyline.addVertex( cachedPolyline[0] );
+		}
+		
 		bool bIs2D = true;
-		cachedTessellation = ofTessellator::tessellate( cachedPolyline, bIs2D );
+#ifdef DRAW_WITH_MESHIES
+		cachedMeshies = ofTessellator::tessellate( cachedPolyline, bFilled, bIs2D );
+#else
+		cachedTessellation = ofTessellator::tessellate( cachedPolyline, bFilled, bIs2D );
+#endif
 	}
 //	ofLog(OF_LOG_NOTICE, "tessellate done");
 	
@@ -186,12 +162,20 @@ void ofShape::draw(){
 	}
 	if ( bFilled ) {
 		ofSetColor( fillColor );
+#ifdef DRAW_WITH_MESHIES
+		for ( int i=0; i<cachedMeshies.size(); i++ ) {
+			glBegin( cachedMeshies[i].mode );
+			for ( int j=0; j<cachedMeshies[i].vertices.size(); j++ ) {
+				glVertex2f( cachedMeshies[i].vertices[j].x, cachedMeshies[i].vertices[j].y );
+			}
+			glEnd();
+		}
+#else
 		cachedTessellation.drawVertices();
+#endif
 	}
-	else {
-		ofSetColor( lineColor );
-		cachedPolyline.draw();
-	}
+	ofSetColor( lineColor );
+	cachedPolyline.draw();
 }
 
 

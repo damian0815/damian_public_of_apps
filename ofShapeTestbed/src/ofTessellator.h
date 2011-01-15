@@ -8,6 +8,7 @@
  */
 
 #pragma once
+
 #include "ofConstants.h"
 #include "ofMain.h"
 #include "ofShape.h"
@@ -25,12 +26,18 @@
  @author Adapted by damian from Theo's ofxShape.
  */
 
+
+
 class ofTessellator
 {
 public:	
 	
 	/// tessellate polyline and return a mesh
-	static ofVboMesh tessellate( const ofPolyline& polyline, bool bIs2D );
+#ifdef DRAW_WITH_MESHIES
+	static vector<meshy> tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D );
+#else
+	static ofVboMesh tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D );
+#endif
 
 	
 private:
@@ -62,6 +69,8 @@ private:
 	static std::vector <double*> ofShapePolyVertexs;
 	
 
+	
+	static vector<meshy> resultMeshies;
 	
 };
 
