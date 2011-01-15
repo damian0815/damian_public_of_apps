@@ -23,6 +23,7 @@ void ofPolyline::draw() const {
 ofShape::ofShape(){
 	bFilled = false;
 	resolution = 16;
+	bNeedsTessellation = true;
 	lineColor = ofColor::gray;
 	fillColor = ofColor::green;
 }
@@ -60,16 +61,15 @@ void ofShape::addCurveVertex(ofPoint p){
 
 
 
-void ofShape::setCurveResolution(int numPoints){
+void ofShape::setCurveResolution(int numPoints) {
 	resolution = numPoints;
 }
 
-void ofShape::close(){
-	if ( segments.size()>0 )
-	{
-		if ( segments.front().getPoints().size()>1 ){
+void ofShape::close() {
+	if ( segments.size()>0 ) {
+		if ( segments.front().getPoints().size()>0 ) {
 			// add the first vertex again
-			segments.back().addVertex( segments.front().getPoints()[0] );
+			addVertex( segments.front().getPoints()[0] );
 		}
 	}
 }
@@ -85,18 +85,12 @@ void ofShape::bezierSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& p
 	// is arbitrary, can we possibly make it dynamic?
 	
 	const vector<ofPoint>& points = seg.getPoints();
-	if ( points.size()>= 4 )
-	{
-		for ( int k=3; k<points.size(); k+=3 )
-		{
+	if ( points.size()>= 4 ) {
+		for ( int k=3; k<points.size(); k+=3 ) {
 			int k0 = k-3;
 			int k1 = k-2;
 			int k2 = k-1;
 			int k3 = k;
-/*			k0 = ofClamp(k0, 0, points.size()-1);
-			k1 = ofClamp(k1, 0, points.size()-1);
-			k2 = ofClamp(k2, 0, points.size()-1);
-			k3 = ofClamp(k3, 0, points.size()-1);*/
 
 			const ofPoint& p0 = points[k0];
 			const ofPoint& p1 = points[k1];
@@ -104,37 +98,19 @@ void ofShape::bezierSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& p
 			const ofPoint& p3 = points[k3];
 			
 			ofPoint a, b, c;
-
 			float   t, t2, t3;
 			float   x, y, z;
 			
-			// polynomial coefficients
-			
-/*			cx = 3.0f * (x1 - x0);
-			cy = 3.0f * (y1 - y0);
-			cz = 3.0f * (z1 - z0);*/
+			// polynomial coefficients			
 			c = 3.0f*(p1-p0);
-
-/*			bx = 3.0f * (x2 - x1) - cx;
-			by = 3.0f * (y2 - y1) - cy;
-			bz = 3.0f * (z2 - z1) - cz;*/
 			b = 3.0f*(p2-p1) - c;
-			
-/*			ax = x3 - x0 - cx - bx;
-			ay = y3 - y0 - cy - by;
-			az = z3 - z0 - cz - bz;*/
 			a = p3 - p0 - c - b;
-
 			
 			for (int i = 0; i < resolution; i++){
 				t  = (float)i / (float)(resolution-1);
 				t2 = t * t;
 				t3 = t2 * t;
 				ofPoint newPoint = a*t3 + b*t2 + c*t + p0;
-				/*
-				x = (ax * t3) + (bx * t2) + (cx * t) + x0;
-				y = (ay * t3) + (by * t2) + (cy * t) + y0;
-				z = (az * t3) + (bz * t2) + (cz * t) + z0;*/
 				polyline.addVertex( newPoint );
 			}
 			
@@ -145,48 +121,29 @@ void ofShape::bezierSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& p
 
 
 void ofShape::curveSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& polyline ){
+	
 	if( seg.getPoints().size() == 0 )
 		return;
 	
 	ofPoint p0, p1, p2, p3;
 	
-	vector<ofPoint> p = seg.getPoints();
-	p.push_back(p.back());
+	const vector<ofPoint>& p = seg.getPoints();
 	
 	if ( p.size() >= 4 ){	
-		
-		for(int k = 0; k < p.size(); k++ ){
-			
-			float x,y,z;
+		for(int k = 3; k < p.size(); k++ ){
 			float t,t2,t3;
-			
-			int k0 = k-3;
-			int k1 = k-2;
-			int k2 = k-1;
-			int k3 = k;
-			
-			k0 = ofClamp(k0, 0, p.size()-1);
-			k1 = ofClamp(k1, 0, p.size()-1);
-			k2 = ofClamp(k2, 0, p.size()-1);
-			k3 = ofClamp(k3, 0, p.size()-1);
-			
-			ofPoint p0 = p[k0];
-			ofPoint p1 = p[k1];
-			ofPoint p2 = p[k2];
-			ofPoint p3 = p[k3];
+			ofPoint p0 = p[k-3];
+			ofPoint p1 = p[k-2];
+			ofPoint p2 = p[k-1];
+			ofPoint p3 = p[k  ];
 			
 			for (int i = 0; i < resolution; i++){
-				
 				t 	=  (float)i / (float)(resolution-1);
 				t2 	= t * t;
 				t3 	= t2 * t;
-				
-				x = 0.5f * ( ( 2.0f * p1.x ) + ( -p0.x + p2.x ) * t + ( 2.0f * p0.x - 5.0f * p1.x + 4 * p2.x - p3.x ) * t2 + ( -p0.x + 3.0f * p1.x - 3.0f * p2.x + p3.x ) * t3 );
-				y = 0.5f * ( ( 2.0f * p1.y ) + ( -p0.y + p2.y ) * t + ( 2.0f * p0.y - 5.0f * p1.y + 4 * p2.y - p3.y ) * t2 + ( -p0.y + 3.0f * p1.y - 3.0f * p2.y + p3.y ) * t3 );
-				z = 0.5f * ( ( 2.0f * p1.z ) + ( -p0.z + p2.z ) * t + ( 2.0f * p0.z - 5.0f * p1.z + 4 * p2.z - p3.z ) * t2 + ( -p0.z + 3.0f * p1.z - 3.0f * p2.z + p3.z ) * t3 );
-				
-				polyline.addVertex( ofPoint( x, y, z ) );
-			
+
+				ofPoint pt = 0.5f * ( (2.0f*p1) + (-p0+p2)*t + (2.0f*p0 - 5.0f*p1 + 4.0f*p2 - p3)*t2 + (-p0 + 3.0f*p1 - 3.0f*p2 + p3)*t3 );
+				polyline.addVertex( pt );
 			}
 		}
 	}
@@ -194,6 +151,7 @@ void ofShape::curveSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& po
 
 void ofShape::tessellate(){
 	
+//	ofLog(OF_LOG_NOTICE, "tessellate, %i segments", segments.size() );
 	cachedPolyline.clear();
 	
 	if( segments.size() ){
@@ -201,41 +159,31 @@ void ofShape::tessellate(){
 		
 		for(int i = 0; i < segments.size(); i++){
 			if( segments[i].getType() == OFSHAPE_SEG_LINE ){
+//				ofLog(OF_LOG_NOTICE, "line   segment, %3i points", segments[i].getPoints().size() );
 				for(int j = 0; j < segments[i].getPoints().size(); j++){
 					cachedPolyline.addVertex( segments[i].getPoints()[j] );
-					//tessellator.addVertex(segments[i].points[j].x, segments[i].points[j].y, segments[i].points[j].z);
-					printf(" polyline vertex(%f, %f, %f)\n", segments[i].getPoints()[j].x, segments[i].getPoints()[j].y, segments[i].getPoints()[j].z);
 				}
 			}else if( segments[i].getType() == OFSHAPE_SEG_BEZIER ){
+//				ofLog(OF_LOG_NOTICE, "bezier segment, %3i points", segments[i].getPoints().size() );
 				bezierSegmentToPolyline(segments[i], cachedPolyline);
 			}else if( segments[i].getType() == OFSHAPE_SEG_CURVE ){
+//				ofLog(OF_LOG_NOTICE, "curve  segment, %3i points", segments[i].getPoints().size() );
 				curveSegmentToPolyline(segments[i], cachedPolyline);
 			}
 		}
 		
-		
-		ofLog(OF_LOG_NOTICE, "calling tessellator");
 		bool bIs2D = true;
 		cachedTessellation = ofTessellator::tessellate( cachedPolyline, bIs2D );
-		ofLog(OF_LOG_NOTICE, "called");
-
-		//				
-		//				printf("cachedPoints.size() is %i \n", cachedPoints.size());
-		//				
-		//				cachedPointsFloat.assign( cachedPoints.size() * 3, 0.0);
-		//				
-		//				int k = 0;
-		//				for(int i = 0; i < cachedPoints.size(); i++){
-		//					cachedPointsFloat[k]	= cachedPoints[i].x;
-		//					cachedPointsFloat[k+1]	= cachedPoints[i].y;
-		//					cachedPointsFloat[k+2]	= cachedPoints[i].z;
-		//					printf("v is %f %f %f\n", cachedPoints[i].x, cachedPoints[i].y, cachedPoints[i].z);
-		//					k+=3;
-		//				}
 	}
+//	ofLog(OF_LOG_NOTICE, "tessellate done");
+	
+	bNeedsTessellation = false;
 }
 
 void ofShape::draw(){
+	if ( bNeedsTessellation ){
+		tessellate();
+	}
 	if ( bFilled ) {
 		ofSetColor( fillColor );
 		cachedTessellation.drawVertices();
@@ -248,9 +196,11 @@ void ofShape::draw(){
 
 
 void ofShape::addVertex(ofPoint p){
-	if ( segments.size() == 0 || segments.back().getType() != OFSHAPE_SEG_LINE )
+	if ( segments.size() == 0 || segments.back().getType() != OFSHAPE_SEG_LINE ) {
 		segments.push_back( ofShapeSegment( OFSHAPE_SEG_LINE ) );
+	}
 	segments.back().addVertex( p );
+	bNeedsTessellation = true;
 }
 
 void ofShape::addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p){
@@ -260,11 +210,14 @@ void ofShape::addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p){
 		segments.back().addVertex( cp1 );
 	}
 	segments.back().addBezierVertex( cp1, cp2, p );	
+	bNeedsTessellation = true;
 }
 
 void ofShape::addCurveVertex(ofPoint p){
-	if ( segments.size() == 0 || segments.back().getType() != OFSHAPE_SEG_CURVE )
+	if ( segments.size() == 0 ) {
 		segments.push_back( ofShapeSegment( OFSHAPE_SEG_CURVE ) );
+	}
 	segments.back().addCurveVertex( p );	
+	bNeedsTessellation = true;
 }
 

@@ -70,6 +70,11 @@ public:
 	void tessellate();
 	void draw();
 	
+	/// drawing style
+	void setFilled( bool bFill ) { bFilled = bFill; }
+	void setLineColor( const ofColor& color ) { lineColor = color; }
+	void setFillColor( const ofColor& color ) { fillColor = color; }
+	
 private:		
 	
 	typedef enum {
@@ -90,7 +95,7 @@ private:
 			points.push_back(p)	;
 		}
 		void addCurveVertex(const ofPoint& p) {
-			points.push_back(p);
+			type = OFSHAPE_SEG_CURVE; points.push_back(p);
 		}
 		void addBezierVertex(const ofPoint& c1, const ofPoint& c2, const ofPoint& p) {
 			type = OFSHAPE_SEG_BEZIER; points.push_back( c1 ); points.push_back( c2 ); points.push_back( p ); 
@@ -114,6 +119,7 @@ private:
 	int resolution;
 	vector <ofShapeSegment> segments;
 	
+	bool bNeedsTessellation;
 	ofPolyline cachedPolyline;
 	ofVboMesh cachedTessellation;
 	

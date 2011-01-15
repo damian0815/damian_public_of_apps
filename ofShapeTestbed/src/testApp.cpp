@@ -49,7 +49,6 @@ void testApp::draw(){
 
 	ofBackground( 255, 255, 255 );
 	
-
 	//------(a)--------------------------------------
 	// 
 	// 		draw a star
@@ -121,7 +120,6 @@ void testApp::draw(){
 	//-------------------------------------
 	
 	
-	
 	//------(f)--------------------------------------
 	// 
 	// 		ofCurveVertex
@@ -131,6 +129,7 @@ void testApp::draw(){
 	//
 	
 	ofSetHexColor(0x2bdbe6);
+	ofNoFill();
 	ofBeginShape();
 	
 	for (int i = 0; i < nCurveVertexes; i++){
@@ -175,8 +174,6 @@ void testApp::draw(){
 			s.addCurveVertex(curveVertices[i].x, curveVertices[i].y);
 		}
 	}
-//	s.close();
-	s.tessellate();
 	s.draw();
 	ofPopMatrix();
 	
@@ -246,7 +243,7 @@ void testApp::draw(){
 	path.addVertex( x0, y0 );
 	path.addBezierVertex( x1, y1, x2, y2, x3, y3 );
 	ofSetHexColor(0xFF9933);
-	path.tessellate();
+	path.close();
 	path.draw();
 
 	ofEnableAlphaBlending();
@@ -259,7 +256,7 @@ void testApp::draw(){
 	ofDisableAlphaBlending();
 	
 	ofPopMatrix();
-	
+
 }
 
 //--------------------------------------------------------------

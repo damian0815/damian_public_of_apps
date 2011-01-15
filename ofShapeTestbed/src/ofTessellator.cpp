@@ -79,9 +79,7 @@ void CALLBACK ofTessellator::error(GLenum errCode){
 void CALLBACK ofTessellator::begin(GLint type){
 	// type can be GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP, or GL_TRIANGLES
 	// or GL_LINE_LOOP if GLU_TESS_BOUNDARY_ONLY was set to TRUE
-	
-//	printf("ofTessBegin - type is %i\n", type);
-	
+		
 	
 	currentTriType = type;
 	vertices.clear();
@@ -92,14 +90,25 @@ void CALLBACK ofTessellator::begin(GLint type){
 void CALLBACK ofTessellator::end(){
 	// here we take our big pile of vertices and push them at the mesh
 
-	if ( currentTriType == GL_TRIANGLES )
+	if ( currentTriType == GL_TRIANGLES ) {
 		resultMesh.addTriangles( vertices );
-	else if ( currentTriType == GL_TRIANGLE_FAN )
+	}
+	else if ( currentTriType == GL_TRIANGLE_FAN ) {
 		resultMesh.addTriangleFan( vertices );
-	else if ( currentTriType == GL_TRIANGLE_STRIP )
+	}
+	else if ( currentTriType == GL_TRIANGLE_STRIP ) {
 		resultMesh.addTriangleStrip( vertices );
-	else
+	}
+	else if ( currentTriType == GL_LINE_LOOP ){
+		ofLog( OF_LOG_WARNING, "ofTessellate: GL_LINE_LOOP with %i vertices:", vertices.size() );
+	/*	for ( int i=0; i<vertices.size(); i++ ) {
+			ofLog( OF_LOG_WARNING, " %s", ofToString( vertices[i] ).c_str() );
+		}*/
+		
+	}
+	else{
 		ofLog( OF_LOG_WARNING, "ofTessellate: unrecognized type '%i' (expected GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP)", currentTriType );
+	}
 	
 }
 
