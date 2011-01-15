@@ -46,8 +46,10 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
 	ofBackground( 255, 255, 255 );
+	
+	ofFill();
+	ofSetHexColor(0xe0be21);
 	
 	//------(a)--------------------------------------
 	// 
@@ -59,30 +61,13 @@ void testApp::draw(){
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
 	ofSetPolyMode(OF_POLY_WINDING_ODD);	// this is the normal mode
-	ofBeginShape();
-	ofVertex(200,135);
-	ofVertex(15,135);
-	ofVertex(165,25);
-	ofVertex(105,200);
-	ofVertex(50,25);
-	ofEndShape();
-
-	// now using ofPath
-	ofPushMatrix( );
-	ofTranslate( 0, 100, 0 ); 
-	ofShape starOdd;
-	ofLog( OF_LOG_NOTICE, "StarOdd ofShape" );
-	starOdd.setPolyWindingMode( OF_POLY_WINDING_ODD );
-	starOdd.addVertex(200,135);
-	starOdd.addVertex(15,135);
-	starOdd.addVertex(165,25);
-	starOdd.addVertex(105,200);
-	starOdd.addVertex(50,25);
-	starOdd.close();
-	starOdd.setFilled(true);
-	starOdd.draw();
-	ofLog( OF_LOG_NOTICE, "StarOdd ofShape end" );
-	ofPopMatrix();
+	ofShape s;
+	s.addVertex(200,135);
+	s.addVertex(15,135);
+	s.addVertex(165,25);
+	s.addVertex(105,200);
+	s.addVertex(50,25);
+	s.draw();
 	
 	
 	//------(b)--------------------------------------
@@ -94,36 +79,97 @@ void testApp::draw(){
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
-	ofSetHexColor(0xb5de10);
-	ofSetPolyMode(OF_POLY_WINDING_NONZERO);
-	ofBeginShape();
-	ofVertex(400,135);
-	ofVertex(215,135);
-	ofVertex(365,25);
-	ofVertex(305,200);
-	ofVertex(250,25);
-	ofEndShape();
-	
-	// now using ofPath
-	ofPushMatrix( );
-	ofTranslate( 0, 100, 0 ); 
-	ofSetHexColor(0xb5de10);
-	ofLog( OF_LOG_NOTICE, "StarNonZero ofShape" );
-	ofShape starNonZero;
-	starNonZero.setPolyWindingMode( OF_POLY_WINDING_NONZERO );
-	starNonZero.addVertex(400,135);
-	starNonZero.addVertex(215,135);
-	starNonZero.addVertex(365,25);
-	starNonZero.addVertex(305,200);
-	starNonZero.addVertex(250,25);
-	starNonZero.close();
-	starNonZero.setFilled(true);
-	starNonZero.draw();
-	ofLog( OF_LOG_NOTICE, "StarNonZero ofShape end" );
-	ofPopMatrix();
-	
+	s.clear();
+	s.setHexColor(0xb5de10);
+	s.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+	s.addVertex(400,135);
+	s.addVertex(215,135);
+	s.addVertex(365,25);
+	s.addVertex(305,200);
+	s.addVertex(250,25);
+	s.draw();
 	//-------------------------------------
 	
+	
+	
+	//------(c)--------------------------------------
+	// 
+	// 		draw a star dynamically
+	//
+	// 		use the mouse position as a pct
+	//		to calc nPoints and internal point radius
+	//
+	float xPct = (float)(mouseX) / (float)(ofGetWidth());
+	float yPct = (float)(mouseY) / (float)(ofGetHeight());
+	int nTips = 5 + xPct * 60;
+	int nStarPts = nTips * 2;
+	float angleChangePerPt = TWO_PI / (float)nStarPts;
+	float innerRadius = 0 + yPct*80;
+	float outerRadius = 80;
+	float origx = 525;
+	float origy = 100;
+	float angle = 0;
+	
+	s.clear();
+	s.setHexColor(0xa16bca);
+	for (int i = 0; i < nStarPts; i++){
+		if (i % 2 == 0) {
+			// inside point:
+			float x = origx + innerRadius * cos(angle);
+			float y = origy + innerRadius * sin(angle);
+			s.addVertex(x,y);
+		} else {
+			// outside point
+			float x = origx + outerRadius * cos(angle);
+			float y = origy + outerRadius * sin(angle);
+			s.addVertex(x,y);
+		}
+		angle += angleChangePerPt;
+	}
+	s.draw();
+	//-------------------------------------
+	
+	//------(d)--------------------------------------
+	// 
+	// 		poylgon of random points
+	//
+	// 		lots of self intersection, 500 pts is a good stress test
+	// 
+	// 
+	s.clear();
+	s.setHexColor(0x0cb0b6);
+	s.setPolyWindingMode(OF_POLY_WINDING_ODD);
+	for (int i = 0; i < 10; i++){
+		s.addVertex(ofRandom(650,850), ofRandom(20,200));
+	}
+	s.draw();
+	//-------------------------------------
+	
+	
+	//------(e)--------------------------------------
+	// 
+	// 		use sin cos and time to make some spirally shape
+	//
+	glPushMatrix();
+	glTranslatef(100,300,0);
+	s.clear();
+	s.setHexColor(0xff2220);
+	s.setFilled( true );
+	s.setPolyWindingMode(OF_POLY_WINDING_ODD);
+	float angleStep 	= TWO_PI/(100.0f + sin(ofGetElapsedTimef()/5.0f) * 60); 
+	float radiusAdder 	= 0.5f;
+	float radius 		= 0;
+	for (int i = 0; i < 200; i++){
+		float anglef = (i) * angleStep;
+		float x = radius * cos(anglef);
+		float y = radius * sin(anglef); 
+		s.addVertex(x,y);
+		radius 	+= radiusAdder; 
+	}
+	s.close();
+	s.draw();
+	glPopMatrix();
+	//-------------------------------------
 	
 	//------(f)--------------------------------------
 	// 
@@ -132,10 +178,9 @@ void testApp::draw(){
 	// 		because it uses catmul rom splines, we need to repeat the first and last 
 	// 		items so the curve actually goes through those points
 	//
-	
-	ofSetHexColor(0x2bdbe6);
-	ofNoFill();
-	ofBeginShape();
+
+	s.clear();
+	s.setFillColor(0x2bdbe6);
 	
 	for (int i = 0; i < nCurveVertexes; i++){
 		
@@ -149,27 +194,6 @@ void testApp::draw(){
 		// otherwise just normal ofCurveVertex call
 		
 		if (i == 0){
-			ofCurveVertex(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
-			ofCurveVertex(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
-		} else if (i == nCurveVertexes-1){
-			ofCurveVertex(curveVertices[i].x, curveVertices[i].y);
-			ofCurveVertex(curveVertices[0].x, curveVertices[0].y);	// to draw a curve from pt 6 to pt 0
-			ofCurveVertex(curveVertices[0].x, curveVertices[0].y);	// we duplicate the first point twice
-		} else {
-			ofCurveVertex(curveVertices[i].x, curveVertices[i].y);
-		}
-	}
-	
-	ofEndShape();
-
-	
-	// now with ofShape
-	ofPushMatrix();
-	ofTranslate( 0, 200, 0 );
-	ofLog( OF_LOG_NOTICE, "Curve ofShape" );
-	ofShape s;
-	for (int i = 0; i < nCurveVertexes; i++){
-		if (i == 0){
 			s.addCurveVertex(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
 			s.addCurveVertex(curveVertices[0].x, curveVertices[0].y); // we need to duplicate 0 for the curve to start at point 0
 		} else if (i == nCurveVertexes-1){
@@ -180,22 +204,18 @@ void testApp::draw(){
 			s.addCurveVertex(curveVertices[i].x, curveVertices[i].y);
 		}
 	}
-	s.close();
-	s.setFilled(true);
 	s.draw();
-	ofLog( OF_LOG_NOTICE, "Curve ofShape done" );
-	ofPopMatrix();
 	
 	
 	// show a faint the non-curve version of the same polygon:
 	ofEnableAlphaBlending();
-	ofNoFill();
-	ofSetColor(0,0,0,40);
-	ofBeginShape();
+	s.setFilled( false );
+	s.setLineColor( ofColor(0,0,0,40) );
 	for (int i = 0; i < nCurveVertexes; i++){
-		ofVertex(curveVertices[i].x, curveVertices[i].y);
+		s.addVertex(curveVertices[i].x, curveVertices[i].y);
 	}
-	ofEndShape(true);
+	s.close();
+	s.draw();
 	
 	
 	ofSetColor(0,0,0,80);
@@ -224,15 +244,16 @@ void testApp::draw(){
 	float x2 = 600+30*cos(ofGetElapsedTimef()*2.0f);
 	float y2 = 300+100*sin(ofGetElapsedTimef());
 	float x3 = 650;
-	float y3 = 300;	
+	float y3 = 300;
 	
 	
-	ofFill();
-	ofSetHexColor(0xFF9933);
-	ofBeginShape();
-	ofVertex(x0,y0);
-	ofBezierVertex(x1,y1,x2,y2,x3,y3);
-	ofEndShape();
+	
+	s.clear();
+	s.setFilled(true);
+	s.setHexColor(0xFF9933);
+	s.addVertex(x0,y0);
+	s.addBezierVertex(x1,y1,x2,y2,x3,y3);
+	s.draw();
 	
 	
 	ofEnableAlphaBlending();
@@ -245,30 +266,151 @@ void testApp::draw(){
 	ofDisableAlphaBlending();
 	
 	
-	// now using ofPath
-	ofPushMatrix();
-	ofTranslate( 0, 100, 0 );
-	ofLog( OF_LOG_NOTICE, "Bezier ofShape" );
-	ofShape path;
-	path.addVertex( x0, y0 );
-	path.addBezierVertex( x1, y1, x2, y2, x3, y3 );
-	ofSetHexColor(0xFF9933);
-	path.close();
-	path.setFilled(true);
-	path.draw();
-	ofLog( OF_LOG_NOTICE, "Bezier ofShape done" );
-
-	ofEnableAlphaBlending();
-	ofFill();
-	ofSetColor(0,0,0,40);
-	ofCircle(x0,y0,4);
-	ofCircle(x1,y1,4);
-	ofCircle(x2,y2,4);
-	ofCircle(x3,y3,4);
-	ofDisableAlphaBlending();
 	
-	ofPopMatrix();
+	//------(h)--------------------------------------
+	// 
+	// 		holes / ofNextContour
+	// 
+	// 		with ofNextContour we can create multi-contour shapes
+	// 		this allows us to draw holes, for example... 
+	//
+	ofSetHexColor(0xd3ffd3);
+	ofRect(80,480,140,70);
+	s.clear();
+	s.setFilled(true);
+	s.setHexColor( 0xff00ff );
+	s.addVertex(100,500);
+	s.addVertex(180,550);
+	s.addVertex(100,600);
+	s.close();
+	s.nextContour();
+	s.addVertex(120,520);
+	s.addVertex(160,550);
+	s.addVertex(120,580);
+	s.close();
+	s.draw();
+	//-------------------------------------
+	
+	
+	//------(i)--------------------------------------
+	// 
+	// 		CSG / ofNextContour
+	// 
+	// 		with different winding rules, you can even use ofNextContour to 
+	// 		perform constructive solid geometry 
+	// 		
+	// 		be careful, the clockwiseness or counter clockwisenss of your multiple
+	// 		contours matters with these winding rules.
+	//
+	// 		for csg ideas, see : http://glprogramming.com/red/chapter11.html
+	// 
+	// 		info about the winding rules is here:
+	//		http://glprogramming.com/red/images/Image128.gif
+	// 
+	s.clear();
+	s.setFilled(false);
+	
+	glPushMatrix();
+	
+	ofSetPolyMode(OF_POLY_WINDING_ODD);
+	
+	s.addVertex(300,500);
+	s.addVertex(380,550);
+	s.addVertex(300,600);
+	s.close();
+	s.nextContour();
+	
+	for (int i = 0; i < 20; i++){
+		float anglef = ((float)i / 19.0f) * TWO_PI;
+		float x = 340 + 30 * cos(anglef);
+		float y = 550 + 30 * sin(anglef); 
+		s.addVertex(x,y);
+		radius 	+= radiusAdder; 
+	}
+	
+	s.close();
+	s.draw();
+	
+	glTranslatef(100,0,0);
+	
+	s.clear();
+	s.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+	
+	s.addVertex(300,500);
+	s.addVertex(380,550);
+	s.addVertex(300,600);
 
+	s.close();
+	s.nextContour();
+	
+	for (int i = 0; i < 20; i++){
+		float anglef = ((float)i / 19.0f) * TWO_PI;
+		float x = 340 + 30 * cos(anglef);
+		float y = 550 + 30 * sin(anglef); 
+		s.addVertex(x,y);
+		radius 	+= radiusAdder; 
+	}
+
+	s.close();
+	s.draw();
+	
+	glTranslatef(100,0,0);
+	s.clear();
+	s.setPolyWindingMode(OF_POLY_WINDING_ABS_GEQ_TWO);
+	s.addVertex(300,500);
+	s.addVertex(380,550);
+	s.addVertex(300,600);
+	s.close();
+	s.nextContour();
+	
+	for (int i = 0; i < 20; i++){
+		float anglef = ((float)i / 19.0f) * TWO_PI;
+		float x = 340 + 30 * cos(anglef);
+		float y = 550 + 30 * sin(anglef); 
+		s.addVertex(x,y);
+		radius 	+= radiusAdder; 
+	}
+
+	s.close();
+	s.draw();
+	
+	glPopMatrix();
+	//-------------------------------------
+	
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(a) star\nwinding rule odd", 20,210);
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(b) star\nwinding rule nonzero", 220,210);
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(c) dynamically\ncreated shape", 420,210);
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(d) random points\npoly", 670,210);
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(e) fun with sin/cos", 20,410);
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(f) ofCurveVertex\nuses catmull rom\nto make curved shapes", 220,410);
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(g) ofBezierVertex\nuses bezier to draw curves", 460,410);
+	
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(h) ofNextContour\nallows for holes", 20,610);
+	
+	ofSetHexColor(0x000000);
+	ofDrawBitmapString("(i) ofNextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
+	
+	
+	
+	
+	
+		
 }
 
 //--------------------------------------------------------------

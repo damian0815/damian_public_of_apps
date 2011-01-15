@@ -60,6 +60,7 @@ public:
 	
 	ofShape();
 	void setCurveResolution(int numPoints);
+	void clear() { segments.clear(); bNeedsTessellation = true; cachedPolyline.clear(); cachedTessellation.clear(); bShouldClose=false; }
 		
 	void addVertex(ofPoint p1);
 	void addVertex( float x, float y ) 
@@ -75,16 +76,27 @@ public:
 
 	/// close the shape
 	void close();
+	/// next contour
+	void nextContour() {};
 
 	/// must call tessellate before calling draw, if the shape has changed
 	void tessellate();
 	void draw();
 	
 	/// drawing style
-	void setFilled( bool bFill ) { bFilled = bFill; bNeedsTessellation = true; }
-	void setLineColor( const ofColor& color ) { lineColor = color; }
-	void setFillColor( const ofColor& color ) { fillColor = color; }
+	/// polygon winding mode for tessellation
 	void setPolyWindingMode( int newMode ) { polyWindingMode = newMode; bNeedsTessellation = true; }
+	/// filled/outline
+	void setFilled( bool bFill ) { bFilled = bFill; bNeedsTessellation = true; }
+	/// set line + fill color simultaneously
+	void setColor( const ofColor& color ) { setFillColor( color ); setLineColor( color ); }
+	void setHexColor( int hex ) { setColor( ofColor().fromHex( hex ) ); };
+	/// set line color
+	void setLineColor( const ofColor& color ) { lineColor = color; }
+	void setLineHexColor( int hex ) { setLineColor( ofColor().fromHex( hex ) ); };
+	/// set fill color
+	void setFillColor( const ofColor& color ) { fillColor = color; }
+	void setFillHexColor( int hex ) { setFillColor( ofColor().fromHex( hex ) ); };
 	
 private:		
 	
@@ -102,18 +114,20 @@ private:
 		}
 		
 		/// up to you to call the correct function
-		void addVertex(const ofPoint& p) {
+		void addSegmentVertex(const ofPoint& p) {
 			points.push_back(p)	;
 		}
-		void addCurveVertex(const ofPoint& p) {
+		void addSegmentCurveVertex(const ofPoint& p) {
 			type = OFSHAPE_SEG_CURVE; points.push_back(p);
 		}
-		void addBezierVertex(const ofPoint& c1, const ofPoint& c2, const ofPoint& p) {
+		void addSegmentBezierVertex(const ofPoint& c1, const ofPoint& c2, const ofPoint& p) {
 			type = OFSHAPE_SEG_BEZIER; points.push_back( c1 ); points.push_back( c2 ); points.push_back( p ); 
 		}
 
 		int getType() const { return type; }
 		const vector<ofPoint>& getPoints() const { return points; }
+		const ofPoint& getPoint( int index ) const { return points[index]; }
+		size_t getNumPoints() const { return points.size(); }
 	private:
 		segmentType type;
 		vector<ofPoint> points;

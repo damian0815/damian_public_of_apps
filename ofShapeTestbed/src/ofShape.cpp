@@ -12,6 +12,14 @@
 
 
 
+/** 
+ @TODO
+	ofShape:
+	- fix issues with multiple segment types
+	- ofShapeCollection for multiple shapes inside (ofShape rename to ofPath)
+	- ttf integration: ttf spits out ofShapeCollection
+*/
+
 
 void ofPolyline::draw() const {
 	for ( int i=1; i<points.size(); i++ ) {
@@ -21,12 +29,12 @@ void ofPolyline::draw() const {
 
 
 ofShape::ofShape(){
-	bFilled = false;
+	bFilled = ofGetStyle().bFill;
 	resolution = 16;
 	bNeedsTessellation = true;
 	polyWindingMode = ofGetStyle().polyMode;
-	lineColor = ofColor::gray;
-	fillColor = ofColor::green;
+	lineColor = ofGetStyle().color;
+	fillColor = ofGetStyle().color;
 	bShouldClose = false;
 }
 
@@ -122,19 +130,15 @@ void ofShape::tessellate(){
 	cachedPolyline.clear();
 	
 	if( segments.size() ){
-		ofPoint tmpPt;
 		
 		for(int i = 0; i < segments.size(); i++){
 			if( segments[i].getType() == OFSHAPE_SEG_LINE ){
-//				ofLog(OF_LOG_NOTICE, "line   segment, %3i points", segments[i].getPoints().size() );
 				for(int j = 0; j < segments[i].getPoints().size(); j++){
-					cachedPolyline.addVertex( segments[i].getPoints()[j] );
+					cachedPolyline.addVertex( segments[i].getPoint(j) );
 				}
 			}else if( segments[i].getType() == OFSHAPE_SEG_BEZIER ){
-//				ofLog(OF_LOG_NOTICE, "bezier segment, %3i points", segments[i].getPoints().size() );
 				bezierSegmentToPolyline(segments[i], cachedPolyline);
 			}else if( segments[i].getType() == OFSHAPE_SEG_CURVE ){
-//				ofLog(OF_LOG_NOTICE, "curve  segment, %3i points", segments[i].getPoints().size() );
 				curveSegmentToPolyline(segments[i], cachedPolyline);
 			}
 		}
@@ -161,9 +165,9 @@ void ofShape::draw(){
 		tessellate();
 	}
 	if ( bFilled ) {
-		ofSetColor( fillColor );
 #ifdef DRAW_WITH_MESHIES
 		for ( int i=0; i<cachedMeshies.size(); i++ ) {
+			ofSetColor( fillColor );
 			glBegin( cachedMeshies[i].mode );
 			for ( int j=0; j<cachedMeshies[i].vertices.size(); j++ ) {
 				glVertex2f( cachedMeshies[i].vertices[j].x, cachedMeshies[i].vertices[j].y );
@@ -180,28 +184,65 @@ void ofShape::draw(){
 
 
 void ofShape::addVertex(ofPoint p){
-	if ( segments.size() == 0 || segments.back().getType() != OFSHAPE_SEG_LINE ) {
+	if ( segments.size() == 0 ) {
 		segments.push_back( ofShapeSegment( OFSHAPE_SEG_LINE ) );
 	}
-	segments.back().addVertex( p );
+	else {
+		ofShapeSegment& backSeg = segments.back();
+		if ( backSeg.getType() != OFSHAPE_SEG_LINE ) {
+			// back segment is not a line
+			if ( backSeg.getNumPoints() > 0 ) {
+				// back segment has points
+				if ( backSeg.getType() == OFSHAPE_SEG_CURVE ) {
+					// back segment is a Catmull-Rom, so we must add the new point to the old curve
+					// to prevent a gap in the line
+					backSeg.addSegmentCurveVertex( p );
+				}
+			}
+			// push back a new line segment
+			segments.push_back( ofShapeSegment( OFSHAPE_SEG_LINE ) );
+		}
+	}
+	segments.back().addSegmentVertex( p );
 	bNeedsTessellation = true;
 }
 
 void ofShape::addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p){
-	if ( segments.size() == 0 ) {
+	if ( segments.size() == 0 || (segments.back().getType() != OFSHAPE_SEG_BEZIER && segments.back().getNumPoints()>1) ) {
 		segments.push_back( ofShapeSegment( OFSHAPE_SEG_BEZIER ) );
 		// user has done something stupid -- let's be kind
-		segments.back().addVertex( cp1 );
+		segments.back().addSegmentVertex( cp1 );
 	}
-	segments.back().addBezierVertex( cp1, cp2, p );	
+	segments.back().addSegmentBezierVertex( cp1, cp2, p );	
 	bNeedsTessellation = true;
 }
+
 
 void ofShape::addCurveVertex(ofPoint p){
 	if ( segments.size() == 0 ) {
 		segments.push_back( ofShapeSegment( OFSHAPE_SEG_CURVE ) );
 	}
-	segments.back().addCurveVertex( p );	
+	else {
+		ofShapeSegment& backSeg = segments.back();
+		if ( backSeg.getType() != OFSHAPE_SEG_CURVE ) {
+			// back segment is not a curve
+			// so we should start our new segment with the previous 2 points of the segment previous 
+			// to us (for a line) or double up the last point (for a bezier segment)
+			int ultimate, penultimate;
+			ultimate = max(0,int(backSeg.getNumPoints())-1);
+			if ( backSeg.getType() == OFSHAPE_SEG_BEZIER ) {
+				penultimate = max(0,int(backSeg.getNumPoints())-2);
+			}
+			else { // OFSHAPE_SEG_LINE
+				penultimate = max(0,int(backSeg.getNumPoints())-2);
+			}
+			ofShapeSegment newSeg = ofShapeSegment( OFSHAPE_SEG_CURVE );
+			newSeg.addSegmentCurveVertex( backSeg.getPoints()[penultimate] );
+			newSeg.addSegmentCurveVertex( backSeg.getPoints()[ultimate] );
+			segments.push_back( newSeg );
+		}
+	}
+	segments.back().addSegmentCurveVertex( p );	
 	bNeedsTessellation = true;
 }
 
