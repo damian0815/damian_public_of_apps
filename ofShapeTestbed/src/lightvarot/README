@@ -1,0 +1,45 @@
+li(ght)varot
+
+a more recent and smaller version of livarot
+
+
+Since the last livarot release has become totally foreign to me after all these 
+years (5 years, if i'm not mistaken), here is a recent rewrite for which i can 
+give help. It's also simpler, doesn't use a binary tree in the polygon sweep, 
+nor complicated data structures for said sweep.
+
+The library is presented as is; put in your code, compile (there isn't any 
+spec ial dependency, except png and zlib), and use the functions. The main.cpp 
+contains some examples, and the headers give more info on the functions to call.
+
+The basic procedure is:
+1) make a path, calling commands in sequence: move there, line to this point, 
+  curve to this point via this other point, etc
+2) create a polygon object
+3) convert the path to a polyline and put it in the polygon: this should always
+  be 2 commands: polygon->setSource(path,A) followed by path->fill(polygon, ...)
+  SetSource is necessary for boolean operations because the polygon object will 
+  hold both paths involved in the operation. For say pathA AND pathB, the 2 calls 
+  will be setSource(pathA, true) and setSource(pathB, false).
+4) once the polygon object contains alls paths for the operation, call the 
+  function uncross() with the appropriate command (see VarotPolygon.h). If the second
+  parameter is true, then the uncross function will merge edges in the result
+  polyline according to the source path, to produce a path representing the 
+  result
+5) polygon or path, you now have something without intersection that can be 
+  rasterized easily. The Image class does a simple edge flag rasterization, for
+  example: one call to polygon->toImage(image) tp collect edge boundaries, then
+  one call to image->blit() to fill the inside of the polygon, and the object is
+  ready. The writeToFile() function just dumps the image in a png file
+  
+Misc. stuff:
+- paths can offset() themselves. This function produces a path that approximates
+  the path you would get by uniformly shifting the source path
+- the PointSequence class holds a minimum-description path simplification algo.
+  Put points in it, call simplify(), done.
+- the Voronoi class computes voronoi graphs of points. Put points in it, call
+  graph(), done. The result is a set of closed paths, one for each region of the
+  graph.
+
+
+  
