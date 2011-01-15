@@ -166,9 +166,9 @@ void ofTessellator::clear(){
 
 //----------------------------------------------------------
 #ifdef DRAW_WITH_MESHIES
-vector<meshy> ofTessellator::tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D ){
+vector<meshy> ofTessellator::tessellate( const ofPolyline& polyline, int polyWindingMode, bool bFilled, bool bIs2D ){
 #else
-ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D ){
+ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, int polyWindingMode, bool bFilled, bool bIs2D ){
 #endif
 
 	mutex.lock();
@@ -208,7 +208,7 @@ ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, bool bFilled, b
 	gluTessCallback( ofShapeTobj, GLU_TESS_END, OF_GLU_CALLBACK_HACK &ofTessellator::end);
 	gluTessCallback( ofShapeTobj, GLU_TESS_ERROR, OF_GLU_CALLBACK_HACK &ofTessellator::error);
 	
-	gluTessProperty( ofShapeTobj, GLU_TESS_WINDING_RULE, ofGetStyle().polyMode);
+	gluTessProperty( ofShapeTobj, GLU_TESS_WINDING_RULE, polyWindingMode );
 	if (!bFilled){
 		gluTessProperty( ofShapeTobj, GLU_TESS_BOUNDARY_ONLY, true);
 	} else {

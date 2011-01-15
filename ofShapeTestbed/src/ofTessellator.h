@@ -32,11 +32,11 @@ class ofTessellator
 {
 public:	
 	
-	/// tessellate polyline and return a mesh
+	/// tessellate polyline and return a mesh. if bIs2D==true, do a 10% more efficient normal calculation.
 #ifdef DRAW_WITH_MESHIES
-	static vector<meshy> tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D );
+	static vector<meshy> tessellate( const ofPolyline& polyline, int polyWindingMode, bool bFilled, bool bIs2D=false );
 #else
-	static ofVboMesh tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D );
+	static ofVboMesh tessellate( const ofPolyline& polyline, bool bFilled, bool bIs2D=false );
 #endif
 
 	

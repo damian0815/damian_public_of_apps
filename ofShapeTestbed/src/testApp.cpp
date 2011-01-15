@@ -60,8 +60,8 @@ void testApp::draw(){
 	// 		info about the winding rules is here:
 	//		http://glprogramming.com/red/images/Image128.gif
 	// 
-	ofSetPolyMode(OF_POLY_WINDING_ODD);	// this is the normal mode
 	ofShape s;
+	s.setPolyWindingMode(OF_POLY_WINDING_ODD);	// this is the normal mode
 	s.addVertex(200,135);
 	s.addVertex(15,135);
 	s.addVertex(165,25);
@@ -87,6 +87,7 @@ void testApp::draw(){
 	s.addVertex(365,25);
 	s.addVertex(305,200);
 	s.addVertex(250,25);
+	s.close();
 	s.draw();
 	//-------------------------------------
 	
@@ -180,7 +181,7 @@ void testApp::draw(){
 	//
 
 	s.clear();
-	s.setFillColor(0x2bdbe6);
+	s.setHexColor(0x2bdbe6);
 	
 	for (int i = 0; i < nCurveVertexes; i++){
 		
@@ -209,8 +210,9 @@ void testApp::draw(){
 	
 	// show a faint the non-curve version of the same polygon:
 	ofEnableAlphaBlending();
+	s.clear();
 	s.setFilled( false );
-	s.setLineColor( ofColor(0,0,0,40) );
+	s.setColor( ofColor(0,0,0,40) );
 	for (int i = 0; i < nCurveVertexes; i++){
 		s.addVertex(curveVertices[i].x, curveVertices[i].y);
 	}

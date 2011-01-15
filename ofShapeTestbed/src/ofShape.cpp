@@ -150,9 +150,9 @@ void ofShape::tessellate(){
 		
 		bool bIs2D = true;
 #ifdef DRAW_WITH_MESHIES
-		cachedMeshies = ofTessellator::tessellate( cachedPolyline, bFilled, bIs2D );
+		cachedMeshies = ofTessellator::tessellate( cachedPolyline, polyWindingMode, bFilled, bIs2D );
 #else
-		cachedTessellation = ofTessellator::tessellate( cachedPolyline, bFilled, bIs2D );
+		cachedTessellation = ofTessellator::tessellate( cachedPolyline, polyWindingMode, bFilled, bIs2D );
 #endif
 	}
 //	ofLog(OF_LOG_NOTICE, "tessellate done");
