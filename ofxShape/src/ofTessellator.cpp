@@ -151,7 +151,8 @@ ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, bool bIs2D ){
 	mutex.lock();
 	
 	clear();
-	resultMesh.clear();
+	resultMesh = ofVboMesh();
+//	resultMesh.clear();
 	
 	// now get the tesselator object up and ready:
 	GLUtesselator * ofShapeTobj = gluNewTess();
