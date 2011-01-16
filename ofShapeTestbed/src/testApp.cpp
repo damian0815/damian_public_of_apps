@@ -150,7 +150,7 @@ void testApp::setup(){
 	
 	//------(f)--------------------------------------
 	// 
-	// 		ofCurveVertex
+	// 		addCurveVertex
 	// 
 	// 		because it uses catmul rom splines, we need to repeat the first and last 
 	// 		items so the curve actually goes through those points
@@ -202,9 +202,9 @@ void testApp::setup(){
 	
 	//------(g)--------------------------------------
 	// 
-	// 		ofBezierVertex
+	// 		addBezierVertex
 	// 
-	// 		with ofBezierVertex we can draw a curve from the current vertex
+	// 		with addBezierVertex we can draw a curve from the current vertex
 	//		through the the next three vertexes we pass in.
 	//		(two control points and the final bezier point)
 	//		
@@ -227,9 +227,9 @@ void testApp::setup(){
 	
 	//------(h)--------------------------------------
 	// 
-	// 		holes / ofNextContour
+	// 		holes / nextContour
 	// 
-	// 		with ofNextContour we can create multi-contour shapes
+	// 		with nextContour we can create multi-contour shapes
 	// 		this allows us to draw holes, for example... 
 	//
 	shapeH.setFilled(true);
@@ -247,9 +247,9 @@ void testApp::setup(){
 	
 	//------(i)--------------------------------------
 	// 
-	// 		CSG / ofNextContour
+	// 		CSG / nextContour
 	// 
-	// 		with different winding rules, you can even use ofNextContour to 
+	// 		with different winding rules, you can even use nextContour to 
 	// 		perform constructive solid geometry 
 	// 		
 	// 		be careful, the clockwiseness or counter clockwisenss of your multiple
@@ -358,9 +358,9 @@ void testApp::update(){
 	
 	//------(g)--------------------------------------
 	// 
-	// 		ofBezierVertex
+	// 		addBezierVertex
 	// 
-	// 		with ofBezierVertex we can draw a curve from the current vertex
+	// 		with addBezierVertex we can draw a curve from the current vertex
 	//		through the the next three vertexes we pass in.
 	//		(two control points and the final bezier point)
 	//		
@@ -387,18 +387,40 @@ void testApp::draw(){
 	ofBackground( 255, 255, 255 );
 	
 
+	//------(a)--------------------------------------
+	// 
+	// 		draw a star
+	// 
+	// 		use poly winding odd
+	// 
 	shapeA.draw();
 
+	//------(b)--------------------------------------
+	// 
+	// 		draw a star
+	//
+	// 		use poly winding nonzero	
+	// 
 	shapeB.draw();
 	
-
+	//------(c)--------------------------------------
+	// 
+	// 		draw a star dynamically	
+	// 
 	shapeC.draw();
 	
 	
+	//------(d)--------------------------------------
+	// 
+	// 		polygon of random points	
+	// 
 	shapeD.draw();
 	
 	
-	
+	//------(e)--------------------------------------
+	// 
+	// 		use sin cos and time to make some spirally shape
+	// 
 	glPushMatrix();
 	glTranslatef(100,300,0);
 	shapeE.draw();
@@ -406,6 +428,10 @@ void testApp::draw(){
 	
 
 	
+	//------(f)--------------------------------------
+	// 
+	// 		addCurveVertex
+	// 
 	shapeF.draw();
 	
 	ofEnableAlphaBlending();
@@ -420,7 +446,10 @@ void testApp::draw(){
 	ofDisableAlphaBlending();
 	
 	
-
+	//------(g)--------------------------------------
+	// 
+	// 		addBezierVertex	
+	// 
 	shapeG.draw();
 	float x0 = 500;
 	float y0 = 300;
@@ -486,17 +515,17 @@ void testApp::draw(){
 	ofDrawBitmapString("(e) fun with sin/cos", 20,410);
 	
 	ofSetHexColor(0x000000);
-	ofDrawBitmapString("(f) ofCurveVertex\nuses catmull rom\nto make curved shapes", 220,410);
+	ofDrawBitmapString("(f) addCurveVertex\nuses catmull rom\nto make curved shapes", 220,410);
 	
 	ofSetHexColor(0x000000);
-	ofDrawBitmapString("(g) ofBezierVertex\nuses bezier to draw curves", 460,410);
+	ofDrawBitmapString("(g) addBezierVertex\nuses bezier to draw curves", 460,410);
 	
 	
 	ofSetHexColor(0x000000);
-	ofDrawBitmapString("(h) ofNextContour\nallows for holes", 20,610);
+	ofDrawBitmapString("(h) nextContour\nallows for holes", 20,610);
 	
 	ofSetHexColor(0x000000);
-	ofDrawBitmapString("(i) ofNextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
+	ofDrawBitmapString("(i) nextContour\ncan even be used for CSG operations\nsuch as union and intersection", 260,620);
 	
 	
 	
@@ -578,7 +607,7 @@ void testApp::mouseDragged(int x, int y, int button){
 
 	//------(f)--------------------------------------
 	// 
-	// 		ofCurveVertex
+	// 		addCurveVertex
 	// 
 	// 		because it uses catmul rom splines, we need to repeat the first and last 
 	// 		items so the curve actually goes through those points
