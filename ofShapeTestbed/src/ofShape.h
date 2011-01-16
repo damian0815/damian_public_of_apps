@@ -9,12 +9,14 @@
 
 #pragma once
 #include "ofMain.h"
-#include "ofVboMesh.h"
 
 #define DRAW_WITH_MESHIES
 
 #ifdef DRAW_WITH_MESHIES
+/// hack until ofMesh is available
 typedef struct _meshy { GLint mode; vector<ofPoint>vertices; } meshy;
+#else
+#include "ofMesh.h"
 #endif
 
 
@@ -32,6 +34,7 @@ public:
 
 	/// add a vertex
 	void addVertex( const ofPoint& p ) { points.push_back(p); }
+	void addVertexes( const vector<ofPoint>& verts ) { points.insert( points.end(), verts.begin(), verts.end() ); }
 	
 	/// draw as line segments, with the current line style
 	void draw() const;
@@ -60,24 +63,32 @@ public:
 	
 	ofShape();
 	void setCurveResolution(int numPoints);
-	void clear() { segments.clear(); bNeedsTessellation = true; cachedPolyline.clear(); cachedTessellation.clear(); bShouldClose=false; }
-		
-	void addVertex(ofPoint p1);
-	void addVertex( float x, float y ) 
-		{ addVertex( ofPoint( x,y ) ); }
+	void clear();
 	
+	/// Add a vertex. Can be used to create straight lines or to specify start points for Bezier or
+	/// Catmull-Rom curves.
+	void addVertex(ofPoint p1);
+	void addVertex( float x, float y, float z=0 ) 
+		{ addVertex( ofPoint( x,y,z ) ); }
+	
+	/// Add a Bezier vertex by specifying ( control point out from previous point, control point in to 
+	/// next point, next point ).
 	void addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p);
 	void addBezierVertex( float cp1x, float cp1y, float cp2x, float cp2y, float px, float py )
 		{ addBezierVertex( ofPoint(cp1x,cp1y), ofPoint(cp2x,cp2y), ofPoint(px,py) ); }
+	void addBezierVertex( float cp1x, float cp1y, float cp1z, float cp2x, float cp2y, float cp2z, float px, float py, float pz )
+		{ addBezierVertex( ofPoint(cp1x,cp1y,cp1z), ofPoint(cp2x,cp2y,cp2z), ofPoint(px,py,pz) ); }
 	
+	/// Add a Catmull-Rom curve vertex. You must add a minimum of vertices to make a Catmull-Rom spline, 
+	/// and the first and last points will be used only as control points.
 	void addCurveVertex(ofPoint p);
-	void addCurveVertex( float x, float y ) 
-		{ addCurveVertex( ofPoint( x,y ) ); }
+	void addCurveVertex( float x, float y, float z=0 ) 
+		{ addCurveVertex( ofPoint( x,y,z ) ); }
 
 	/// close the shape
 	void close();
 	/// next contour
-	void nextContour() {};
+	void nextContour( bool bClosePrev=true );
 
 	/// must call tessellate before calling draw, if the shape has changed
 	void tessellate();
@@ -85,7 +96,7 @@ public:
 	
 	/// drawing style
 	/// polygon winding mode for tessellation
-	void setPolyWindingMode( int newMode ) { polyWindingMode = newMode; bNeedsTessellation = true; }
+	void setPolyWindingMode( int newMode );
 	/// filled/outline
 	void setFilled( bool bFill ) { bFilled = bFill; bNeedsTessellation = true; }
 	/// set line + fill color simultaneously
@@ -142,17 +153,58 @@ private:
 	ofColor fillColor;
 	
 	// true if this shape should be closed
-	bool bShouldClose;
 	
 	int resolution;
-	vector <ofShapeSegment> segments;
+	vector<vector<ofShapeSegment> > segmentVectors;
+	vector<bool> bShouldClose;
 	
 	int polyWindingMode;
 	bool bNeedsTessellation;
-	ofPolyline cachedPolyline;
-	ofVboMesh cachedTessellation;
+	vector<ofPolyline> cachedPolylines;
+	
+	// resulting mesh and outline
+	bool bNeedsOutlineDraw;
+	ofPolyline cachedOutline;
+	
 #ifdef DRAW_WITH_MESHIES
 	vector<meshy> cachedMeshies;
+#else
+	ofMesh cachedTessellation;
 #endif
 	
 };
+
+
+/** ofShapeCollection
+ 
+ An ofShapeCollection holds one or more shapes. It knows its own position.
+ 
+ @author Damian
+ */
+/*
+
+class ofShapeCollection
+{
+public:
+	
+	
+	/// add shapes to this collection
+	void addShape( const ofShape& shape, ofPoint relativePosition = ofPoint( 0,0,0 ) );
+	void addShape( const ofShapeCollection& collection, ofPoint relativePosition = ofPoint( 0,0,0 ) );
+	
+	/// set the position (relative to parent) of this shape collection
+	void setPosition( ofPoint position );
+	
+	void draw();
+	
+private:
+	
+	vector<ofShapeCollection> children;
+	
+	ofPoint position;
+	
+};
+*/
+
+
+

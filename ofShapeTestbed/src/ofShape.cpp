@@ -15,7 +15,6 @@
 /** 
  @TODO
 	ofShape:
-	- fix issues with multiple segment types
 	- ofShapeCollection for multiple shapes inside (ofShape rename to ofPath)
 	- ttf integration: ttf spits out ofShapeCollection
 */
@@ -35,9 +34,24 @@ ofShape::ofShape(){
 	polyWindingMode = ofGetStyle().polyMode;
 	lineColor = ofGetStyle().color;
 	fillColor = ofGetStyle().color;
-	bShouldClose = false;
+	clear();
 }
 
+
+void ofShape::clear() {
+	segmentVectors.clear(); 
+	segmentVectors.resize(1); 
+	bShouldClose.clear(); 
+	bShouldClose.resize(1);
+	bNeedsTessellation = true;
+	cachedPolylines.clear(); 
+#ifdef DRAW_WITH_MESHIES
+	cachedMeshies.clear();
+#else
+	cachedTessellation.clear();
+#endif
+	bNeedsOutlineDraw = false;
+}
 
 
 void ofShape::setCurveResolution(int numPoints) {
@@ -45,9 +59,26 @@ void ofShape::setCurveResolution(int numPoints) {
 }
 
 void ofShape::close() {
-	bShouldClose = true;
+	bShouldClose.back() = true;
 }
 
+
+void ofShape::nextContour( bool bClosePrev ){
+	bShouldClose.back() = bClosePrev;
+	segmentVectors.push_back( vector<ofShapeSegment>() );
+	bShouldClose.push_back( false );
+	bNeedsTessellation = true;
+	// we shouldn't draw the tessellated outline if polyWindingMode is ODD.
+	bNeedsOutlineDraw = (polyWindingMode!=OF_POLY_WINDING_ODD);
+}
+
+
+void ofShape::setPolyWindingMode( int newMode ) {
+	polyWindingMode = newMode; 
+	bNeedsTessellation = true; 
+	// we shouldn't draw the tessellated outline if polyWindingMode is ODD.
+	bNeedsOutlineDraw = bNeedsOutlineDraw && (polyWindingMode!=OF_POLY_WINDING_ODD);
+}
 
 
 void ofShape::bezierSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& polyline ){
@@ -74,7 +105,6 @@ void ofShape::bezierSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& p
 			
 			ofPoint a, b, c;
 			float   t, t2, t3;
-			float   x, y, z;
 			
 			// polynomial coefficients			
 			c = 3.0f*(p1-p0);
@@ -127,33 +157,43 @@ void ofShape::curveSegmentToPolyline( const ofShapeSegment & seg, ofPolyline& po
 void ofShape::tessellate(){
 	
 //	ofLog(OF_LOG_NOTICE, "tessellate, %i segments", segments.size() );
-	cachedPolyline.clear();
+	cachedPolylines.clear();
 	
-	if( segments.size() ){
-		
-		for(int i = 0; i < segments.size(); i++){
-			if( segments[i].getType() == OFSHAPE_SEG_LINE ){
-				for(int j = 0; j < segments[i].getPoints().size(); j++){
-					cachedPolyline.addVertex( segments[i].getPoint(j) );
+	if( segmentVectors.size()>0 ){
+		cachedPolylines.resize( segmentVectors.size() );
+		/// loop through all the subpaths
+		for ( int h = 0; h < segmentVectors.size(); h++ ) {
+			/// loop through all the segments of this subpath
+			const vector<ofShapeSegment>& segments = segmentVectors[h];
+			ofPolyline& polyline = cachedPolylines[h];
+			for(int i = 0; i < segments.size(); i++){
+				if( segments[i].getType() == OFSHAPE_SEG_LINE ){
+					for(int j = 0; j < segments[i].getPoints().size(); j++){
+						polyline.addVertex( segments[i].getPoint(j) );
+					}
+				}else if( segments[i].getType() == OFSHAPE_SEG_BEZIER ){
+					bezierSegmentToPolyline(segments[i], polyline);
+				}else if( segments[i].getType() == OFSHAPE_SEG_CURVE ){
+					curveSegmentToPolyline(segments[i], polyline);
 				}
-			}else if( segments[i].getType() == OFSHAPE_SEG_BEZIER ){
-				bezierSegmentToPolyline(segments[i], cachedPolyline);
-			}else if( segments[i].getType() == OFSHAPE_SEG_CURVE ){
-				curveSegmentToPolyline(segments[i], cachedPolyline);
 			}
+			
+			// close?
+/*			if ( bShouldClose[h] && polyline.size() > 0 ) {
+				polyline.addVertex( polyline[0] );
+			}*/
+			
 		}
 		
-		// close?
-		if ( bShouldClose && cachedPolyline.size() > 0 ) {
-			cachedPolyline.addVertex( cachedPolyline[0] );
-		}
-		
-		bool bIs2D = true;
+		bool bIs2D = false;
 #ifdef DRAW_WITH_MESHIES
-		cachedMeshies = ofTessellator::tessellate( cachedPolyline, polyWindingMode, bFilled, bIs2D );
+		cachedMeshies = ofTessellator::tessellateToMesh( cachedPolylines, polyWindingMode, bIs2D );
 #else
-		cachedTessellation = ofTessellator::tessellate( cachedPolyline, polyWindingMode, bFilled, bIs2D );
+		cachedTessellation = ofTessellator::tessellateToMesh( cachedPolylines, polyWindingMode, bIs2D );
 #endif
+		if ( bNeedsOutlineDraw ) {
+			cachedOutline = ofTessellator::tessellateToOutline( cachedPolylines, polyWindingMode, bIs2D );
+		}
 	}
 //	ofLog(OF_LOG_NOTICE, "tessellate done");
 	
@@ -170,7 +210,7 @@ void ofShape::draw(){
 			ofSetColor( fillColor );
 			glBegin( cachedMeshies[i].mode );
 			for ( int j=0; j<cachedMeshies[i].vertices.size(); j++ ) {
-				glVertex2f( cachedMeshies[i].vertices[j].x, cachedMeshies[i].vertices[j].y );
+				glVertex3f( cachedMeshies[i].vertices[j].x, cachedMeshies[i].vertices[j].y, cachedMeshies[i].vertices[j].z );
 			}
 			glEnd();
 		}
@@ -178,12 +218,35 @@ void ofShape::draw(){
 		cachedTessellation.drawVertices();
 #endif
 	}
-	ofSetColor( lineColor );
-	cachedPolyline.draw();
+	else {
+				
+		ofSetColor( lineColor );
+		if ( bNeedsOutlineDraw ) {
+			cachedOutline.draw();
+		}
+		else {
+			for ( int i=0; i<segmentVectors.size(); i++ ) {
+				for ( int j=0; j<segmentVectors[i].size(); j++ ) {
+					for ( int k=1; k<segmentVectors[i][j].getNumPoints(); k++ ) {
+						ofLine( segmentVectors[i][j].getPoint(k-1), segmentVectors[i][j].getPoint(k) );
+					}
+					if ( bShouldClose[j] ) {
+						// close the loop
+						int last = segmentVectors[i][j].getNumPoints()-1;
+						if ( last > 0 ) {
+							ofLine( segmentVectors[i][j].getPoint(last), segmentVectors[i][j].getPoint(0) ); 
+						}
+					}
+				}
+			}
+		}
+		
+	}
 }
 
 
 void ofShape::addVertex(ofPoint p){
+	vector<ofShapeSegment>& segments = segmentVectors.back();
 	if ( segments.size() == 0 ) {
 		segments.push_back( ofShapeSegment( OFSHAPE_SEG_LINE ) );
 	}
@@ -208,6 +271,7 @@ void ofShape::addVertex(ofPoint p){
 }
 
 void ofShape::addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p){
+	vector<ofShapeSegment>& segments = segmentVectors.back();
 	if ( segments.size() == 0 || (segments.back().getType() != OFSHAPE_SEG_BEZIER && segments.back().getNumPoints()>1) ) {
 		segments.push_back( ofShapeSegment( OFSHAPE_SEG_BEZIER ) );
 		// user has done something stupid -- let's be kind
@@ -215,10 +279,12 @@ void ofShape::addBezierVertex(ofPoint cp1, ofPoint cp2, ofPoint p){
 	}
 	segments.back().addSegmentBezierVertex( cp1, cp2, p );	
 	bNeedsTessellation = true;
+	bNeedsOutlineDraw = true;
 }
 
 
 void ofShape::addCurveVertex(ofPoint p){
+	vector<ofShapeSegment>& segments = segmentVectors.back();
 	if ( segments.size() == 0 ) {
 		segments.push_back( ofShapeSegment( OFSHAPE_SEG_CURVE ) );
 	}
@@ -244,5 +310,6 @@ void ofShape::addCurveVertex(ofPoint p){
 	}
 	segments.back().addSegmentCurveVertex( p );	
 	bNeedsTessellation = true;
+	bNeedsOutlineDraw = true;
 }
 

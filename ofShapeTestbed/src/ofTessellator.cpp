@@ -59,15 +59,16 @@ std::vector <double*> ofTessellator::newVertices;
 //---------------------------- store all the polygon vertices:
 std::vector <double*> ofTessellator::ofShapePolyVertexs;
 
-ofVboMesh ofTessellator::resultMesh;
 GLint ofTessellator::currentTriType; // GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP
 vector<ofPoint> ofTessellator::vertices;
 
 
-
-
+ofPolyline ofTessellator::resultOutline;
+#ifdef DRAW_WITH_MESHIES
 vector<meshy> ofTessellator::resultMeshies;
-
+#else
+ofMesh ofTessellator::resultMesh;
+#endif
 
 
 
@@ -99,9 +100,8 @@ void CALLBACK ofTessellator::end(){
 	m.mode = currentTriType;
 	m.vertices = vertices;
 	resultMeshies.push_back( m );
-#endif
-
-	ofLog( OF_LOG_WARNING, "ofTessellator::end() %i with %i vertices", currentTriType, vertices.size() );
+#else
+	// deal with mesh elements (triangles, triangle fan, triangle strip)
 	if ( currentTriType == GL_TRIANGLES ) {
 		resultMesh.addTriangles( vertices );
 	}
@@ -111,12 +111,15 @@ void CALLBACK ofTessellator::end(){
 	else if ( currentTriType == GL_TRIANGLE_STRIP ) {
 		resultMesh.addTriangleStrip( vertices );
 	}
-	else if ( currentTriType == GL_LINE_LOOP ){
-		ofLog( OF_LOG_WARNING, "ofTessellate: GL_LINE_LOOP" );
-	/*	for ( int i=0; i<vertices.size(); i++ ) {
-			ofLog( OF_LOG_WARNING, " %s", ofToString( vertices[i] ).c_str() );
-		}*/
-		
+#endif
+	
+	// deal with line loop (outline only)
+	if ( currentTriType == GL_LINE_LOOP ){
+		resultOutline.addVertexes( vertices );
+		// close the loop
+		if ( vertices.size()>0 ) {
+			resultOutline.addVertex( vertices[0] );
+		}
 	}
 	else{
 		ofLog( OF_LOG_WARNING, "ofTessellate: unrecognized type '%i' (expected GL_TRIANGLES, GL_TRIANGLE_FAN or GL_TRIANGLE_STRIP)", currentTriType );
@@ -164,19 +167,69 @@ void ofTessellator::clear(){
     newVertices.clear();
 }
 
+
+
+//----------------------------------------------------------
+ofPolyline ofTessellator::tessellateToOutline( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
+	mutex.lock();
+	
+	clear();
+	resultOutline.clear();
+	
+	performTessellation( polylines, polyWindingMode, false /* filled */, bIs2D );
+	
+	mutex.unlock();
+
+	return resultOutline;
+	
+	
+}
+
+
 //----------------------------------------------------------
 #ifdef DRAW_WITH_MESHIES
-vector<meshy> ofTessellator::tessellate( const ofPolyline& polyline, int polyWindingMode, bool bFilled, bool bIs2D ){
+vector<meshy> ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D ){
 #else
-ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, int polyWindingMode, bool bFilled, bool bIs2D ){
+ofMesh ofTessellator::tessellateToMesh( const ofPolyline& polyline, int polyWindingMode, bool bIs2D ){
+#endif
+	vector<ofPolyline> tempPolylinesVector;
+	tempPolylinesVector.push_back( polyline );
+	return tessellateToMesh( tempPolylinesVector, polyWindingMode, bIs2D );
+}
+
+	
+//----------------------------------------------------------
+#ifdef DRAW_WITH_MESHIES
+vector<meshy> ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
+#else
+static ofMesh ofTessellator::tessellateToMesh( const vector<ofPolyline>& polylines, int polyWindingMode, bool bIs2D ) {
 #endif
 
 	mutex.lock();
 	
 	clear();
-	resultMesh = ofVboMesh();
+#ifdef DRAW_WITH_MESHIES
 	resultMeshies.clear();
+#else
+	resultMesh = ofMesh();
+#endif
+
+	performTessellation( polylines, polyWindingMode, true /* filled */, bIs2D );
 	
+	mutex.unlock();
+	
+#ifdef DRAW_WITH_MESHIES
+	return resultMeshies;
+#else
+	return resultMesh;
+#endif
+		
+}
+
+
+	
+//----------------------------------------------------------
+void ofTessellator::performTessellation(const vector<ofPolyline>& polylines, int polyWindingMode, bool bFilled, bool bIs2D ) {
 	
 	// now get the tesselator object up and ready:
 	GLUtesselator * ofShapeTobj = gluNewTess();
@@ -222,27 +275,33 @@ ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, int polyWinding
 	 the computation time. For example, if all polygons lie in
 	 the x-y plane, you can provide the normal by using the
 	 -------------------------------------------  */
-	if( bIs2D) 
+	if( bIs2D) {
 		gluTessNormal(ofShapeTobj, 0.0, 0.0, 1.0);
+	}
 
 	gluTessBeginPolygon( ofShapeTobj, NULL);
-	
-	for ( int i=0; i<polyline.size(); i++ ) {
-		double* point = new double[3];
-		point[0] = polyline[i].x;
-		point[1] = polyline[i].y;
-		point[2] = polyline[i].z;
-		ofShapePolyVertexs.push_back(point);
-	}
 
-	gluTessBeginContour( ofShapeTobj );
+	int currentStartVertex = 0;
 	
-	for (int i=0; i<(int)ofShapePolyVertexs.size(); i++) {
-		gluTessVertex( ofShapeTobj, ofShapePolyVertexs[i], ofShapePolyVertexs[i]);
+	for ( int j=0; j<polylines.size(); j++ ) {
+		const ofPolyline& polyline = polylines[j];
+		for ( int i=0; i<polyline.size(); i++ ) {
+			double* point = new double[3];
+			point[0] = polyline[i].x;
+			point[1] = polyline[i].y;
+			point[2] = polyline[i].z;
+			ofShapePolyVertexs.push_back(point);
+		}
+		
+		gluTessBeginContour( ofShapeTobj );
+		for (int i=currentStartVertex; i<(int)ofShapePolyVertexs.size(); i++) {
+			gluTessVertex( ofShapeTobj, ofShapePolyVertexs[i], ofShapePolyVertexs[i]);
+		}
+		gluTessEndContour( ofShapeTobj );
+		
+		currentStartVertex = (int)ofShapePolyVertexs.size();
+		
 	}
-	
-	gluTessEndContour( ofShapeTobj );
-
 	
 	
 	// no matter what we did / do, we need to delete the tesselator object
@@ -253,13 +312,5 @@ ofVboMesh ofTessellator::tessellate( const ofPolyline& polyline, int polyWinding
    	// now clear the vertices on the dynamically allocated data
    	clear();
 
-	mutex.unlock();
-	
-#ifdef DRAW_WITH_MESHIES
-	return resultMeshies;
-#else
-	return resultMesh;
-#endif
-	
 }
 

@@ -3,7 +3,7 @@
 
 
 #include "ofMain.h"
-
+#include "ofShape.h"
 
 typedef struct {
 	
@@ -40,6 +40,11 @@ class testApp : public ofBaseApp{
 	draggableVertex bezierVertices[4];
 	
 	
+	
+	ofShape shapeA,shapeB,shapeC,shapeD,shapeE;
+	ofShape shapeF,shapeFNonCurve;
+	ofShape shapeG,shapeH;
+	ofShape shapeIa,shapeIb,shapeIc;
 	
 };
 
