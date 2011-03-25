@@ -15,14 +15,12 @@ static const float RADIUS = 10.0f;
 
 
 // pentatonic
-static const int	SCALE_STEPS = 5;
-static const float	SCALE[SCALE_STEPS] = { 0, 2, 5, 7, 10 };
+static const int	SCALE_STEPS_PENTATONIC = 5;
+static const float	SCALE_PENTATONIC[SCALE_STEPS_PENTATONIC] = { 0, 2, 5, 7, 10 };
 
-/*
 // lydian Tone, tone, semitone, tone, tone, tone, semitone
-static const int	SCALE_STEPS = 8;
-static const float	SCALE[SCALE_STEPS] = { 0, 2, 3, 5, 7, 9, 10 };
-*/
+static const int	SCALE_STEPS_LYDIAN = 8;
+static const float	SCALE_LYDIAN[SCALE_STEPS_LYDIAN] = { 0, 2, 3, 5, 7, 9, 10 };
 
 static const float BASE_MIDI_NOTE = 62.0f;
 
@@ -32,33 +30,43 @@ float midiToFrequency( float midiNote )
 	return 440.0f*powf(2.0f,(midiNote-60.0f)/12.0f);
 }
 
-void FloatingSine::setup( ofSoundMixer* mixer, vector<FloatingSine*> * n )
+void FloatingSine::setup( ofSoundMixer* mixer, vector<FloatingSine*> * n, ofImage* particleImage )
 {
 	neighbours = n;
+	particle = particleImage;
 
-//	const float E = 329.6f;
-//	float baseFrequency = E*powf(2.0f,int(ofRandom( -2, 2 )));
-	int whichPentatonic = ofRandom( 0, 0.99999f*SCALE_STEPS );
-	float midiNote = BASE_MIDI_NOTE + SCALE[whichPentatonic];
+	setScale( 0 );
+	setBaseMidiNote( BASE_MIDI_NOTE );
+	
+	int whichScaleNote = ofRandom( 0, 0.99999f*scaleSteps );
+	float midiNote = baseMidiNote + scale[whichScaleNote];
 	float baseFrequency = midiToFrequency( midiNote );
-	ofLog(OF_LOG_NOTICE, "tone %x: freq %f", &tone, baseFrequency );
+	//	ofLog(OF_LOG_NOTICE, "tone %x: freq %f", &tone, baseFrequency );
 	
 
 	shellDistance = ofRandom( 100.0f, 200.0f );
 	
 	frequency = baseFrequency;
 	tone.setFrequency( frequency );
-/*	if ( ofRandomuf() > 0.5f ) */
-	tone.setSawtoothWaveform();
+	
 	volume.addInputFrom( &tone );
-	volume.setVolume( 4.0f/n->size() );
+	volume.setVolume( 4.0f/(n->size()+1) );
+	
 	mixer->addInputFrom( &volume );
 	
+	sawtooth = false;
 	
 	velocity = 0;
 	
 	position.set( ofRandom( 3.0f*ofGetWidth()/8, 5.0f*ofGetWidth()/8 ), ofRandom( 3.0f*ofGetHeight()/8, 5.0f*ofGetHeight()/8 ) );
 	
+	
+	sineColour.setHsb( 255.0f*(ofRandom( -10, 10 ) + 221.0f)/360.0f, 
+					   255.0f*(ofRandom( -0.1f, 0.1f ) + 0.79), 
+					   255.0f*(ofRandom( -0.1f, 0.1f ) + 0.66f), 200.0f );
+	sawColour.setHsb(  255.0f*(ofRandom( -10, 10 ) + 33.0f)/360.0f, 
+					   255.0f*(ofRandom( -0.1f, 0.1f ) + 0.79), 
+					   255.0f*(ofRandom( -0.1f, 0.1f ) + 0.66f), 200.0f );
 	
 	if ( neighbours->size() >= 3 )
 	{
@@ -85,6 +93,34 @@ void FloatingSine::setup( ofSoundMixer* mixer, vector<FloatingSine*> * n )
 }
 
 
+void FloatingSine::setScale( int which )
+{
+	which = min(max(0,which),1);
+	if ( which == 0 )
+	{
+		scale = SCALE_PENTATONIC;
+		scaleSteps = SCALE_STEPS_PENTATONIC;
+	}
+	else {
+		scale = SCALE_LYDIAN;
+		scaleSteps = SCALE_STEPS_LYDIAN;
+	}
+}
+
+
+void FloatingSine::toggleWaveform() { 
+	setWaveform ( !sawtooth );
+}
+
+void FloatingSine::setWaveform( bool toSawtooth ) {
+	sawtooth = toSawtooth;
+	
+	if ( sawtooth ) { 
+		tone.setSawtoothWaveform(); 
+	} else { 
+		tone.setSineWaveform(); 
+	} 
+}
 
 void FloatingSine::update( )
 {
@@ -102,26 +138,26 @@ void FloatingSine::update( )
 	distanceUnits = distance/shellDistance;
 	
 	// calculate distance in terms of shells
-	int whichPentatonic = distanceUnits;
-	float remainder = distanceUnits - whichPentatonic;
+	int whichScaleNote = distanceUnits;
+	float remainder = distanceUnits - whichScaleNote;
 	if ( remainder > 0.5f )
 	{
 		distanceUnits += 1.0f;
-		whichPentatonic += 1.0f;
+		whichScaleNote += 1.0f;
 		remainder = 1.0f-remainder;
 	}
 
 	// update frequency
-	float midiNote = BASE_MIDI_NOTE;
-	while ( whichPentatonic>=SCALE_STEPS )
+	float midiNote = baseMidiNote;
+	while ( whichScaleNote>=scaleSteps )
 	{
 		midiNote += 12; 
-		whichPentatonic -= SCALE_STEPS;
+		whichScaleNote -= scaleSteps;
 	}
 	
-	float scaleNote = SCALE[whichPentatonic%SCALE_STEPS];
-	float nextScaleNote = SCALE[(whichPentatonic+1)%SCALE_STEPS];
-	float prevScaleNote = SCALE[(whichPentatonic+4)%SCALE_STEPS];
+	float scaleNote = scale[whichScaleNote%scaleSteps];
+	float nextScaleNote = scale[(whichScaleNote+1)%scaleSteps];
+	float prevScaleNote = scale[(whichScaleNote+4)%scaleSteps];
 	if ( prevScaleNote>nextScaleNote) 
 	{
 		nextScaleNote += 12.0f;
@@ -133,7 +169,7 @@ void FloatingSine::update( )
 	
 	// volume
 	float vol = 1.0f-min(1.0f,(distance/ofGetWidth()));
-	volume.setVolume( 4.0f*vol/neighbours->size() );
+	volume.setVolume( 4.0f*vol/(neighbours->size()+1) );
 	
 	
 	static const float BUDDY_FORCE_MUL = 1000.0f;
@@ -192,11 +228,14 @@ void FloatingSine::draw()
 	float vol = volume.getVolume();
 	float volSq = vol*vol;
 	float alpha = fabsf(2.0f*(distanceUnits-int(distanceUnits)-0.5f));
-	ofSetColor( 160, 100, 100, 255 );
+	ofColor colour = sawtooth?sawColour:sineColour;
+	ofSetColor( colour.r, colour.g, colour.b, 128+128.0f*alpha );
 	ofFill();
+	particle->setAnchorPercent(0.5,0.5);
+//	particle->draw( position.x, position.y, RADIUS*2, RADIUS*2 );
 	ofCircle( position.x, position.y, RADIUS );
 	
-	ofSetColor( 160, 100, 100, 255*alpha );
+	ofSetColor( colour.r, colour.g, colour.b, 255.0f*alpha );
 	ofNoFill();
 	ofVec2f buddyPosition = neighbours->at(buddy)->position;
 	ofLine( position.x, position.y, buddyPosition.x, buddyPosition.y );

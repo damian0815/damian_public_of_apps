@@ -8,51 +8,38 @@
 
 class testApp : public ofBaseApp{
 
-	public:
+public:
 
 
-		void setup();
-		void update();
-		void draw();
+	void setup();
+	void update();
+	void draw();
 
-		void keyPressed  (int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void windowResized(int w, int h);
+	void keyPressed  (int key);
+	void keyReleased(int key);
+	void mouseMoved(int x, int y );
+	void mouseDragged(int x, int y, int button);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void windowResized(int w, int h);
 
 
-		int		sampleRate;
-		float 	* lAudio;
-		float   * rAudio;
+	int		sampleRate;
+	float 	* lAudio;
+	float   * rAudio;
 	float volume;
-/*	float pan;
-	bool bNoise;
-	float targetFrequency;*/
+	int baseNote;
 
-	/*
-	
-	ofSoundSourceTestTone testToneA;
-	ofSoundSourceTestTone testToneC;
-	ofSoundSourceTestTone testToneE;
-	
-	ofSoundSinkMicrophone microphone;
-	
-	vector<ofSoundSourceTestTone*> tones;
-	
-	ofSoundEffectVolume testVolume;
-	*/
 	ofSoundEffectPassthrough passthrough;
-	ofxSynthFilter filter;
-	
+	ofxSynthFilter filter;	
 	ofSoundMixer mixer;
-	//ofSoundSourceMultiplexor mux;
-	
 	
 	vector<FloatingSine*> floating;
 	
+	ofImage particle;
+
+	int scale; // 0 = pentatonic, 1 = lydian
+	void setScale( int scale /* 0=pentatonic, 1=lydian */ );
 };
 
 #endif

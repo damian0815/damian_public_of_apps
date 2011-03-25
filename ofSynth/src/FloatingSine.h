@@ -14,16 +14,24 @@
 class FloatingSine
 {
 public:
-	void setup( ofSoundMixer* mixer, vector<FloatingSine*> * neighbours );
+	void setup( ofSoundMixer* mixer, vector<FloatingSine*> * neighbours, ofImage* particle );
 	
 	void update();
 	
 	void draw();
 	
 	float getFrequency() { return frequency; }
+	ofPoint getPosition() { return position; }
+	ofSoundSource* getSoundOutputNodePtr() { return &volume; }
+	void toggleWaveform();
+	void setWaveform( bool toSawtooth );
 	
 	ofVec2f position;
 	ofVec2f velocity;
+	
+	void setBaseMidiNote( float base ) { baseMidiNote = base; }
+	/// 0 = pentatonic, 1 = lydian
+	void setScale( int which );
 
 private:
 	
@@ -32,10 +40,20 @@ private:
 	
 	vector<FloatingSine*> *neighbours;
 	
+	ofImage* particle;
+	ofColor sawColour;
+	ofColor sineColour;
+	
 	float frequency;
 	int buddy;
 	int enemy;
 	float distanceUnits;
+	
+	bool sawtooth;
+	
+	const float* scale;
+	int scaleSteps;
+	float baseMidiNote;
 	
 	float shellDistance;
 	
