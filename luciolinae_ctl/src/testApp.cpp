@@ -28,16 +28,16 @@ void testApp::setup(){
 	ofSetFrameRate( 60 ); 
 #endif
 	
-	ofSetLogLevel( OF_LOG_WARNING );
+	ofSetLogLevel( OF_LOG_VERBOSE );
 	
 	serial.enumerateDevices();
 #ifdef TARGET_LINUX
 	static const char* SERIAL_PORT = "/dev/ttyUSB0";
 #elif defined TARGET_OSX
-	//static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
+	static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
 	//static const char* SERIAL_PORT = "/dev/tty.usbserial-0000103D";
 	//static const char* SERIAL_PORT = "/dev/tty.usbserial-A4000R0L";
-	static const char* SERIAL_PORT	 = "/dev/tty.usbserial-FTTEIQQY";
+	//static const char* SERIAL_PORT	 = "/dev/tty.usbserial-FTTEIQQY";
 #endif
 	static const int BAUDRATE = 19200;
 	if ( serial.setup(SERIAL_PORT, BAUDRATE ) )
@@ -66,7 +66,10 @@ void testApp::setup(){
 	}
 
 	AnimationFactory::useLights( &lights );
-	//anim_switcher.addAnim( AnimKapelica::NAME );
+    
+    anim_switcher.addAnim( AnimSeq::NAME );
+
+    //anim_switcher.addAnim( AnimKapelica::NAME );
 	anim_switcher.addAnim( AnimGazebo::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSweep::NAME );
@@ -75,7 +78,7 @@ void testApp::setup(){
 	anim_switcher.addAnim( AnimSeq::NAME );
 	anim_switcher.addAnim( AnimSeqSine::NAME );
 
-	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
+	current_anim = anim_switcher.goToAnim( AnimSeq::NAME );
 	
 #ifdef DO_PD
 	printf("starting pd...\n");

@@ -15,7 +15,6 @@
 //	#include <GL/glut.h>
 //#endif
 
-class ofPoint;
 class ofBaseApp;
 
 class ofAppNoWindow : public ofAppBaseWindow {

@@ -12,6 +12,7 @@
 // smallest brightness step size
 static const float FLOAT_STEP_SIZE = 1.0f/4096;
 
+//#define NEEDS_MANY_SENDS
 
 Light::Light()
 {
@@ -134,8 +135,12 @@ bool Light::needsSerial() const
 void Light::resetNeedsSerial()
 { 
 	last_brightness = brightness; 
+#ifdef NEEDS_MANY_SENDS
 	if ( needs_count > 0 )
 		needs_count --;
+#else
+    needs_count = 0;
+#endif
 }
 
 
