@@ -16,7 +16,7 @@ AnimSeq::AnimSeq( Lights* _lights )
 {
 	anim_pct = 0.0f;
 	current_active = -1;
-	speed = 1.0f;
+	speed = 0.2f;
 }
 
 void AnimSeq::update( float elapsed )
@@ -26,8 +26,8 @@ void AnimSeq::update( float elapsed )
 	// update pct
 	anim_pct += elapsed * real_speed;
 	// calculate new active
-	//int new_active = anim_pct*lights->getNumLights();
-    int new_active = 3*16 + anim_pct*16;
+	int new_active = anim_pct*lights->getNumLights();
+    //int new_active = 3*16 + anim_pct*16;
 	if ( new_active != current_active )
 	{
 		// we might jump more than one

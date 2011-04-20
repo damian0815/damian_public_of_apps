@@ -21,6 +21,7 @@ Light::Light()
 	last_brightness = 1; // force serial update 
 	needs_count = 2;
 	decay_factor = 10.0f; 
+    big = false;
 }
 
 void Light::setup( int _board_id, int _light_id, float _x, float _y )

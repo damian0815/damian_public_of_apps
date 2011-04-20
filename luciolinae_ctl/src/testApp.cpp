@@ -20,7 +20,7 @@ void testApp::setup(){
 	ofSetVerticalSync(true);
 	ofBackground(20,20,20);	
 	ofEnableAlphaBlending();
-	ofSetFrameRate( 30 );
+	ofSetFrameRate( 60 );
 #endif
 	
 #ifdef NO_WINDOW
