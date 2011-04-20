@@ -1,3 +1,6 @@
 [submodule "artvertiser"]
 	path = artvertiser
 	url = dnz_gitosis@frey.co.nz:artvertiser_repo.or.cx_mirror
+[submodule "wasps_test"]
+	path = wasps_test
+	url = dnz_gitosis@frey.co.nz:wasps.git
