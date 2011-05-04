@@ -83,7 +83,7 @@ void testApp::drawInRectAspectFit( ofBaseDraws* drawable, ofRectangle rect )
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	ofBackground( 0 );
+	ofBackground( 0,0,0 );
 
 	ofSetColor( 255,255,255 );
 	ofRectangle screen( 0, 0, ofGetWidth(), ofGetHeight() );
