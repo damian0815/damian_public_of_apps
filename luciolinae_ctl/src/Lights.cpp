@@ -13,7 +13,7 @@
 #include "NearestPointOnLineToPoint.h"
 #include "LightsDelaunay.h"
 
-static const int NUM_LIGHTS=16*2;
+static const int DEFAULT_NUM_LIGHTS=16*2;
 
 
 static const unsigned char FUNC_SET_EVERY = 0x06;
@@ -44,10 +44,10 @@ void Lights::setup( BufferedSerial* _serial )
 	serial = _serial;
 	num_boards = 0;
 	
-	lights.resize( NUM_LIGHTS );
+	lights.resize( DEFAULT_NUM_LIGHTS );
 	// square grid
-	int grid_size = sqrtf( NUM_LIGHTS );
-	for ( int i=0; i<NUM_LIGHTS; i++ )
+	int grid_size = sqrtf( DEFAULT_NUM_LIGHTS );
+	for ( int i=0; i<DEFAULT_NUM_LIGHTS; i++ )
 	{
 		float y = (float(i/grid_size)+0.5f+ofRandom(-0.5,0.5))/(grid_size+2);
 		float x = (float(i%grid_size)+0.5f+ofRandom(-0.5,0.5))/grid_size;
