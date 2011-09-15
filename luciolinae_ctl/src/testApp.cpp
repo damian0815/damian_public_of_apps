@@ -22,7 +22,7 @@ void testApp::setup(){
 	ofSetVerticalSync(true);
 	ofBackground(20,20,20);	
 	ofEnableAlphaBlending();
-	ofSetFrameRate( 30 );
+	ofSetFrameRate( 60 );
 #endif
 	
 #ifdef NO_WINDOW
@@ -30,16 +30,16 @@ void testApp::setup(){
 	ofSetFrameRate( 60 ); 
 #endif
 	
-	ofSetLogLevel( OF_LOG_WARNING );
+	ofSetLogLevel( OF_LOG_NOTICE );
 	
 	serial.enumerateDevices();
 #ifdef TARGET_LINUX
 	static const char* SERIAL_PORT = "/dev/ttyUSB0";
 #elif defined TARGET_OSX
-	//static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
+	static const char* SERIAL_PORT = "/dev/tty.usbserial-FTT8R2AA";
 	//static const char* SERIAL_PORT = "/dev/tty.usbserial-0000103D";
 	//static const char* SERIAL_PORT = "/dev/tty.usbserial-A4000R0L";
-	static const char* SERIAL_PORT	 = "/dev/tty.usbserial-FTTEIQQY";
+	//static const char* SERIAL_PORT	 = "/dev/tty.usbserial-FTTEIQQY";
 #endif
 	static const int BAUDRATE = 19200;
 	if ( serial.setup(SERIAL_PORT, BAUDRATE ) )
@@ -74,8 +74,11 @@ void testApp::setup(){
 	
 
 	AnimationFactory::useLights( &lights );
-	//anim_switcher.addAnim( AnimKapelica::NAME );
+    
+    anim_switcher.addAnim( AnimSeq::NAME );
+
 	anim_switcher.addAnim( AnimGazebo::NAME );
+	anim_switcher.addAnim( AnimKapelica::NAME );
 	anim_switcher.addAnim( AnimStateMachine::NAME );
 	anim_switcher.addAnim( AnimSweep::NAME );
 	anim_switcher.addAnim( AnimDelaunay::NAME );
@@ -83,7 +86,7 @@ void testApp::setup(){
 	anim_switcher.addAnim( AnimSeq::NAME );
 	anim_switcher.addAnim( AnimSeqSine::NAME );
 
-	current_anim = anim_switcher.goToAnim( AnimStateMachine::NAME );
+	current_anim = anim_switcher.goToAnim( AnimSeq::NAME );
 	
 #ifdef DO_PD
 	printf("starting pd...\n");
@@ -92,10 +95,11 @@ void testApp::setup(){
 	//pd.addOpenFile( "pd-test.pd" );
 	pd.addOpenFile( "pdstuff/_main.pd" );
 	pd.start();
-	
+
 	ofSoundStreamSetup(2, 0, this, 44100, 256, 4 );
 #endif
 	
+	ofSoundStreamSetup(2, 0, this, 44100, 256, 12 );
 	printf("testApp::setup() finished\n");
 	
 }
@@ -136,8 +140,8 @@ void testApp::update(){
 		m.addFloatArg( vol );
 		osc.sendMessage(m);
 	}
-	else if ( ofGetElapsedTimeMillis() > ontime_ms )
-	{
+	else if ( ontime_ms > 0 && ofGetElapsedTimeMillis() > ontime_ms )
+{
 		// calculate a volume
 		float vol = float(ofGetElapsedTimeMillis()-ontime_ms)/FADE_TIME;
 		vol = min(1.0f,max(0.0f, vol));
@@ -164,11 +168,13 @@ void testApp::draw(){
 #ifndef NO_WINDOW
 	lights.draw();
 	current_anim->draw();
+	anim_switcher.draw();
 #endif
 }
 
 void testApp::exit()
 {
+	pd.stop();
 	printf("clearing lights\n");
 	lights.clear( true );
 	buffered_serial->shutdown();
@@ -194,10 +200,12 @@ void testApp::keyPressed  (int key){
 			data.addValue("ontime_ms", ontime_ms);
 			break;
 		}
+		case OF_KEY_LEFT:
 		case '[':
 			current_anim = anim_switcher.prevAnim();
 			lights.clear();
 			break;
+		case OF_KEY_RIGHT:
 		case ']':
 			current_anim = anim_switcher.nextAnim();
 			lights.clear();
@@ -230,7 +238,7 @@ void testApp::keyReleased(int key){
 	
 }
 
-//--------------------------------------------------------------
+//-------------------------------------------------------------- 
 void testApp::mouseMoved(int x, int y ){
 	current_anim->mouseMoved( x, y );
 }
@@ -258,6 +266,5 @@ void testApp::windowResized(int w, int h){
 void testApp::audioRequested( float* input, int bufferSize, int nChannels )
 {
 	pd.renderAudio( input, bufferSize, nChannels );
-	//memset( input, 0, sizeof( input ) );
 		
 }

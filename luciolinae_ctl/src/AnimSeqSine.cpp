@@ -11,7 +11,7 @@
 
 const char* AnimSeqSine::NAME = "SeqSine";
 
-static const float BRIGHT=sqrtf(0.5f);
+static const float BRIGHT=sqrtf(1.0f);
 
 AnimSeqSine::AnimSeqSine( Lights* _lights ) 
 :	Animation( _lights )

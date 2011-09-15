@@ -25,6 +25,7 @@ AnimGazebo::AnimGazebo( Lights* _lights )
 	which = ofRandom( 0, lights->getNumLights()*0.999f );
 	closest_a = -1;
 	editing_delaunay = false;
+	draw_delaunay = true;
 	speed = 1.0f;
 	
 	customDelaunay = *lights->getDelaunay();
@@ -130,6 +131,8 @@ void AnimGazebo::keyPressed ( int k )
 			speed *= 1.1f;
 		else if ( k == 'S' )
 			speed /= 1.1f;
+		else if ( k == 'd' )
+			draw_delaunay = !draw_delaunay;
 	}
 
 	if ( k == OF_KEY_RETURN )
@@ -170,7 +173,7 @@ void AnimGazebo::triggerDelaunay( int index )
 
 void AnimGazebo::draw()
 {
-	if ( editing_delaunay )
+	if ( editing_delaunay || draw_delaunay )
 	{
 		for ( int i=0; i<lights->getNumLights(); i++ )
 		{
@@ -182,7 +185,7 @@ void AnimGazebo::draw()
 				if ( closest_a == i && closest_b == *jt )
 					ofSetColor( 0xF0, 0x10, 0x10, 0x80 );
 				else
-					ofSetColor( 0x20, 0x80, 0x20, 0x30 );
+					ofSetColor( 0x20, 0x80, 0x20, 0x18 );
 				ofLine( ofGetWidth()*lights->getLight( i ).getX(),   ofGetHeight()*lights->getLight( i ).getY(),
 					   ofGetWidth()*lights->getLight( *jt ).getX(), ofGetHeight()*lights->getLight( *jt ).getY() );
 			}

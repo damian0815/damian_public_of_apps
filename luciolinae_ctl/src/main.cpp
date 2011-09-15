@@ -19,7 +19,7 @@ void delayUs( unsigned long us )
 //========================================================================
 int main( ){
 
-#ifdef NO_WINDOW
+#ifdef NO_WINDOW 
 	ofAppNoWindow window;	
 
 	//runDummyOf( new testApp() );

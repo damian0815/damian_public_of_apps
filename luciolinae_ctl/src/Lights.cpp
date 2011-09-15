@@ -13,11 +13,13 @@
 #include "NearestPointOnLineToPoint.h"
 #include "LightsDelaunay.h"
 
-static const int DEFAULT_NUM_LIGHTS=16*2;
+static const int DEFAULT_NUM_LIGHTS=16*6;
 
-
-static const unsigned char FUNC_SET_EVERY = 0x06;
-static const unsigned char FUNC_LATCH = 0x04;
+static const unsigned char FUNC_SET_ALL = 0x01;     // set everything to one 8-bit level
+static const unsigned char FUNC_SET_EVERY = 0x06;   // set all light levels on a board with one message
+static const unsigned char FUNC_LATCH = 0x04;       
+static const unsigned char FUNC_SET_SINGLE = 0x02;
+static const unsigned char FUNC_PULSE = 0x03;
 
 
 
@@ -34,7 +36,6 @@ Lights::~Lights()
 		delete (*it).second;
 	}
 }
-
 
 
 void Lights::setup( BufferedSerial* _serial )
@@ -256,19 +257,22 @@ void Lights::flush()
 void Lights::sendLightLevel( unsigned char board_id, unsigned char light_id, int brightness )
 {
 	// clamp
+    
 	if ( brightness < 0 )
 		brightness = 0;
 	if ( brightness > 4095 )
 		brightness = 4095;
 	// construct message
-	unsigned char msg[4];
-	msg[0] = (board_id) | 0x02; // set level
-	msg[1] = (light_id<<4) + (brightness>>8);
-	msg[2] = brightness & 0xff;
-	msg[3] = calculateCRC( msg, 3 );
+    unsigned char msg[6];
+    msg[0] = 0xAA; // 0b10101010
+    msg[1] = 0x55; // 0x01010101
+	msg[2] = (board_id) | FUNC_SET_SINGLE; // set level
+	msg[3] = (light_id<<4) + (brightness>>8);
+	msg[4] = brightness & 0xff;
+	msg[5] = calculateCRC( msg+2, 3 );
 	//printf("Lights::sendLightLevel: writing msg %02x %02x %02x\n", msg[0], msg[1], msg[2] );
 	// send msg
-	serial->writeBytes( msg, 4 );
+	serial->writeBytes( msg, 6 );
 	
 }
 
@@ -282,15 +286,17 @@ void Lights::sendPulse( unsigned char board_id, unsigned char light_id, int brig
 	decay = min(255,max(0,(int)decay));
 	
 	// construct message
-	unsigned char msg[5];
-	msg[0] = (board_id) | 0x03; // pulse
-	msg[1] = (light_id<<4) + (brightness>>8);
-	msg[2] = brightness & 0xff;
-	msg[3] = decay;
-	msg[4] = calculateCRC( msg, 4 );
+	unsigned char msg[7];
+    msg[0] = 0xAA; // 0b10101010
+    msg[1] = 0x55; // 0x01010101
+	msg[2] = (board_id) | FUNC_PULSE; // pulse
+	msg[3] = (light_id<<4) + (brightness>>8);
+	msg[4] = brightness & 0xff;
+	msg[5] = decay;
+	msg[6] = calculateCRC( msg+2, 4 );
 	//printf("Lights::sendPulse: writing msg %02x %02x %02x %02x\n", msg[0], msg[1], msg[2], msg[3] );
 	// send msg
-	serial->writeBytes( msg, 5 );
+	serial->writeBytes( msg, 7 );
 }
 
 
@@ -365,11 +371,13 @@ void Lights::clear( bool pummel )
 			sendEveryLightLevel( (j+1)<<4, black );			
 			for ( int i=0; i<4; i++ )
 			{
-				unsigned char msg[3];
-				msg[0] = ((unsigned char)((j+1)<<4))|0x01;
-				msg[1] = 0x00;
-				msg[2] = calculateCRC( msg, 2 );
-				serial->writeBytes( msg, 3 );
+				unsigned char msg[5];
+                msg[0] = 0xAA; // 0b10101010
+                msg[1] = 0x55; // 0x01010101
+				msg[2] = ((unsigned char)((j+1)<<4)) | FUNC_SET_ALL;
+				msg[3] = 0x00;
+				msg[4] = calculateCRC( msg+2, 2 );
+				serial->writeBytes( msg, 5 );
 				
 			}
 			latch();
@@ -380,11 +388,13 @@ void Lights::clear( bool pummel )
 	{
 		serial->beginWrite();
 		// to be sure
-		unsigned char msg[3];
-		msg[0] = 0x01;
-		msg[1] = 0x00;
-		msg[2] = calculateCRC( msg, 2 );
-		serial->writeBytes( msg, 3 );
+		unsigned char msg[5];
+        msg[0] = 0xAA; // 0b10101010
+        msg[1] = 0x55; // 0x01010101
+		msg[2] = 0x01;
+		msg[3] = 0x00;
+		msg[4] = calculateCRC( msg+2, 2 );
+		serial->writeBytes( msg, 5 );
 		latch();
 		serial->endWrite();
 	}
@@ -415,15 +425,20 @@ void Lights::illuminateCircularArea( float x, float y, float area, bool include_
 
 void Lights::sendEveryLightLevel( unsigned char board_id, unsigned char* data )
 {
-	unsigned char func = FUNC_SET_EVERY | board_id;
 	// calculate crc
 
-	serial->writeBytes( &func, 1 );
-	serial->writeBytes( data, 24 );
-	// write crc
+    unsigned char msg[64];
+    msg[0] = 0xAA; // 0b10101010
+    msg[1] = 0x55; // 0x01010101
+	unsigned char func = FUNC_SET_EVERY | board_id;
+    msg[2] = func;
+    memcpy( msg+3, data, 24 );
+	// calculate crc
 	unsigned char crc = calculateCRC( &func, 1 );
 	crc = updateCRC( data, 24, crc );
-	serial->writeBytes( &crc, 1 );
+    msg[3+24] = crc;
+    // write
+    serial->writeBytes( msg, 3+24+1 );
 	
 	/*
 	printf(" %02x\n", func );
@@ -496,10 +511,14 @@ void Lights::drawIlluminateCorridor( float x, float y, float dx, float dy, float
 
 void Lights::latch( unsigned char board_id )
 {
+    unsigned char msg[4];
+    msg[0] = 0xAA;
+    msg[1] = 0x55;
 	unsigned char func = FUNC_LATCH | board_id;
-	serial->writeBytes( &func, 1 );
+    msg[2] = func;
 	unsigned char crc = calculateCRC( &func, 1 );
-	serial->writeBytes( &crc, 1 );
+    msg[3] = crc;
+	serial->writeBytes( msg, 4 );
 	// done
 }
 

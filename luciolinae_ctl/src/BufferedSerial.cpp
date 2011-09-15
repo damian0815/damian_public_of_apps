@@ -96,22 +96,23 @@ void BufferedSerial::setup( ofSerial* _serial , int baud, float _delay )
 
 void BufferedSerial::shutdown()
 {
+#ifdef WAIT_FOR_ACK
 	// write to the end of this block to synchronize buffer boundaries for next run
 	unsigned char dummy[BLOCKSIZE-sent_this_block];
 	memset( dummy, 0, BLOCKSIZE-sent_this_block );
 	writeBytes( dummy, BLOCKSIZE-sent_this_block );
+#endif
 }
 
 void BufferedSerial::beginWrite()
 {
 #ifdef WAIT_FOR_ACK
 	assert( sent_this_block%CHUNKSIZE == 0);
-#endif
-	
 	unsigned char dummy[2];
 	dummy[0] = 0;
 	dummy[1] = 0;
 	writeBytes( dummy, 2 );
+#endif
 	
 }
 
@@ -136,7 +137,15 @@ void BufferedSerial::pushOutPacket()
 	if ( ready_packets == 0 )
 		return;
 	
+    /*
+    char buffer[4096];
+    buffer[0] = 0;
+    for ( int i=0; i<packets[read_packet].count; i++ )
+        sprintf( buffer, "%s%02x ", buffer, packets[read_packet].data[i] );
+    ofLog(OF_LOG_VERBOSE, "sending %s", buffer );*/
+    
 	writeBytes_real( packets[read_packet].data, packets[read_packet].count );
+    
 	ready_packets--;
 	read_packet++;
 	if ( read_packet >= NUM_PACKETS )
@@ -158,9 +167,9 @@ bool BufferedSerial::writeBytes_real( unsigned char* bytes, int size )
 		while( to_write > 0 )
 		{
 			// try to send
-			ofLog( OF_LOG_VERBOSE, "BufferedSerial::writeBytes trying to send %i/%i bytes", to_write, count );
+			//ofLog( OF_LOG_VERBOSE, "BufferedSerial::writeBytes trying to send %i/%i bytes", to_write, count );
 			written = serial->writeBytes( bytes, to_write );
-			ofLog( OF_LOG_VERBOSE, "BufferedSerial::writeBytes wrote %i bytes", written );
+			//ofLog( OF_LOG_VERBOSE, "BufferedSerial::writeBytes wrote %i bytes", written );
 			if ( written <= 0 )
 			{
 				// sleep for 1ms and try again

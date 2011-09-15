@@ -63,11 +63,11 @@ public:
 		return NULL;
 	};
 	
+	void draw() { /*if ( current < anims.size() ) { ofDrawBitmapString( anims[current], 10, 10 ); }*/ }
+	
 	Animation* currentAnim() { return AnimationFactory::makeAnimation( anims[current] ); }
 	Animation* nextAnim() { current++; if ( current >= anims.size() ) current = 0 ; printf("going to anim '%s'\n", anims[current].c_str() ); return AnimationFactory::makeAnimation( anims[current] ); }
 	Animation* prevAnim() { current--; if ( current < 0 ) current = anims.size()-1; printf("going to anim '%s'\n", anims[current].c_str() ); return AnimationFactory::makeAnimation( anims[current] ); }
-	
-	void draw();
 	
 private:
 	vector<string> anims;
