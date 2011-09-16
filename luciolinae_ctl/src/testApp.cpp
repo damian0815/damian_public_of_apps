@@ -67,7 +67,7 @@ void testApp::setup(){
 		lights.setup( buffered_serial );
 	}
 	
-	ontime_ms = data.getValue("ontime_ms", 180000 );
+	ontime_ms = data.getValue("ontime_ms", 0 );
 	
 	
 	data.popTag();
@@ -152,7 +152,7 @@ void testApp::update(){
 		m.addFloatArg( vol );
 		osc.sendMessage(m);
 		
-		if ( ofGetElapsedTimeMillis() > (ontime_ms+FADE_TIME) )
+		if ( ontime_ms >0 && (ofGetElapsedTimeMillis() > (ontime_ms+FADE_TIME)) )
 		{
 			printf("quit time\n");
 			::exit(0);
