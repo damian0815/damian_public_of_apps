@@ -13,7 +13,7 @@
 #include "NearestPointOnLineToPoint.h"
 #include "LightsDelaunay.h"
 
-static const int DEFAULT_NUM_LIGHTS=16*6;
+static const int DEFAULT_NUM_LIGHTS=16*7;
 
 static const unsigned char FUNC_SET_ALL = 0x01;     // set everything to one 8-bit level
 static const unsigned char FUNC_SET_EVERY = 0x06;   // set all light levels on a board with one message

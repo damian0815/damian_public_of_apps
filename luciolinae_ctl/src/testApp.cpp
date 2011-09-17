@@ -68,6 +68,7 @@ void testApp::setup(){
 	}
 	
 	ontime_ms = data.getValue("ontime_ms", 0 );
+	printf("got ontime_ms: %i\n", ontime_ms );
 	
 	
 	data.popTag();
